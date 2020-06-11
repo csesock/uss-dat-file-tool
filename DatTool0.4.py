@@ -1,3 +1,6 @@
+# Version 0.2
+# Written on 6-11-2020
+#
 # The convention in this program is to measure elapsed time by using
 # time.time() when an execution begins, and then again when it ends.
 # 
@@ -8,6 +11,7 @@ import time
 import csv, sys, re, os
 from pyfiglet import Figlet
 from clint.textui import colored, puts, indent
+from os import system
 
 # regular expression patterns
 record_pattern = re.compile('MTX[0-9]*\s*')
@@ -17,6 +21,7 @@ empty2_pattern = re.compile('[^\S\r\n]{2,}')
 # name of the download file
 download_file_name = "download.dat"
 
+# parameterized error handler for the file reader
 def throwFileException(errorType):
     if errorType == 1:
         print("ERROR 01: File Not Found")
@@ -26,6 +31,14 @@ def throwFileException(errorType):
         print("ERROR 02: File Already Exists")
         print()
         main()
+    elif errorType == 3:
+        print("ERROR 03: Unknown Input")
+        print()
+        main()
+    else:
+        print("ERROR 00: Unknown Error")
+        print()
+        sys.exit(0)
 
 def main():
     puts(colored.green("Enter operation to perform (0 to quit)"))
@@ -36,7 +49,6 @@ def main():
         puts('4. Print all records')
         puts('5. Export missing meters')
         puts('6. Export meter type')
-
     scan_type = int(input())
     if scan_type == 1:
         scanForRecord()
@@ -58,9 +70,7 @@ def main():
     elif scan_type == 0:
         sys.exit(0)
     else:
-        print("ERROR: Unknown Option Entered")
-        print()
-        main()
+        throwFileException(3)
 
 def scanForRecord():
     counter = 0
@@ -81,13 +91,7 @@ def scanForRecord():
     main()
 
 def scanAllRecords():
-    count_cus = 0
-    count_csx = 0
-    count_mtr = 0
-    count_mtx = 0
-    count_mts = 0
-    count_rdg = 0
-    count_rff = 0
+    count_cus = count_csx = count_mtr = count_mtx = count_mts = count_rdg = count_rff = 0
     try:
         with open(download_file_name, 'r') as openfile:
                 start = time.time()
@@ -127,26 +131,32 @@ def scanAllRecords():
     
 def printSingleRecord():
     record_type = input("Enter the record type: (ex. CUS or MTX) ")
-    with open(download_file_name, 'r') as openfile:
-        counter = 0
-        start = time.time()
-        for line in openfile:
-            if record_type in line or record_type.lower() in line:
-                counter+=1
-                print("{0}) {1}".format(counter, line))
-    total = time.time()-start
-    print(counter, "records printed.")
-    print("time elapsed: %.2f" % (total), " seconds.")
+    try:
+        with open(download_file_name, 'r') as openfile:
+            counter = 0
+            start = time.time()
+            for line in openfile:
+                if record_type in line or record_type.lower() in line:
+                    counter+=1
+                    print("{0}) {1}".format(counter, line))
+        total = time.time()-start
+        print(counter, "records printed.")
+        print("time elapsed: %.2f" % (total), " seconds.")
+    except FileNotFoundError:
+        throwFileException(1)
     print()
     time.sleep(1)
     main()
 
 def printAllRecords():
-    with open(download_file_name, 'r') as openfile:
-        counter = 0
-        for line in openfile:
-            print("{0}) {1}".format(counter, line))
-            counter+=1
+    try:
+        with open(download_file_name, 'r') as openfile:
+            counter = 0
+            for line in openfile:
+                print("{0}) {1}".format(counter, line))
+                counter+=1
+    except FileNotFoundError:
+        throwFileException(1)
     print()
     time.sleep(1)
     main()
@@ -156,14 +166,20 @@ def exportMissingMeters():
         with open(download_file_name, 'r') as openfile:
             try:
                 with open('MissingMeters.txt', 'x') as builtfile:
+                    counter = 0
                     start = time.time()
                     previous_line = ''
                     for line in openfile:
                         if line.startswith('MTR'):
-                            meter_record = line[45:58]
+                            meter_record = line[45:58] # range 46-57
                             if empty_pattern.match(meter_record):
                                 builtfile.write(previous_line)
+                                counter+=1
                         previous_line = line
+                    if counter == 0:
+                        print("No missing meters found")
+                        print()
+                        main()
             except FileExistsError:
                 throwFileException(2)
     except FileNotFoundError:
@@ -186,7 +202,7 @@ def convertMissingMetersToCSV():
                 with open('MissingMeters.csv', 'x') as builtfile:
                     start = time.time()
                     for line in openfile:
-                        line = re.sub(empty2_pattern, ',', line.strip())
+                        line = re.sub('[^\S\r\n]{2,}', ',', line.strip())
                         builtfile.write(line)
                         if line.startswith('CUS'):
                             builtfile.write('\n')
@@ -194,7 +210,6 @@ def convertMissingMetersToCSV():
                     print(".csv file successfully exported.")
                     print("time elapsed: %.2f" % (total), " seconds.")
                     print()
-                    main()
             except FileExistsError:
                 throwFileException(2)
     except FileNotFoundError:
@@ -207,20 +222,17 @@ def exportMeterType():
     try:
         with open(download_file_name, 'r') as openfile:
             try:
-                user_meter_code = int(input("Enter the meter code to export: "))
+                user_meter_code = int(input("Enter the meter code to export: (ex. 00 or 01) "))
                 with open('MeterType.txt', 'x') as builtfile:
                     start = time.time()
                     for line in openfile:
                         if line.startswith('RDG'):
-                            meter_code = line[76:78]
-                            if meter_code == user_meter_code: #failing to write somewhere in here
+                            meter_code = line[76:78] #range 77-78
+                            if int(meter_code) == user_meter_code:
                                 builtfile.write(line)
-                                print(line)
                     total = time.time()-start
                     print("Meter type successfully exported")
                     print("time elapsed: %.2f" % (total), " seconds.")
-                    print()
-                    main()
             except FileExistsError:
                 throwFileException(2)
     except FileNotFoundError:
@@ -230,9 +242,11 @@ def exportMeterType():
     main()
         
 
-
 if __name__ == "__main__":
-    f = Figlet(font='slant')
-    print(f.renderText('Sesock .dat Tool'))
+    f = Figlet(font='slant', width=120)
+    print(f.renderText('Sesock\'s .dat Tool'))
+    system('title'+'.dat Tool v0.4')
     main()
+
+
 
