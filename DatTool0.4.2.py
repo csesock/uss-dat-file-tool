@@ -1,5 +1,5 @@
-# Current build: Version 0.4.1
-# Written on 6-11-2020
+# Current build: Version 0.4.2
+# Current build written on 6-11-2020
 #
 # For information regarding this program, find the readme at github.com/csesock/SesockDatTool
 # For feature requests or feedback, email christophers@united-systems.com
@@ -10,6 +10,8 @@ import csv, sys, re, os
 from pyfiglet import Figlet
 from clint.textui import colored, puts, indent
 from os import system
+from collections import deque
+from datetime import datetime
 
 # regular expression patterns
 record_pattern = re.compile('MTX[0-9]*\s*')
@@ -18,6 +20,8 @@ empty2_pattern = re.compile('[^\S\r\n]{2,}')
 
 # name of the download file
 download_file_name = "download.dat"
+missing_meter_filename = 'MissingMeters' + str(datetime.today().strftime('%Y-%m-%d')) + '.txt'
+missing_meter_csv_filename = 'MissingMeters' + str(datetime.today().strftime('%Y-%m-%d')) + '.csv'
 
 # parameterized error handler for the file reader
 def throwFileException(errorType):
@@ -65,6 +69,11 @@ def main():
         exportMissingMeters()
     elif scan_type == 6:
         exportMeterType()
+    elif scan_type == 666:
+        print(":^)")
+        main()
+    elif scan_type == 99:
+        exportFullRecordMeterType()
     elif scan_type == 0:
         sys.exit(0)
     else:
@@ -163,7 +172,7 @@ def exportMissingMeters():
     try:
         with open(download_file_name, 'r') as openfile:
             try:
-                with open('MissingMeters.txt', 'x') as builtfile:
+                with open(missing_meter_filename, 'x') as builtfile:
                     counter = 0
                     start = time.time()
                     previous_line = ''
@@ -195,9 +204,9 @@ def exportMissingMeters():
 
 def convertMissingMetersToCSV():
     try: 
-        with open('MissingMeters.txt', 'r') as openfile:
+        with open(missing_meter_filename, 'r') as openfile:
             try:
-                with open('MissingMeters.csv', 'x') as builtfile:
+                with open(missing_meter_csv_filename, 'x') as builtfile:
                     start = time.time()
                     for line in openfile:
                         line = re.sub('[^\S\r\n]{2,}', ',', line.strip())
@@ -238,13 +247,34 @@ def exportMeterType():
     print()
     time.sleep(1)
     main()
-        
 
+def exportFullRecordMeterType():
+    lines = deque(maxlen=5)
+    with open('download.dat', 'r') as openfile:
+        for line in openfile:
+            lines.append(line)
+            if line.startswith('RDG'):
+                searchDequeForCustomerRecord(lines)
+                
+def searchDequeForCustomerRecord(deq):
+    for rec in deq:
+        if rec.startswith('CUS'):
+            print(rec)
+    main()
+
+    
 if __name__ == "__main__":
     f = Figlet(font='slant', width=120)
     print(f.renderText('Sesock\'s .dat Tool'))
     system('title'+'.dat Tool v0.4')
     main()
+
+
+
+
+
+
+
 
 
 
