@@ -14,34 +14,36 @@ from collections import deque
 from datetime import datetime
 
 # regular expression patterns
-record_pattern = re.compile('MTX[0-9]*\s*')
+record_pattern = re.compile('[a-z][0-9]*\s*')
 empty_pattern = re.compile('[^\S\n\t]+')
 empty2_pattern = re.compile('[^\S\r\n]{2,}')
 
-# name of the download file
+# file names with dynamic dates 
 download_file_name = "download.dat"
-missing_meter_filename = 'MissingMeters' + str(datetime.today().strftime('%Y-%m-%d')) + '.txt'
-missing_meter_csv_filename = 'MissingMeters' + str(datetime.today().strftime('%Y-%m-%d')) + '.csv'
+missing_meter_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d')) + '.txt'
+missing_meter_csv_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d')) + '.csv'
+meter_type_filename = 'MeterType ' + str(datetime.today().strftime('%Y-%m-%d')) + '.txt'
 
 # parameterized error handler for the file reader
-def throwFileException(errorType):
+def throwIOException(errorType):
     if errorType == 1:
-        print("ERROR 01: File Not Found")
+        print("[ERROR 01]: File Not Found")
         print()
         main()
     elif errorType == 2:
-        print("ERROR 02: File Already Exists")
+        print("[ERROR 02]: File Already Exists")
         print()
         main()
     elif errorType == 3:
-        print("ERROR 03: Unknown Input")
+        print("[ERROR 03]: Unknown Input")
         print()
         main()
     else:
-        print("ERROR 00: Unknown Error")
+        print("[ERROR 00]: Unknown Error")
         print()
         sys.exit(0)
 
+# main method -- responsible for IO menu/handling
 def main():
     puts(colored.green("Enter operation to perform (0 to quit)"))
     with indent(4, quote=' >'):
@@ -77,8 +79,9 @@ def main():
     elif scan_type == 0:
         sys.exit(0)
     else:
-        throwFileException(3)
+        throwIOException(3)
 
+# scan download file for number of instances of a single record
 def scanForRecord():
     counter = 0
     record_type = input("Enter the record type: (ex. CUS or MTX) ").upper()
@@ -89,7 +92,7 @@ def scanForRecord():
                 if line.startswith(record_type):
                     counter+=1
     except FileNotFoundError:
-        throwFileException(1)
+        throwIOException(1)
     total = time.time()-start
     print(f"{counter:,d}", "records found")
     print("time elapsed: %.2f" % (total), " seconds.")
@@ -97,6 +100,7 @@ def scanForRecord():
     time.sleep(1)
     main()
 
+# scan download file for number of each record
 def scanAllRecords():
     count_cus = count_csx = count_mtr = count_mtx = count_mts = count_rdg = count_rff = 0
     try:
@@ -118,7 +122,7 @@ def scanAllRecords():
                     elif line.startswith('RFF'):
                         count_rff+=1
     except FileNotFoundError:
-        throwFileException(1)
+        throwIOException(1)
 
     total = time.time()-start 
     print("File scan successful.")
@@ -135,9 +139,10 @@ def scanAllRecords():
     print()
     time.sleep(1)
     main()
-    
+
+# print all of a single record type
 def printSingleRecord():
-    record_type = input("Enter the record type: (ex. CUS or MTX) ")
+    record_type = input("Enter the record type (ex. CUS or MTX): ")
     try:
         with open(download_file_name, 'r') as openfile:
             counter = 0
@@ -150,11 +155,12 @@ def printSingleRecord():
         print(counter, "records printed.")
         print("time elapsed: %.2f" % (total), " seconds.")
     except FileNotFoundError:
-        throwFileException(1)
+        throwIOException(1)
     print()
     time.sleep(1)
     main()
 
+# print all records -- functionally a print() for download.dat
 def printAllRecords():
     try:
         with open(download_file_name, 'r') as openfile:
@@ -163,11 +169,12 @@ def printAllRecords():
                 print("{0}) {1}".format(counter, line))
                 counter+=1
     except FileNotFoundError:
-        throwFileException(1)
+        throwIOException(1)
     print()
     time.sleep(1)
     main()
 
+# exports a text file with all missing meter records in download file
 def exportMissingMeters():
     try:
         with open(download_file_name, 'r') as openfile:
@@ -188,9 +195,9 @@ def exportMissingMeters():
                         print()
                         main()
             except FileExistsError:
-                throwFileException(2)
+                throwIOException(2)
     except FileNotFoundError:
-        throwFileException(1)
+        throwIOException(1)
     total = time.time()-start
     print("Missing meters successfully exported.")
     print("time elapsed: %.2f" % (total), " seconds.")
@@ -199,9 +206,12 @@ def exportMissingMeters():
     answer = input()
     if answer == 'Y' or answer == 'y':
         convertMissingMetersToCSV()
-    else:
+    elif answer == 'N' or answer == 'n':
         main()
+    else:
+        throwIOException(3)
 
+# post export function which converts list of missing meters to a .csv file
 def convertMissingMetersToCSV():
     try: 
         with open(missing_meter_filename, 'r') as openfile:
@@ -218,19 +228,20 @@ def convertMissingMetersToCSV():
                     print("time elapsed: %.2f" % (total), " seconds.")
                     print()
             except FileExistsError:
-                throwFileException(2)
+                throwIOException(2)
     except FileNotFoundError:
-        throwFileException(1)
+        throwIOException(1)
     print()
     time.sleep(1)
     main()
 
+# exports a text file of a specified meter translation code
 def exportMeterType():
     try:
         with open(download_file_name, 'r') as openfile:
             try:
-                user_meter_code = int(input("Enter the meter code to export: (ex. 00 or 01) "))
-                with open('MeterType.txt', 'x') as builtfile:
+                user_meter_code = int(input("Enter the meter code to export (ex. 00 or 01): "))
+                with open(meter_type_filename, 'x') as builtfile:
                     start = time.time()
                     for line in openfile:
                         if line.startswith('RDG'):
@@ -241,13 +252,15 @@ def exportMeterType():
                     print("Meter type successfully exported")
                     print("time elapsed: %.2f" % (total), " seconds.")
             except FileExistsError:
-                throwFileException(2)
+                throwIOException(2)
     except FileNotFoundError:
-        throwFileException(1)
+        throwIOException(1)
     print()
     time.sleep(1)
     main()
 
+# deque implementation to print entire customer record of translation code
+# @TODO: return only post-customer records in deque
 def exportFullRecordMeterType():
     lines = deque(maxlen=5)
     with open('download.dat', 'r') as openfile:
@@ -255,18 +268,20 @@ def exportFullRecordMeterType():
             lines.append(line)
             if line.startswith('RDG'):
                 searchDequeForCustomerRecord(lines)
-                
+
+# helper function for deque implementation of export meter translation
+# @TODO: 
 def searchDequeForCustomerRecord(deq):
     for rec in deq:
         if rec.startswith('CUS'):
             print(rec)
     main()
 
-    
+# sets import function calls
 if __name__ == "__main__":
     f = Figlet(font='slant', width=120)
     print(f.renderText('Sesock\'s .dat Tool'))
-    system('title'+'.dat Tool v0.4')
+    system('title'+'.dat Tool v0.4.2')
     main()
 
 
