@@ -1,3 +1,1 @@
-#Sesock Download Dat Tool
-
-![LandingScreen](https://www.imgur.com/9w9QQEd)
+<p align="center"><img width="55%" src="./assets/01.png"/></p>
