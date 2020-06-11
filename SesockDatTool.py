@@ -12,6 +12,7 @@ from clint.textui import colored, puts, indent
 # regular expression patterns
 record_pattern = re.compile('MTX[0-9]*\s*')
 empty_pattern = re.compile('[^\S\n\t]+')
+empty2_pattern = re.compile('[^\S\r\n]{2,}')
 
 # name of the download file
 download_file_name = "download.dat"
@@ -181,7 +182,7 @@ def convertMissingMetersToCSV():
                 with open('MissingMeters.csv', 'x') as builtfile:
                     start = time.time()
                     for line in openfile:
-                        line = re.sub('[^\S\r\n]{2,}', ',', line.strip())
+                        line = re.sub(empty2_pattern, ',', line.strip())
                         builtfile.write(line)
                         if line.startswith('CUS'):
                             builtfile.write('\n')
