@@ -1,10 +1,8 @@
-# Version 0.2
+# Current build: Version 0.4.1
 # Written on 6-11-2020
 #
-# The convention in this program is to measure elapsed time by using
-# time.time() when an execution begins, and then again when it ends.
-# 
-# for feature requests or feedback, email christophers@united-systems.com
+# For information regarding this program, find the readme at github.com/csesock/SesockDatTool
+# For feature requests or feedback, email christophers@united-systems.com
 # Author: Chris Sesock on 6-5-2020
 
 import time 
