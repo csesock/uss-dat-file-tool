@@ -1,2 +1,3 @@
-# SesockDatTool
-Tool for internal use at USS with download.dat files
+#Sesock Download Dat Tool
+
+![MainScreen](https://imgur.com/9w9QQEd)
