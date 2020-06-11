@@ -17,6 +17,16 @@ empty2_pattern = re.compile('[^\S\r\n]{2,}')
 # name of the download file
 download_file_name = "download.dat"
 
+def throwFileException(errorType):
+    if errorType == 1:
+        print("ERROR 01: File Not Found")
+        print()
+        main()
+    elif errorType == 2:
+        print("ERROR 02: File Already Exists")
+        print()
+        main()
+
 def main():
     puts(colored.green("Enter operation to perform (0 to quit)"))
     with indent(4, quote=' >'):
@@ -62,7 +72,7 @@ def scanForRecord():
                 if line.startswith(record_type):
                     counter+=1
     except FileNotFoundError:
-        print("File not found")
+        throwFileException(1)
     total = time.time()-start
     print(f"{counter:,d}", "records found")
     print("time elapsed: %.2f" % (total), " seconds.")
@@ -97,9 +107,7 @@ def scanAllRecords():
                     elif line.startswith('RFF'):
                         count_rff+=1
     except FileNotFoundError:
-        print("ERROR: File Not Found")
-        print()
-        main()
+        throwFileException(1)
 
     total = time.time()-start 
     print("File scan successful.")
@@ -157,13 +165,9 @@ def exportMissingMeters():
                                 builtfile.write(previous_line)
                         previous_line = line
             except FileExistsError:
-                print("ERROR: File Already Exists")
-                print()
-                main()
+                throwFileException(2)
     except FileNotFoundError:
-        print("ERROR: File Not Found")
-        print()
-        main()
+        throwFileException(1)
     total = time.time()-start
     print("Missing meters successfully exported.")
     print("time elapsed: %.2f" % (total), " seconds.")
@@ -192,13 +196,9 @@ def convertMissingMetersToCSV():
                     print()
                     main()
             except FileExistsError:
-                print("File already exists")
-                print()
-                main()
+                throwFileException(2)
     except FileNotFoundError:
-        print("File not found")
-        print()
-        main()
+        throwFileException(1)
     print()
     time.sleep(1)
     main()
@@ -222,11 +222,9 @@ def exportMeterType():
                     print()
                     main()
             except FileExistsError:
-                print("Error: File already exists")
+                throwFileException(2)
     except FileNotFoundError:
-        print("File not found")
-        print()
-        main()
+        throwFileException(1)
     print()
     time.sleep(1)
     main()
