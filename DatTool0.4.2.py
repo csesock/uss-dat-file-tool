@@ -243,11 +243,14 @@ def exportMeterType():
                 user_meter_code = int(input("Enter the meter code to export (ex. 00 or 01): "))
                 with open(meter_type_filename, 'x') as builtfile:
                     start = time.time()
+                    previous_line = ''
                     for line in openfile:
                         if line.startswith('RDG'):
                             meter_code = line[76:78] #range 77-78
                             if int(meter_code) == user_meter_code:
+                                builtfile.write(previous_line)
                                 builtfile.write(line)
+                        previous_line = line
                     total = time.time()-start
                     print("Meter type successfully exported")
                     print("time elapsed: %.2f" % (total), " seconds.")
@@ -283,13 +286,3 @@ if __name__ == "__main__":
     print(f.renderText('Sesock\'s .dat Tool'))
     system('title'+'.dat Tool v0.4.2')
     main()
-
-
-
-
-
-
-
-
-
-
