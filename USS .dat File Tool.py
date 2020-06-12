@@ -49,7 +49,10 @@ def main():
     print("4) Print meter type")
     print("5) Export missing meters")
     print("6) Export meter type")
-    scan_type = int(input(">>"))
+    try:
+        scan_type = int(input(">>"))
+    except ValueError:
+        throwIOException(3)
     if scan_type == 1:
         scanForRecord()
     elif scan_type == 2:
