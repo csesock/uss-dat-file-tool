@@ -72,7 +72,8 @@ def main():
 # scan download file for number of instances of a single record
 def scanForRecord():
     counter = 0
-    record_type = input("Enter the record type: (ex. CUS or MTX) >>").upper()
+    print(("Enter the record type (ex. CUS or RHD)"))
+    record_type = input(">>").upper()
     try:
         with open(download_file_name, 'r') as openfile:
             start = time.time()
@@ -130,7 +131,8 @@ def scanAllRecords():
 
 # print all of a single record type
 def printSingleRecord():
-    record_type = input("Enter the record type (ex. CUS or MTX) >>")
+    print("Enter the record type (ex. CUS or RHD)")
+    record_type = input(">>").upper()
     try:
         with open(download_file_name, 'r') as openfile:
             counter = 0
@@ -149,6 +151,8 @@ def printSingleRecord():
     main()
 
 # print all records -- functionally a print() for download.dat
+# CURRENTLY NOT AN OPTION FROM USER SIDE
+# 
 def printAllRecords():
     try:
         with open(download_file_name, 'r') as openfile:
@@ -215,7 +219,6 @@ def convertMissingMetersToCSV():
                     total = time.time()-start
                     print(".csv file successfully exported.")
                     print("time elapsed: %.2f" % (total), " seconds.")
-                    print()
             except FileExistsError:
                 throwIOException(2)
     except FileNotFoundError:
@@ -306,11 +309,9 @@ def getFileLineCount(filename):
 
 # sets import function calls
 if __name__ == "__main__":
-    print("United Systems .dat File Tool [Version 0.4.3]")
+    print("United Systems .dat File Tool [Version 0.4.4]")
     print("(c) 2020 United Systems and Software Inc.")
     print()
-    system('title'+'.dat Tool v0.4.3')
+    system('title'+'.dat Tool v0.4.4')
     main()
-    
-    
     
