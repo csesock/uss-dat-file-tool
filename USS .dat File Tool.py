@@ -17,9 +17,9 @@ empty2_pattern = re.compile('[^\S\r\n]{2,}')
 
 # file names with dynamic dates 
 download_file_name = "download.dat"
-missing_meter_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d')) + '.txt'
-missing_meter_csv_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d')) + '.csv'
-meter_type_filename = 'MeterType ' + str(datetime.today().strftime('%Y-%m-%d')) + '.txt'
+missing_meter_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d-%H-%M')) + '.txt'
+missing_meter_csv_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d-%H-%M')) + '.csv'
+meter_type_filename = 'MeterType ' + str(datetime.today().strftime('%Y-%m-%d-%H-%M')) + '.txt'
 
 # parameterized error handler for the file reader
 def throwIOException(errorType):
@@ -261,20 +261,22 @@ def exportMeterType():
 
 # prints every record of a specified meter type to the console
 def printMeterType():
+    current_record = deque(maxlen=6)
     try:
         with open(download_file_name, 'r') as openfile:
             print("Enter the meter code to print (ex. 00 or 01)")
             user_meter_code = int(input(">>"))
             start = time.time()
-            previous_line = ''
             counter = 0
             for line in openfile:
                 if line.startswith('RDG'):
                     meter_code = line[76:78] #range 77-78
                     if int(meter_code) == user_meter_code:
-                        print(line)
-                        counter+=1
-                previous_line = line
+                        for record in current_record:
+                            if record.startswith('CUS'):
+                                print(record)
+                                counter+=1
+                current_record.append(line)
             total = time.time()-start
             if counter == 0:
                 print("no records found.")
