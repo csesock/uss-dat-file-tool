@@ -5,11 +5,7 @@
 # For feature requests or feedback, email christophers@united-systems.com
 # Author: Chris Sesock on 6-5-2020
 
-import time 
-import csv, sys, re, os
-#from pyfiglet import Figlet
-#from clint.textui import colored, puts, indent
-#from clint.textui import progress
+import csv, sys, re, os, time
 from os import system
 from collections import deque
 from datetime import datetime
@@ -46,14 +42,6 @@ def throwIOException(errorType):
 
 # main method -- responsible for IO menu/handling
 def main():
-    # puts(colored.green("Enter operation to perform (0 to quit)"))
-    # with indent(4, quote=' >>'):
-        # puts('1. Single record scan')
-        # puts('2. Verbose record scan')
-        # puts('3. Print single record type')
-        # puts('4. Print meter type')
-        # puts('5. Export missing meters')
-        # puts('6. Export meter type')
     print("Enter operation to perform (0 to quit)")
     print("1) Single record scan")
     print("2) Verbose record scan")
@@ -318,8 +306,6 @@ def getFileLineCount(filename):
 
 # sets import function calls
 if __name__ == "__main__":
-    #f = Figlet(font='slant', width=120)
-    #print(f.renderText('Sesock\'s .dat Tool'))
     print("United Systems .dat File Tool [Version 0.4.3]")
     print("(c) 2020 United Systems and Software Inc.")
     print()
