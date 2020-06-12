@@ -1,4 +1,4 @@
-# Current build: Version 0.4.4
+# Current build: Version 0.4.5
 # Current build written on 6-12-2020
 #
 # For information regarding this program, find the readme at github.com/csesock/SesockDatTool
@@ -232,6 +232,7 @@ def convertMissingMetersToCSV():
 
 # exports a text file of a specified meter translation code
 def exportMeterType():
+    current_record = deque(maxlen=6)
     try:
         with open(download_file_name, 'r') as openfile:
             try:
@@ -239,14 +240,14 @@ def exportMeterType():
                 user_meter_code = int(input(">>"))
                 with open(meter_type_filename, 'x') as builtfile:
                     start = time.time()
-                    previous_line = ''
                     for line in openfile:
                         if line.startswith('RDG'):
                             meter_code = line[76:78] #range 77-78
                             if int(meter_code) == user_meter_code:
-                                builtfile.write(previous_line)
-                                builtfile.write(line)
-                        previous_line = line
+                                for record in current_record:
+                                    if record.startswith('CUS'):
+                                        builtfile.write(record)
+                        current_record.append(line)
                     total = time.time()-start
                     print("Meter type successfully exported")
                     print("time elapsed: %.2f" % (total), " seconds.")
@@ -320,9 +321,9 @@ def getFileLineCount(filename):
 
 # sets import function calls
 if __name__ == "__main__":
-    print("United Systems .dat File Tool [Version 0.4.4]")
+    print("United Systems .dat File Tool [Version 0.4.5]")
     print("(c) 2020 United Systems and Software Inc.")
     print()
-    system('title'+'.dat Tool v0.4.4')
+    system('title'+'.dat Tool v0.4.5')
     main()
     
