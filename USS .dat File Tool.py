@@ -187,6 +187,9 @@ def exportMissingMeters():
                                 counter+=1
                         previous_line = line
                     if counter == 0:
+                        # close file, delete file, move on
+                        builtfile.close()
+                        os.remove(missing_meter_filename)
                         print("No missing meters found.")
                         print()
                         main()
@@ -240,6 +243,7 @@ def exportMeterType():
                 user_meter_code = int(input(">>"))
                 with open(meter_type_filename, 'x') as builtfile:
                     start = time.time()
+                    counter = 0
                     for line in openfile:
                         if line.startswith('RDG'):
                             meter_code = line[76:78] #range 77-78
@@ -247,8 +251,17 @@ def exportMeterType():
                                 for record in current_record:
                                     if record.startswith('CUS'):
                                         builtfile.write(record)
+                                        counter+=1
                         current_record.append(line)
                     total = time.time()-start
+                    if counter == 0:
+                        # close file, delete file, move on
+                        builtfile.close()
+                        os.remove(meter_type_filename)
+                        print("no records found.")
+                        print()
+                        time.sleep(1)
+                        main()
                     print("Meter type successfully exported")
                     print("time elapsed: %.2f" % (total), " seconds.")
             except FileExistsError:
