@@ -1,5 +1,5 @@
-# Current build: Version 0.4.2
-# Current build written on 6-11-2020
+# Current build: Version 0.4.4
+# Current build written on 6-12-2020
 #
 # For information regarding this program, find the readme at github.com/csesock/SesockDatTool
 # For feature requests or feedback, email christophers@united-systems.com
@@ -7,8 +7,9 @@
 
 import time 
 import csv, sys, re, os
-from pyfiglet import Figlet
-from clint.textui import colored, puts, indent
+#from pyfiglet import Figlet
+#from clint.textui import colored, puts, indent
+#from clint.textui import progress
 from os import system
 from collections import deque
 from datetime import datetime
@@ -45,15 +46,22 @@ def throwIOException(errorType):
 
 # main method -- responsible for IO menu/handling
 def main():
-    puts(colored.green("Enter operation to perform (0 to quit)"))
-    with indent(4, quote=' >'):
-        puts('1. Single record scan')
-        puts('2. Verbose record scan')
-        puts('3. Print single record type')
-        puts('4. Print all records')
-        puts('5. Export missing meters')
-        puts('6. Export meter type')
-    scan_type = int(input())
+    # puts(colored.green("Enter operation to perform (0 to quit)"))
+    # with indent(4, quote=' >>'):
+        # puts('1. Single record scan')
+        # puts('2. Verbose record scan')
+        # puts('3. Print single record type')
+        # puts('4. Print meter type')
+        # puts('5. Export missing meters')
+        # puts('6. Export meter type')
+    print("Enter operation to perform (0 to quit)")
+    print("1) Single record scan")
+    print("2) Verbose record scan")
+    print("3) Print single record type")
+    print("4) Print meter type")
+    print("5) Export missing meters")
+    print("6) Export meter type")
+    scan_type = int(input(">>"))
     if scan_type == 1:
         scanForRecord()
     elif scan_type == 2:
@@ -61,19 +69,11 @@ def main():
     elif scan_type == 3:
         printSingleRecord()
     elif scan_type == 4:
-        print("This will print the entire download file")
-        answer = input("Are you sure? (Y or N):")
-        if answer == 'Y' or answer == 'y':
-            printAllRecords()
-        else:
-            main()
+        printMeterType()
     elif scan_type == 5:
         exportMissingMeters()
     elif scan_type == 6:
         exportMeterType()
-    elif scan_type == 666:
-        print(":^)")
-        main()
     elif scan_type == 99:
         exportFullRecordMeterType()
     elif scan_type == 0:
@@ -84,7 +84,7 @@ def main():
 # scan download file for number of instances of a single record
 def scanForRecord():
     counter = 0
-    record_type = input("Enter the record type: (ex. CUS or MTX) ").upper()
+    record_type = input("Enter the record type: (ex. CUS or MTX) >>").upper()
     try:
         with open(download_file_name, 'r') as openfile:
             start = time.time()
@@ -142,7 +142,7 @@ def scanAllRecords():
 
 # print all of a single record type
 def printSingleRecord():
-    record_type = input("Enter the record type (ex. CUS or MTX): ")
+    record_type = input("Enter the record type (ex. CUS or MTX) >>")
     try:
         with open(download_file_name, 'r') as openfile:
             counter = 0
@@ -179,6 +179,7 @@ def exportMissingMeters():
     try:
         with open(download_file_name, 'r') as openfile:
             try:
+                num_lines = getFileLineCount(download_file_name)
                 with open(missing_meter_filename, 'x') as builtfile:
                     counter = 0
                     start = time.time()
@@ -203,7 +204,7 @@ def exportMissingMeters():
     print("time elapsed: %.2f" % (total), " seconds.")
     print()
     print("Export missing meters to .csv file? (Y or N)")
-    answer = input()
+    answer = input(">>")
     if answer == 'Y' or answer == 'y':
         convertMissingMetersToCSV()
     elif answer == 'N' or answer == 'n':
@@ -240,7 +241,8 @@ def exportMeterType():
     try:
         with open(download_file_name, 'r') as openfile:
             try:
-                user_meter_code = int(input("Enter the meter code to export (ex. 00 or 01): "))
+                print("Enter the meter code to print (ex. 00 or 01)")
+                user_meter_code = int(input(">>"))
                 with open(meter_type_filename, 'x') as builtfile:
                     start = time.time()
                     previous_line = ''
@@ -262,6 +264,29 @@ def exportMeterType():
     time.sleep(1)
     main()
 
+def printMeterType():
+    try:
+        with open(download_file_name, 'r') as openfile:
+            print("Enter the meter code to print (ex. 00 or 01)")
+            user_meter_code = int(input(">>"))
+            start = time.time()
+            previous_line = ''
+            for line in openfile:
+                if line.startswith('RDG'):
+                    meter_code = line[76:78] #range 77-78
+                    if int(meter_code) == user_meter_code:
+                        print(line)
+                previous_line = line
+            total = time.time()-start
+            print("Meter type successfully exported")
+            print("time elapsed: %.2f" % (total), " seconds.")
+    except FileNotFoundError:
+        throwIOException(1)
+    print()
+    time.sleep(1)
+    main()
+                    
+
 # deque implementation to print entire customer record of translation code
 # @TODO: return only post-customer records in deque
 def exportFullRecordMeterType():
@@ -280,9 +305,26 @@ def searchDequeForCustomerRecord(deq):
             print(rec)
     main()
 
+def getFileLineCount(filename):
+    try:
+        with open(filename, 'r') as openfile:
+            counter = 0
+            for line in openfile:
+                counter+=1
+        return counter
+    except FileNotFoundError:
+        throwIOException(1)
+
+
 # sets import function calls
 if __name__ == "__main__":
-    f = Figlet(font='slant', width=120)
-    print(f.renderText('Sesock\'s .dat Tool'))
-    system('title'+'.dat Tool v0.4.2')
+    #f = Figlet(font='slant', width=120)
+    #print(f.renderText('Sesock\'s .dat Tool'))
+    print("United Systems .dat File Tool [Version 0.4.3]")
+    print("(c) 2020 United Systems and Software Inc.")
+    print()
+    system('title'+'.dat Tool v0.4.3')
     main()
+    
+    
+    
