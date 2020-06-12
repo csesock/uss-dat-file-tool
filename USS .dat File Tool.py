@@ -184,7 +184,7 @@ def exportMissingMeters():
                                 counter+=1
                         previous_line = line
                     if counter == 0:
-                        print("No missing meters found")
+                        print("No missing meters found.")
                         print()
                         main()
             except FileExistsError:
@@ -255,6 +255,7 @@ def exportMeterType():
     time.sleep(1)
     main()
 
+# prints every record of a specified meter type to the console
 def printMeterType():
     try:
         with open(download_file_name, 'r') as openfile:
@@ -262,14 +263,21 @@ def printMeterType():
             user_meter_code = int(input(">>"))
             start = time.time()
             previous_line = ''
+            counter = 0
             for line in openfile:
                 if line.startswith('RDG'):
                     meter_code = line[76:78] #range 77-78
                     if int(meter_code) == user_meter_code:
                         print(line)
+                        counter+=1
                 previous_line = line
             total = time.time()-start
-            print("Meter type successfully exported")
+            if counter == 0:
+                print("no records found.")
+                print()
+                time.sleep(1)
+                main()
+            print(counter, "records printed.")
             print("time elapsed: %.2f" % (total), " seconds.")
     except FileNotFoundError:
         throwIOException(1)
