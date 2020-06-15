@@ -236,6 +236,10 @@ def convertMissingMetersToCSV():
     main()
 
 # exports a text file of a specified meter translation code
+#
+## There is a theoretical bug wherein the deque exceeds the number of records
+## between the current RDG and previous CUS and the previous CUS gets read
+## and associated with the wrong RDG record. I am currently working to fix.
 def exportMeterType():
     current_record = deque(maxlen=6)
     try:
@@ -301,6 +305,9 @@ def printMeterType():
     time.sleep(1)
     main()
 
+#################################
+# Helper Functions
+
 def getFileLineCount(filename):
     try:
         with open(filename, 'r') as openfile:
@@ -318,6 +325,24 @@ def removeFile(filename):
     time.sleep(1)
     main()
 
+def getCustomerRecordLength():
+    try:
+        with open('download.dat', 'r') as openfile:
+            counter = 0
+            start_line = 0
+            end_line = 0
+            for line in openfile:
+                counter+=1
+                if line.startswith('CUS'):
+                    start_line = counter
+                    #print(start_line)
+                if line.startswith('RFF'):
+                    end_line = counter
+                    length = (end_line-start_line)+1
+                    print(length)
+    except FileNotFoundError:
+        throwIOException(1)        
+
 # sets import function calls
 if __name__ == "__main__":
     print("United Systems .dat File Tool [Version 0.4.6]")
@@ -326,3 +351,4 @@ if __name__ == "__main__":
     system('title'+'.dat Tool v0.4.5')
     main()
     
+
