@@ -10,6 +10,9 @@ from os import system
 from collections import deque
 from datetime import datetime
 
+# flag for debug mode
+debug = False
+
 # regular expression patterns
 record_pattern = re.compile('[a-z][0-9]*\s*')
 empty_pattern = re.compile('[^\S\n\t]+')
