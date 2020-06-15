@@ -1,0 +1,4 @@
+# ignore .dat filetypes #
+#########################
+.dat
+.md
