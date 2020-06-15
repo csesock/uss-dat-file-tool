@@ -1,4 +1,4 @@
-# ignore .dat filetypes #
-#########################
-.dat
-.md
+#.dat filetypes used for testing -- always ignore
+*.dat
+*.md
+*.log
