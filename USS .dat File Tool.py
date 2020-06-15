@@ -1,5 +1,5 @@
-# Current build: Version 0.4.5
-# Current build written on 6-12-2020
+# Current build: Version 0.4.6
+# Current build written on 6-15-2020
 #
 # For information regarding this program, find the readme at github.com/csesock/SesockDatTool
 # For feature requests or feedback, email christophers@united-systems.com
@@ -97,12 +97,14 @@ def scanForRecord():
 
 # scan download file for number of each record
 def scanAllRecords():
-    count_cus = count_csx = count_mtr = count_mtx = count_mts = count_rdg = count_rff = 0
+    count_rhd = count_cus = count_csx = count_mtr = count_mtx = count_mts = count_rdg = count_rff = 0
     try:
         with open(download_file_name, 'r') as openfile:
                 start = time.time()
                 for line in openfile:
-                    if line.startswith('CUS'):
+                    if line.startswith('RHD'):
+                        count_rhd+=1
+                    elif line.startswith('CUS'):
                         count_cus+=1
                     elif line.startswith('CSX'):
                         count_csx+=1
@@ -119,9 +121,11 @@ def scanAllRecords():
     except FileNotFoundError:
         throwIOException(1)
 
-    total = time.time()-start 
+    total = time.time()-start
+    print()
     print("File scan successful.")
     print("-----------------------------------------")
+    print(f"{count_rhd:,d}", "\t (RHD) Route header records found.")
     print(f"{count_cus:,d}", "\t (CUS) Customer records found.")
     print(f"{count_csx:,d}", "\t (CSX) Customer extra records found.")
     print(f"{count_mtr:,d}", "\t (MTR) Meter records found.")
@@ -177,25 +181,20 @@ def exportMissingMeters():
     try:
         with open(download_file_name, 'r') as openfile:
             try:
-                num_lines = getFileLineCount(download_file_name)
                 with open(missing_meter_filename, 'x') as builtfile:
                     counter = 0
                     start = time.time()
                     previous_line = ''
                     for line in openfile:
                         if line.startswith('MTR'):
-                            meter_record = line[45:58] # range 46-57
+                            meter_record = line[45:57] # range 46-57
                             if empty_pattern.match(meter_record):
                                 builtfile.write(previous_line)
                                 counter+=1
                         previous_line = line
                     if counter == 0:
-                        # close file, delete file, move on
                         builtfile.close()
-                        os.remove(missing_meter_filename)
-                        print("No missing meters found.")
-                        print()
-                        main()
+                        removeFile(missing_meter_filename)
             except FileExistsError:
                 throwIOException(2)
     except FileNotFoundError:
@@ -258,13 +257,8 @@ def exportMeterType():
                         current_record.append(line)
                     total = time.time()-start
                     if counter == 0:
-                        # close file, delete file, move on
                         builtfile.close()
-                        os.remove(meter_type_filename)
-                        print("no records found.")
-                        print()
-                        time.sleep(1)
-                        main()
+                        removeFile(meter_type_filename)
                     print("Meter type successfully exported")
                     print("time elapsed: %.2f" % (total), " seconds.")
             except FileExistsError:
@@ -306,25 +300,6 @@ def printMeterType():
     print()
     time.sleep(1)
     main()
-                    
-
-# deque implementation to print entire customer record of translation code
-# @TODO: return only post-customer records in deque
-def exportFullRecordMeterType():
-    lines = deque(maxlen=5)
-    with open('download.dat', 'r') as openfile:
-        for line in openfile:
-            lines.append(line)
-            if line.startswith('RDG'):
-                searchDequeForCustomerRecord(lines)
-
-# helper function for deque implementation of export meter translation
-# @TODO: 
-def searchDequeForCustomerRecord(deq):
-    for rec in deq:
-        if rec.startswith('CUS'):
-            print(rec)
-    main()
 
 def getFileLineCount(filename):
     try:
@@ -336,10 +311,16 @@ def getFileLineCount(filename):
     except FileNotFoundError:
         throwIOException(1)
 
+def removeFile(filename):
+    os.remove(filename)
+    print("No records found.")
+    print()
+    time.sleep(1)
+    main()
 
 # sets import function calls
 if __name__ == "__main__":
-    print("United Systems .dat File Tool [Version 0.4.5]")
+    print("United Systems .dat File Tool [Version 0.4.6]")
     print("(c) 2020 United Systems and Software Inc.")
     print()
     system('title'+'.dat Tool v0.4.5')
