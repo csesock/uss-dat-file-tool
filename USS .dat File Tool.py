@@ -18,8 +18,11 @@ record_pattern = re.compile('[a-z][0-9]*\s*')
 empty_pattern = re.compile('[^\S\n\t]+')
 empty2_pattern = re.compile('[^\S\r\n]{2,}')
 
-# file names with dynamic dates 
+# download file information
 download_file_name = "download.dat"
+download_file_path = '' # default to current directory
+
+# file names with dynamic dates 
 missing_meter_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d-%H-%M')) + '.txt'
 missing_meter_csv_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d-%H-%M')) + '.csv'
 meter_type_filename = 'MeterType ' + str(datetime.today().strftime('%Y-%m-%d-%H-%M')) + '.txt'
@@ -68,8 +71,10 @@ def main():
         exportMissingMeters()
     elif scan_type == 6:
         exportMeterType()
+    elif scan_type == 98:
+        getDownloadNamePath()
     elif scan_type == 99:
-        exportFullRecordMeterType()
+        printAllRecords()
     elif scan_type == 0:
         sys.exit(0)
     else:
@@ -306,8 +311,10 @@ def printMeterType():
     main()
 
 #################################
-# Helper Functions
+###### Helper Functions #########
+#################################
 
+# counts the number of lines in a file
 def getFileLineCount(filename):
     try:
         with open(filename, 'r') as openfile:
@@ -318,6 +325,7 @@ def getFileLineCount(filename):
     except FileNotFoundError:
         throwIOException(1)
 
+# formatted deletion of a file in current directory
 def removeFile(filename):
     os.remove(filename)
     print("No records found.")
@@ -325,6 +333,7 @@ def removeFile(filename):
     time.sleep(1)
     main()
 
+# returns the number of records associated with each customer
 def getCustomerRecordLength():
     try:
         with open('download.dat', 'r') as openfile:
@@ -335,13 +344,23 @@ def getCustomerRecordLength():
                 counter+=1
                 if line.startswith('CUS'):
                     start_line = counter
-                    #print(start_line)
                 if line.startswith('RFF'):
                     end_line = counter
                     length = (end_line-start_line)+1
-                    print(length)
+                    return length
     except FileNotFoundError:
         throwIOException(1)        
+
+# edits the details of the download file
+def getDownloadNamePath():
+    print("[Configure download file parameters]")
+    print("Enter download filename (include extention .dat)")
+    global download_file_name
+    download_file_name = str(input(">>"))
+    print("Enter download file path (C:\\Users\\john\\Desktop\\download)")
+    global download_file_path
+    download_file_path = str(input(">>"))
+    main()
 
 # sets import function calls
 if __name__ == "__main__":
@@ -350,5 +369,3 @@ if __name__ == "__main__":
     print()
     system('title'+'.dat Tool v0.4.5')
     main()
-    
-
