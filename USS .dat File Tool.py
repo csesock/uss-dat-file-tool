@@ -1,8 +1,6 @@
 # Current build: Version 0.4.7
 # Current build written on 6-16-2020
 #
-# For information regarding this program, find the readme at github.com/csesock/SesockDatTool
-# For feature requests or feedback, email christophers@united-systems.com
 # Author: Chris Sesock on 6-5-2020
 
 import csv, sys, re, os, time
@@ -39,6 +37,10 @@ def throwIOException(errorType):
         main()
     elif errorType == 3:
         print("[ERROR 03]: Unknown Input")
+        print()
+        main()
+    elif errorType == 4:
+        print("[ERROR 04]: No Records Found")
         print()
         main()
     else:
@@ -295,10 +297,7 @@ def printMeterType(user_meter_code):
                 current_record.append(line)
             total = time.time()-start
             if counter == 0:
-                print("no records found.")
-                print()
-                time.sleep(1)
-                main()
+                throwIOException(4)
             print(counter, "records printed.")
             print("time elapsed: %.2f" % (total), " seconds.")
     except FileNotFoundError:
@@ -327,10 +326,7 @@ def exportAllMeterTypes():
                                             counter+=1
                             current_record.append(line)
                     if counter == 0:
-                        print("no records found.")
-                        print()
-                        time.sleep(1)
-                        main()
+                        throwIOException(4)
                     printEndOperation(start, time.time())
             except FileExistsError:
                 throwIOException(2)
