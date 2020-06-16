@@ -23,9 +23,9 @@ download_file_name = "download.dat"
 download_file_path = '' # default to current directory
 
 # file names with dynamic dates 
-missing_meter_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d-%H-%M')) + '.txt'
-missing_meter_csv_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d-%H-%M')) + '.csv'
-meter_type_filename = 'MeterType ' + str(datetime.today().strftime('%Y-%m-%d-%H-%M')) + '.txt'
+missing_meter_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + '.txt'
+missing_meter_csv_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + '.csv'
+meter_type_filename = 'MeterType ' + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + '.txt'
 
 # parameterized error handler for the file reader
 def throwIOException(errorType):
@@ -293,7 +293,8 @@ def printMeterType():
                     if int(meter_code) == user_meter_code:
                         for record in current_record:
                             if record.startswith('CUS'):
-                                print(record)
+                                #print(record)
+                                print("{0}) {1}".format(counter, record))
                                 counter+=1
                 current_record.append(line)
             total = time.time()-start
