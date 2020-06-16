@@ -60,11 +60,15 @@ def main():
     except ValueError:
         throwIOException(3)
     if scan_type == 1:
-        scanForRecord()
+        print("Enter record type (ex. CUS or RHD)")
+        record_type = input(">>").upper()
+        scanForRecord(record_type)
     elif scan_type == 2:
         scanAllRecords()
     elif scan_type == 3:
-        printSingleRecord()
+        print("Enter the record type (ex. CUS or RHD)")
+        record_type = input(">>").upper()
+        printSingleRecord(record_type)
     elif scan_type == 4:
         printMeterType()
     elif scan_type == 5:
@@ -81,10 +85,10 @@ def main():
         throwIOException(3)
 
 # scan download file for number of instances of a single record
-def scanForRecord():
+def scanForRecord(record_type):
     counter = 0
-    print(("Enter the record type (ex. CUS or RHD)"))
-    record_type = input(">>").upper()
+##    print(("Enter the record type (ex. CUS or RHD)"))
+##    record_type = input(">>").upper()
     try:
         with open(download_file_name, 'r') as openfile:
             start = time.time()
@@ -145,9 +149,9 @@ def scanAllRecords():
     main()
 
 # print all of a single record type
-def printSingleRecord():
-    print("Enter the record type (ex. CUS or RHD)")
-    record_type = input(">>").upper()
+def printSingleRecord(record_type):
+##    print("Enter the record type (ex. CUS or RHD)")
+##    record_type = input(">>").upper()
     try:
         with open(download_file_name, 'r') as openfile:
             counter = 0
@@ -293,7 +297,6 @@ def printMeterType():
                     if int(meter_code) == user_meter_code:
                         for record in current_record:
                             if record.startswith('CUS'):
-                                #print(record)
                                 print("{0}) {1}".format(counter, record))
                                 counter+=1
                 current_record.append(line)
@@ -310,6 +313,41 @@ def printMeterType():
     print()
     time.sleep(1)
     main()
+
+def exportAllMeterTypes():
+    current_record = deque(maxlen=6)
+    try:
+        with open(download_file_name, 'r') as openfile:
+            print("Enter the meter code to print (ex. 00 or 01)")
+            user_meter_code = int(input(">>"))
+            start = time.time()
+            counter = 0
+            for line in openfile:
+                if line.startswith('RDG'):
+                    meter_code = line[76:78] #range 77-78
+                    if int(meter_code) == user_meter_code:
+                        for record in current_record:
+                            if record.startswith('CUS'):
+                                print("{0}) {1}".format(counter, record))
+                                counter+=1
+                current_record.append(line)
+            total = time.time()-start
+            if counter == 0:
+                print("no records found.")
+                print()
+                time.sleep(1)
+                main()
+            print(counter, "records printed.")
+            print("time elapsed: %.2f" % (total), " seconds.")
+    except FileNotFoundError:
+        throwIOException(1)
+    print()
+    time.sleep(1)
+    main()
+                
+def exportFullAnalysis():
+    exportMissingMeters()
+    exportMeterType()
 
 #################################
 ###### Helper Functions #########
