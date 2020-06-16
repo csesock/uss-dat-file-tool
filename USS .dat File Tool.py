@@ -70,11 +70,15 @@ def main():
         record_type = input(">>").upper()
         printSingleRecord(record_type)
     elif scan_type == 4:
-        printMeterType()
+        print("Enter the meter code to print (ex. 00 or 01)")
+        user_meter_code = int(input(">>"))
+        printMeterType(user_meter_code)
     elif scan_type == 5:
         exportMissingMeters()
     elif scan_type == 6:
-        exportMeterType()
+        print("Enter the meter code to print (ex. 00 or 01)")
+        user_meter_code = int(input(">>"))
+        exportMeterType(user_meter_code)
     elif scan_type == 98:
         getDownloadNamePath()
     elif scan_type == 99:
@@ -87,8 +91,6 @@ def main():
 # scan download file for number of instances of a single record
 def scanForRecord(record_type):
     counter = 0
-##    print(("Enter the record type (ex. CUS or RHD)"))
-##    record_type = input(">>").upper()
     try:
         with open(download_file_name, 'r') as openfile:
             start = time.time()
@@ -150,8 +152,6 @@ def scanAllRecords():
 
 # print all of a single record type
 def printSingleRecord(record_type):
-##    print("Enter the record type (ex. CUS or RHD)")
-##    record_type = input(">>").upper()
     try:
         with open(download_file_name, 'r') as openfile:
             counter = 0
@@ -171,7 +171,6 @@ def printSingleRecord(record_type):
 
 # print all records -- functionally a print() for download.dat
 # CURRENTLY NOT AN OPTION FROM USER SIDE
-# 
 def printAllRecords():
     try:
         with open(download_file_name, 'r') as openfile:
@@ -249,13 +248,11 @@ def convertMissingMetersToCSV():
 ## There is a theoretical bug wherein the deque exceeds the number of records
 ## between the current RDG and previous CUS and the previous CUS gets read
 ## and associated with the wrong RDG record. I am currently working to fix.
-def exportMeterType():
+def exportMeterType(user_meter_code):
     current_record = deque(maxlen=6)
     try:
         with open(download_file_name, 'r') as openfile:
             try:
-                print("Enter the meter code to print (ex. 00 or 01)")
-                user_meter_code = int(input(">>"))
                 with open(meter_type_filename, 'x') as builtfile:
                     start = time.time()
                     counter = 0
@@ -283,12 +280,10 @@ def exportMeterType():
     main()
 
 # prints every record of a specified meter type to the console
-def printMeterType():
+def printMeterType(user_meter_code):
     current_record = deque(maxlen=6)
     try:
         with open(download_file_name, 'r') as openfile:
-            print("Enter the meter code to print (ex. 00 or 01)")
-            user_meter_code = int(input(">>"))
             start = time.time()
             counter = 0
             for line in openfile:
