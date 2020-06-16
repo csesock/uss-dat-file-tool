@@ -1,5 +1,5 @@
-# Current build: Version 0.4.6
-# Current build written on 6-15-2020
+# Current build: Version 0.4.7
+# Current build written on 6-16-2020
 #
 # For information regarding this program, find the readme at github.com/csesock/SesockDatTool
 # For feature requests or feedback, email christophers@united-systems.com
@@ -82,7 +82,7 @@ def main():
     elif scan_type == 98:
         getDownloadNamePath()
     elif scan_type == 99:
-        printAllRecords()
+        exportAllMeterTypes()
     elif scan_type == 0:
         sys.exit(0)
     else:
@@ -207,18 +207,20 @@ def exportMissingMeters():
                 throwIOException(2)
     except FileNotFoundError:
         throwIOException(1)
-    total = time.time()-start
-    print("Missing meters successfully exported.")
-    print("time elapsed: %.2f" % (total), " seconds.")
-    print()
-    print("Export missing meters to .csv file? (Y or N)")
+    #total = time.time()-start
+    #print("time elapsed: %.2f" % (total), " seconds.")
+    printEndOperation(start, time.time())
+    yesNoCsv()
+
+def yesNoCsv():
+    print("Export missing meters to .csv file (Y or N)")
     answer = input(">>")
-    if answer == 'Y' or answer == 'y':
+    if answer.upper() == 'Y':
         convertMissingMetersToCSV()
-    elif answer == 'N' or answer == 'n':
+    elif answer.upper() == 'N':
         main()
     else:
-        throwIOException(3)
+        yesNoCsv()
 
 # post export function which converts list of missing meters to a .csv file
 def convertMissingMetersToCSV():
@@ -232,9 +234,7 @@ def convertMissingMetersToCSV():
                         builtfile.write(line)
                         if line.startswith('CUS'):
                             builtfile.write('\n')
-                    total = time.time()-start
-                    print(".csv file successfully exported.")
-                    print("time elapsed: %.2f" % (total), " seconds.")
+                        printEndOperation(start, time.time())
             except FileExistsError:
                 throwIOException(2)
     except FileNotFoundError:
@@ -265,12 +265,10 @@ def exportMeterType(user_meter_code):
                                         builtfile.write(record)
                                         counter+=1
                         current_record.append(line)
-                    total = time.time()-start
                     if counter == 0:
                         builtfile.close()
                         removeFile(meter_type_filename)
-                    print("Meter type successfully exported")
-                    print("time elapsed: %.2f" % (total), " seconds.")
+                    printEndOperation(start, time.time())
             except FileExistsError:
                 throwIOException(2)
     except FileNotFoundError:
@@ -311,29 +309,31 @@ def printMeterType(user_meter_code):
 
 def exportAllMeterTypes():
     current_record = deque(maxlen=6)
+    meter_codes = ['00', '01', '02', '03']
+    counter = 0
+    start = time.time()
     try:
         with open(download_file_name, 'r') as openfile:
-            print("Enter the meter code to print (ex. 00 or 01)")
-            user_meter_code = int(input(">>"))
-            start = time.time()
-            counter = 0
-            for line in openfile:
-                if line.startswith('RDG'):
-                    meter_code = line[76:78] #range 77-78
-                    if int(meter_code) == user_meter_code:
-                        for record in current_record:
-                            if record.startswith('CUS'):
-                                print("{0}) {1}".format(counter, record))
-                                counter+=1
-                current_record.append(line)
-            total = time.time()-start
-            if counter == 0:
-                print("no records found.")
-                print()
-                time.sleep(1)
-                main()
-            print(counter, "records printed.")
-            print("time elapsed: %.2f" % (total), " seconds.")
+            try:
+                with open(meter_type_filename, 'x') as builtfile:
+                    for code in meter_codes:
+                        for line in openfile:
+                            if line.startswith('RDG'):
+                                meter_code = line[76:78] #range 77-78
+                                if int(meter_code) == int(code):
+                                    for record in current_record:
+                                        if record.startswith('CUS'):
+                                            builtfile.write(record)
+                                            counter+=1
+                            current_record.append(line)
+                    if counter == 0:
+                        print("no records found.")
+                        print()
+                        time.sleep(1)
+                        main()
+                    printEndOperation(start, time.time())
+            except FileExistsError:
+                throwIOException(2)
     except FileNotFoundError:
         throwIOException(1)
     print()
@@ -342,7 +342,7 @@ def exportAllMeterTypes():
                 
 def exportFullAnalysis():
     exportMissingMeters()
-    exportMeterType()
+    exportAllMeterTypes()
 
 #################################
 ###### Helper Functions #########
@@ -396,10 +396,17 @@ def getDownloadNamePath():
     download_file_path = str(input(">>"))
     main()
 
+def printEndOperation(start_time, end_time):
+    total = end_time-start_time
+    print("The operation was successful.")
+    print("time elapsed: %.2f" % (total), " seconds.")
+    print()
+
+
 # sets import function calls
 if __name__ == "__main__":
-    print("United Systems .dat File Tool [Version 0.4.6]")
+    print("United Systems .dat File Tool [Version 0.4.7]")
     print("(c) 2020 United Systems and Software Inc.")
     print()
-    system('title'+'.dat Tool v0.4.5')
+    system('title'+'.dat Tool v0.4.7')
     main()
