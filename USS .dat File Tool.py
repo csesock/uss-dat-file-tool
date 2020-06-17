@@ -188,20 +188,20 @@ def printAllRecords():
 
 # exports a text file with all missing meter records in download file
 def exportMissingMeters():
+    counter=0
+    start=time.time()
     try:
         with open(download_file_name, 'r') as openfile:
             try:
                 with open(missing_meter_filename, 'x') as builtfile:
-                    counter = 0
-                    start = time.time()
                     previous_line = ''
                     for line in openfile:
                         if line.startswith('MTR'):
-                            meter_record = line[45:57] # range 46-57
+                            meter_record = line[45:57]
                             if empty_pattern.match(meter_record):
                                 builtfile.write(previous_line)
                                 counter+=1
-                        previous_line = line
+                        previous_line=line
                     if counter == 0:
                         builtfile.close()
                         removeFile(missing_meter_filename)
@@ -209,8 +209,6 @@ def exportMissingMeters():
                 throwIOException(2)
     except FileNotFoundError:
         throwIOException(1)
-    #total = time.time()-start
-    #print("time elapsed: %.2f" % (total), " seconds.")
     printEndOperation(start, time.time())
     yesNoCsv()
 
@@ -251,7 +249,8 @@ def convertMissingMetersToCSV():
 ## between the current RDG and previous CUS and the previous CUS gets read
 ## and associated with the wrong RDG record. I am currently working to fix.
 def exportMeterType(user_meter_code):
-    current_record = deque(maxlen=6)
+    #current_record = deque(maxlen=6)
+    current_record = deque(maxlen=getCustomerRecordLength()+1) # dynamically re-size the deque to fit customer record
     try:
         with open(download_file_name, 'r') as openfile:
             try:
@@ -340,6 +339,16 @@ def exportFullAnalysis():
     exportMissingMeters()
     exportAllMeterTypes()
 
+def fixOfficeRegionZoneFields():
+    try:
+        with open(download_file_name, 'r') as openfile:
+            for line in openfile:
+                if line.startswith('RHD'):
+                    region_zone_office = line[71:77]
+                    print(region_zone_office)
+    except FileNotFoundError:
+        throwIOException(1)
+
 #################################
 ###### Helper Functions #########
 #################################
@@ -398,6 +407,18 @@ def printEndOperation(start_time, end_time):
     print("time elapsed: %.2f" % (total), " seconds.")
     print()
 
+# updates the office-region-zone fields of the rhd file to fix import errors
+def fixOfficeRegionZoneFields():
+    try:
+        with open('download.dat', 'r') as openfile:
+            for line in openfile:
+                if line.startswith('RHD'):
+                    region_zone_office = line[71:77]
+                    print(region_zone_office)
+                    region_zone_office.replace('0', ' ')
+                    print(region_zone_office)
+    except FileNotFoundError:
+        throwIOException(1)
 
 # sets import function calls
 if __name__ == "__main__":
