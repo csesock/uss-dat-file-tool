@@ -15,6 +15,7 @@ debug = False
 record_pattern = re.compile('[a-z][0-9]*\s*')
 empty_pattern = re.compile('[^\S\n\t]+')
 empty2_pattern = re.compile('[^\S\r\n]{2,}')
+lat_long_pattern = re.compile('-?[0-9]{2}\.\d{2,12}$')
 
 # download file information
 download_file_name = "download.dat"
@@ -87,7 +88,7 @@ def main():
     elif scan_type == 98:
         getDownloadNamePath()
     elif scan_type == 99:
-        exportAllMeterTypes()
+        checkMalformedLatLong()
     elif scan_type == 0:
         sys.exit(0)
     else:
@@ -347,20 +348,48 @@ def exportFullAnalysis():
 # label and print the office-region-zone fields
 def fixOfficeRegionZoneFields():
     try:
-        with open('download.dat', 'r') as openfile:
+        with open(download_file_name, 'r') as openfile:
             start = time.time()
             for line in openfile:
                 if line.startswith('RHD'):
                     #region_zone_office = line[71:77]
                     office = line[71:73]
+                    if office == "  ":
+                        office = "BLANK"
                     region = line[73:75]
+                    if region == "  ":
+                        region = "BLANK"
                     zone = line[75:77]
-                    print("--------------------")
+                    if zone == "  ":
+                        zone = "BLANK"
+                    print("-------------------------")
                     print("Office: \t", str(office))
                     print("Region: \t", str(region))
                     print("Zone: \t\t", str(zone))
-                    print("--------------------")
+                    print("-------------------------")
                     break
+        total = time.time()-start
+        print("The operation was successful.")
+        print("time elapsed: %.2f" % (total), " seconds.")
+        print()
+        main()
+    except FileNotFoundError:
+        throwIOException(1)
+
+def checkMalformedLatLong():
+    try:
+        with open(download_file_name, 'r') as openfile:
+            start = time.time()
+            for line in openfile:
+                if line.startswith('MTX'):
+                    lat_data = line[23:40]
+                    long_data = line[40:57]
+                    #print("Lat: ", lat_data)
+                    #print("Long: ", long_data)
+                    if lat_long_pattern.match(lat_data) and lat_long_pattern.match(long_data):
+                        print("Data is not malformed.")
+                    else:
+                        print("Data does not match the pattern.")
         total = time.time()-start
         print("The operation was successful.")
         print("time elapsed: %.2f" % (total), " seconds.")
