@@ -1,5 +1,5 @@
-# Current build: Version 0.4.7
-# Current build written on 6-16-2020
+# Current build: Version 0.5
+# Current build written on 6-17-2020
 #
 # Author: Chris Sesock on 6-5-2020
 
@@ -55,8 +55,9 @@ def main():
     print("2) Verbose record scan")
     print("3) Print single record type")
     print("4) Print meter type")
-    print("5) Export missing meters")
-    print("6) Export meter type")
+    print("5) Print Office-Region-Zone data")
+    print("6) Export missing meters")
+    print("7) Export meter type")
     try:
         scan_type = int(input(">>"))
     except ValueError:
@@ -76,8 +77,10 @@ def main():
         user_meter_code = int(input(">>"))
         printMeterType(user_meter_code)
     elif scan_type == 5:
-        exportMissingMeters()
+        fixOfficeRegionZoneFields()
     elif scan_type == 6:
+        exportMissingMeters()
+    elif scan_type == 7:
         print("Enter the meter code to print (ex. 00 or 01)")
         user_meter_code = int(input(">>"))
         exportMeterType(user_meter_code)
@@ -172,7 +175,7 @@ def printSingleRecord(record_type):
     main()
 
 # print all records -- functionally a print() for download.dat
-# CURRENTLY NOT AN OPTION FROM USER SIDE
+# used for debugging, not a visible option for the user
 def printAllRecords():
     try:
         with open(download_file_name, 'r') as openfile:
@@ -345,17 +348,24 @@ def exportFullAnalysis():
 def fixOfficeRegionZoneFields():
     try:
         with open('download.dat', 'r') as openfile:
+            start = time.time()
             for line in openfile:
                 if line.startswith('RHD'):
                     #region_zone_office = line[71:77]
-                    office = line[71:72]
-                    region = line[73:74]
-                    zone = line[75:76]
+                    office = line[71:73]
+                    region = line[73:75]
+                    zone = line[75:77]
                     print("--------------------")
-                    print("Office: ", str(office))
-                    print("Region: ", str(region))
-                    print("Zone: ", str(zone))
+                    print("Office: \t", str(office))
+                    print("Region: \t", str(region))
+                    print("Zone: \t\t", str(zone))
                     print("--------------------")
+                    break
+        total = time.time()-start
+        print("The operation was successful.")
+        print("time elapsed: %.2f" % (total), " seconds.")
+        print()
+        main()
     except FileNotFoundError:
         throwIOException(1)
 
@@ -411,6 +421,7 @@ def getDownloadNamePath():
     download_file_path = str(input(">>"))
     main()
 
+# This is bad and dumb -- remove this
 def printEndOperation(start_time, end_time):
     total = end_time-start_time
     print("The operation was successful.")
@@ -419,8 +430,8 @@ def printEndOperation(start_time, end_time):
 
 # sets import function calls
 if __name__ == "__main__":
-    print("United Systems .dat File Tool [Version 0.4.7]")
+    print("United Systems .dat File Tool [Version 0.5]")
     print("(c) 2020 United Systems and Software Inc.")
     print()
-    system('title'+'.dat Tool v0.4.7')
+    system('title'+'.dat Tool v0.5')
     main()
