@@ -1,4 +1,4 @@
-# USS .dat File Tool
+# United Systems .dat File Tool
 
 The reality of dealing with download files can be less than stellar. 
 
@@ -17,7 +17,8 @@ Future improvements include:
 - [ ] Perform full scans of download files
 
 ## Dependencies
-This project has been built from the start to have no dependencies. The only requirement is the current python version (3.8.X).
+This project has been built from the start for ease of use, and consequently to have no dependencies. The only requirement to run it is the current version of Python (3.8.X).
 
+##
 
 For feature requests/comments email christophers@united-systems.com
