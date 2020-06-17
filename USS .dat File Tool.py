@@ -209,10 +209,10 @@ def exportMissingMeters():
                 throwIOException(2)
     except FileNotFoundError:
         throwIOException(1)
-    printEndOperation(start, time.time())
-    yesNoCsv()
-
-def yesNoCsv():
+    total = time.time()-start
+    print("The operation was successful.")
+    print("time elapsed: %.2f" % (total), " seconds.")    
+    print()
     print("Export missing meters to .csv file (Y or N)")
     answer = input(">>")
     if answer.upper() == 'Y':
@@ -220,7 +220,7 @@ def yesNoCsv():
     elif answer.upper() == 'N':
         main()
     else:
-        yesNoCsv()
+        throwIOException(3)
 
 # post export function which converts list of missing meters to a .csv file
 def convertMissingMetersToCSV():
@@ -234,11 +234,13 @@ def convertMissingMetersToCSV():
                         builtfile.write(line)
                         if line.startswith('CUS'):
                             builtfile.write('\n')
-                        printEndOperation(start, time.time())
             except FileExistsError:
                 throwIOException(2)
     except FileNotFoundError:
         throwIOException(1)
+    print("The operation was successful.")
+    total = time.time()-start
+    print("time elapsed: %.2f" % (total), " seconds.")   
     print()
     time.sleep(1)
     main()
@@ -339,13 +341,21 @@ def exportFullAnalysis():
     exportMissingMeters()
     exportAllMeterTypes()
 
+# label and print the office-region-zone fields
 def fixOfficeRegionZoneFields():
     try:
-        with open(download_file_name, 'r') as openfile:
+        with open('download.dat', 'r') as openfile:
             for line in openfile:
                 if line.startswith('RHD'):
-                    region_zone_office = line[71:77]
-                    print(region_zone_office)
+                    #region_zone_office = line[71:77]
+                    office = line[71:72]
+                    region = line[73:74]
+                    zone = line[75:76]
+                    print("--------------------")
+                    print("Office: ", str(office))
+                    print("Region: ", str(region))
+                    print("Zone: ", str(zone))
+                    print("--------------------")
     except FileNotFoundError:
         throwIOException(1)
 
@@ -406,19 +416,6 @@ def printEndOperation(start_time, end_time):
     print("The operation was successful.")
     print("time elapsed: %.2f" % (total), " seconds.")
     print()
-
-# updates the office-region-zone fields of the rhd file to fix import errors
-def fixOfficeRegionZoneFields():
-    try:
-        with open('download.dat', 'r') as openfile:
-            for line in openfile:
-                if line.startswith('RHD'):
-                    region_zone_office = line[71:77]
-                    print(region_zone_office)
-                    region_zone_office.replace('0', ' ')
-                    print(region_zone_office)
-    except FileNotFoundError:
-        throwIOException(1)
 
 # sets import function calls
 if __name__ == "__main__":

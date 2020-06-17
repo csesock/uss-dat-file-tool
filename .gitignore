@@ -1,5 +1,5 @@
-#.dat filetypes used for testing -- always ignore
 *.dat
 *.md
 *.log
 *.txt
+*.csv
