@@ -206,7 +206,7 @@ def exportMissingMeters():
                                 builtfile.write(previous_line)
                                 counter+=1
                         previous_line=line
-                    if counter == 0:
+                    if counter == 0: # these few lines fix the problem of making a blank file if there are no missing meters
                         builtfile.close()
                         removeFile(missing_meter_filename)
             except FileExistsError:
@@ -220,7 +220,7 @@ def exportMissingMeters():
     print("Export missing meters to .csv file (Y or N)")
     answer = input(">>")
     if answer.upper() == 'Y':
-        convertMissingMetersToCSV()
+        convertMissingMetersToCSV() # create a .csv file with the same data
     elif answer.upper() == 'N':
         main()
     else:
@@ -377,19 +377,20 @@ def fixOfficeRegionZoneFields():
         throwIOException(1)
 
 def checkMalformedLatLong():
+    malformed_data = False
     try:
         with open(download_file_name, 'r') as openfile:
             start = time.time()
             for line in openfile:
                 if line.startswith('MTX'):
-                    lat_data = line[23:40]
-                    long_data = line[40:57]
-                    #print("Lat: ", lat_data)
-                    #print("Long: ", long_data)
-                    if lat_long_pattern.match(lat_data) and lat_long_pattern.match(long_data):
-                        print("Data is not malformed.")
-                    else:
-                        print("Data does not match the pattern.")
+                    lat_data = line[23:40].rstrip()
+                    long_data = line[40:57].rstrip()
+                    if not lat_long_pattern.match(lat_data) and lat_long_pattern.match(long_data):
+                        malformed_data = True
+        if malformed_data == True:
+            print("The data is malformed.")
+        else:
+            print("The data is not malformed.")
         total = time.time()-start
         print("The operation was successful.")
         print("time elapsed: %.2f" % (total), " seconds.")
