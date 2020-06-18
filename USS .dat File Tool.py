@@ -103,7 +103,7 @@ def scanForRecord(record_type):
         with open(download_file_name, 'r') as openfile:
             start = time.time()
             for line in openfile:
-                progressBarSimple(current_line, total_lines)
+                progressBarComplex(current_line, total_lines)
                 if line.startswith(record_type):
                     counter+=1
                 current_line+=1
@@ -121,10 +121,13 @@ def scanForRecord(record_type):
 # scan download file for number of each record
 def scanAllRecords():
     count_rhd = count_cus = count_csx = count_mtr = count_mtx = count_mts = count_rdg = count_rff = 0
+    current_line = 1
+    total_lines = getFileLineCount(download_file_name)
     try:
         with open(download_file_name, 'r') as openfile:
                 start = time.time()
                 for line in openfile:
+                    progressBarComplex(current_line, total_lines)
                     if line.startswith('RHD'):
                         count_rhd+=1
                     elif line.startswith('CUS'):
@@ -141,6 +144,7 @@ def scanAllRecords():
                         count_rdg+=1
                     elif line.startswith('RFF'):
                         count_rff+=1
+                    current_line+=1
     except FileNotFoundError:
         throwIOException(1)
 
@@ -164,14 +168,18 @@ def scanAllRecords():
 
 # print all of a single record type
 def printSingleRecord(record_type):
+    current_line = 1
+    total_lines = getFileLineCount(download_file_name)
     try:
         with open(download_file_name, 'r') as openfile:
             counter = 0
             start = time.time()
             for line in openfile:
+                progressBarComplex(current_line, total_lines)
                 if record_type in line or record_type.lower() in line:
                     counter+=1
                     print("{0}) {1}".format(counter, line))
+                current_line+=1
         total = time.time()-start
         print(counter, "records printed.")
         print("time elapsed: %.2f" % (total), " seconds.")
@@ -199,8 +207,8 @@ def printAllRecords():
 # exports a text file with all missing meter records in download file
 def exportMissingMeters():
     counter=0
+    current_line=1
     total_line = getFileLineCount(download_file_name)
-    print("total lines: ", total_line)
     start=time.time()
     try:
         with open(download_file_name, 'r') as openfile:
@@ -208,14 +216,14 @@ def exportMissingMeters():
                 with open(missing_meter_filename, 'x') as builtfile:
                     previous_line = ''
                     for line in openfile:
+                        progressBarComplex(current_line, total_line)
                         if line.startswith('MTR'):
                             meter_record = line[45:57]
                             if empty_pattern.match(meter_record):
                                 builtfile.write(previous_line)
                                 counter+=1
                         previous_line=line
-                        progressBar(line, total_line, barLength=40)
-                    time.sleep(0.1)
+                        current_line+=1
                     if counter == 0: # these few lines fix the problem of making a blank file if there are no missing meters
                         builtfile.close()
                         removeFile(missing_meter_filename)
