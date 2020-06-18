@@ -14,12 +14,12 @@ Current features of this tool include:
 
 Future improvements include:
 
-- [ ] Modifying download files from the command line
+- [ ] Modifying download files safely from the command line
 - [ ] Perform full scans of download files
 - [ ] Check for malformed lat/long data
 
 ## Dependencies
-This project has been built from the start for ease of use, and consequently to have no dependencies. The only requirement to run it is the current version of Python (3.8.X).
+This project has been built from the start for ease of use and, consequently, to have no dependencies. The only requirement to run it is the current version of Python (3.8.X).
 
 ##
 
