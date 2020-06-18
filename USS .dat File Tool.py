@@ -1,15 +1,11 @@
-# Current build: Version 0.5
-# Current build written on 6-17-2020
+# Current build: Version 0.6
+# Current build written on 6-18-2020
 #
 # Author: Chris Sesock on 6-5-2020
-
 import csv, sys, re, os, time
 from os import system
 from collections import deque
 from datetime import datetime
-
-# flag for debug mode
-debug = False
 
 # regular expression patterns
 record_pattern = re.compile('[a-z][0-9]*\s*')
@@ -19,7 +15,6 @@ lat_long_pattern = re.compile('-?[0-9]{2}\.\d{2,12}$')
 
 # download file information
 download_file_name = "download.dat"
-download_file_path = '' # default to current directory
 
 # file names with dynamic dates 
 missing_meter_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + '.txt'
@@ -85,8 +80,6 @@ def main():
         print("Enter the meter code to print (ex. 00 or 01)")
         user_meter_code = int(input(">>"))
         exportMeterType(user_meter_code)
-    elif scan_type == 98:
-        getDownloadNamePath()
     elif scan_type == 99:
         checkMalformedLatLong()
     elif scan_type == 0:
@@ -113,9 +106,8 @@ def scanForRecord(record_type):
     total = time.time()-start
     print()
     print(f"{counter:,d}", "records found")
-    print("time elapsed: %.2f" % (total), " seconds.")
+    #print("time elapsed: %.2f" % (total), " seconds.")
     print()
-    time.sleep(1)
     main()
 
 # scan download file for number of each record
@@ -163,7 +155,6 @@ def scanAllRecords():
     print("-----------------------------------------")
     print("time elapsed: %.2f" % (total), " seconds.")
     print()
-    time.sleep(1)
     main()
 
 # print all of a single record type
@@ -182,7 +173,7 @@ def printSingleRecord(record_type):
                 current_line+=1
         total = time.time()-start
         print(counter, "records printed.")
-        print("time elapsed: %.2f" % (total), " seconds.")
+        #print("time elapsed: %.2f" % (total), " seconds.")
     except FileNotFoundError:
         throwIOException(1)
     print()
@@ -273,7 +264,6 @@ def convertMissingMetersToCSV():
 ## between the current RDG and previous CUS and the previous CUS gets read
 ## and associated with the wrong RDG record. I am currently working to fix.
 def exportMeterType(user_meter_code):
-    #current_record = deque(maxlen=6)
     current_record = deque(maxlen=getCustomerRecordLength()+1) # dynamically re-size the deque to fit customer record
     try:
         with open(download_file_name, 'r') as openfile:
@@ -281,7 +271,6 @@ def exportMeterType(user_meter_code):
                 with open(meter_type_filename, 'x') as builtfile:
                     start = time.time()
                     counter = 0
-                    total_line = getFileLineCount(download_file_name) # for progress bar
                     for line in openfile:
                         if line.startswith('RDG'):
                             meter_code = line[76:78] #range 77-78
@@ -290,15 +279,10 @@ def exportMeterType(user_meter_code):
                                     if record.startswith('CUS'):
                                         builtfile.write(record)
                                         counter+=1
-                                        #progressBar(counter, total_line)
-                        #progressBar(counter, total_line)
                         current_record.append(line)
-                        #progressBar(counter, total_line)
-                        #time.sleep(0.5)
                     if counter == 0:
                         builtfile.close()
                         removeFile(meter_type_filename)
-                    printEndOperation(start, time.time())
             except FileExistsError:
                 throwIOException(2)
     except FileNotFoundError:
@@ -333,40 +317,6 @@ def printMeterType(user_meter_code):
     print()
     time.sleep(1)
     main()
-
-def exportAllMeterTypes():
-    current_record = deque(maxlen=6)
-    meter_codes = ['00', '01', '02', '03']
-    counter = 0
-    start = time.time()
-    try:
-        with open(download_file_name, 'r') as openfile:
-            try:
-                with open(meter_type_filename, 'x') as builtfile:
-                    for code in meter_codes:
-                        for line in openfile:
-                            if line.startswith('RDG'):
-                                meter_code = line[76:78] #range 77-78
-                                if int(meter_code) == int(code):
-                                    for record in current_record:
-                                        if record.startswith('CUS'):
-                                            builtfile.write(record)
-                                            counter+=1
-                            current_record.append(line)
-                    if counter == 0:
-                        throwIOException(4)
-                    printEndOperation(start, time.time())
-            except FileExistsError:
-                throwIOException(2)
-    except FileNotFoundError:
-        throwIOException(1)
-    print()
-    time.sleep(1)
-    main()
-                
-def exportFullAnalysis():
-    exportMissingMeters()
-    exportAllMeterTypes()
 
 # label and print the office-region-zone fields
 def fixOfficeRegionZoneFields():
@@ -459,7 +409,6 @@ def removeFile(filename):
     os.remove(filename)
     print("No records found.")
     print()
-    time.sleep(1)
     main()
 
 # returns the number of records associated with each customer
@@ -480,40 +429,17 @@ def getCustomerRecordLength():
     except FileNotFoundError:
         throwIOException(1)        
 
-# edits the details of the download file
-def getDownloadNamePath():
-    print("[Configure download file parameters]")
-    print("Enter download filename (include extention .dat)")
-    global download_file_name
-    download_file_name = str(input(">>"))
-    print("Enter download file path (C:\\Users\\john\\Desktop\\download)")
-    global download_file_path
-    download_file_path = str(input(">>"))
-    main()
-
-# This is bad and dumb -- remove this
-def printEndOperation(start_time, end_time):
-    total = end_time-start_time
-    print("The operation was successful.")
-    print("time elapsed: %.2f" % (total), " seconds.")
-    print()
-
 def progressBarComplex(current, total, barLength = 20):
     percent = float(current) * 100 / total
     arrow   = '-' * int(percent/100 * barLength - 1) + '>'
     spaces  = ' ' * (barLength - len(arrow))
-
     print('Progress: [%s%s] %d %%' % (arrow, spaces, percent), end='\r')
-
-def progressBarSimple(current, total):
-    sys.stdout.write("\rProgress: [%d of %d]" %(current, total))
-    sys.stdout.flush()
 
 
 # sets import function calls
 if __name__ == "__main__":
-    print("United Systems .dat File Tool [Version 0.5]")
+    print("United Systems .dat File Tool [Version 0.6]")
     print("(c) 2020 United Systems and Software Inc.")
     print()
-    system('title'+'.dat Tool v0.5')
+    system('title'+'.dat Tool v0.6')
     main()
