@@ -97,15 +97,21 @@ def main():
 # scan download file for number of instances of a single record
 def scanForRecord(record_type):
     counter = 0
+    current_line = 1
+    total_lines = getFileLineCount(download_file_name)
     try:
         with open(download_file_name, 'r') as openfile:
             start = time.time()
             for line in openfile:
+                progressBarSimple(current_line, total_lines)
                 if line.startswith(record_type):
                     counter+=1
+                current_line+=1
+                
     except FileNotFoundError:
         throwIOException(1)
     total = time.time()-start
+    print()
     print(f"{counter:,d}", "records found")
     print("time elapsed: %.2f" % (total), " seconds.")
     print()
@@ -193,6 +199,8 @@ def printAllRecords():
 # exports a text file with all missing meter records in download file
 def exportMissingMeters():
     counter=0
+    total_line = getFileLineCount(download_file_name)
+    print("total lines: ", total_line)
     start=time.time()
     try:
         with open(download_file_name, 'r') as openfile:
@@ -206,6 +214,8 @@ def exportMissingMeters():
                                 builtfile.write(previous_line)
                                 counter+=1
                         previous_line=line
+                        progressBar(line, total_line, barLength=40)
+                    time.sleep(0.1)
                     if counter == 0: # these few lines fix the problem of making a blank file if there are no missing meters
                         builtfile.close()
                         removeFile(missing_meter_filename)
@@ -263,6 +273,7 @@ def exportMeterType(user_meter_code):
                 with open(meter_type_filename, 'x') as builtfile:
                     start = time.time()
                     counter = 0
+                    total_line = getFileLineCount(download_file_name) # for progress bar
                     for line in openfile:
                         if line.startswith('RDG'):
                             meter_code = line[76:78] #range 77-78
@@ -271,7 +282,11 @@ def exportMeterType(user_meter_code):
                                     if record.startswith('CUS'):
                                         builtfile.write(record)
                                         counter+=1
+                                        #progressBar(counter, total_line)
+                        #progressBar(counter, total_line)
                         current_record.append(line)
+                        #progressBar(counter, total_line)
+                        #time.sleep(0.5)
                     if counter == 0:
                         builtfile.close()
                         removeFile(meter_type_filename)
@@ -376,6 +391,7 @@ def fixOfficeRegionZoneFields():
     except FileNotFoundError:
         throwIOException(1)
 
+# checks that lat/long data matches two digits, period, then trailing digits
 def checkMalformedLatLong():
     malformed_data = False
     try:
@@ -396,6 +412,22 @@ def checkMalformedLatLong():
         print("time elapsed: %.2f" % (total), " seconds.")
         print()
         main()
+    except FileNotFoundError:
+        throwIOException(1)
+
+# an additional level of checking to make sure that lat/long data is correct
+# lat data will always be +, long will always be - in our region
+def checkLatLongSigns():
+    try:
+        with open(download_file_name, 'r') as openfile:
+            start = time.time()
+            for line in openfile:
+                if line.startswith('MTX'):
+                    lat_data = int(line[23:40].rstrip())
+                    long_data = int(line[40:57].rstrip())
+                    if lat_data < 0 or long_data > 0:
+                        return True # data is malformed
+        return False # data is not malformed
     except FileNotFoundError:
         throwIOException(1)
 
@@ -457,6 +489,18 @@ def printEndOperation(start_time, end_time):
     print("The operation was successful.")
     print("time elapsed: %.2f" % (total), " seconds.")
     print()
+
+def progressBarComplex(current, total, barLength = 20):
+    percent = float(current) * 100 / total
+    arrow   = '-' * int(percent/100 * barLength - 1) + '>'
+    spaces  = ' ' * (barLength - len(arrow))
+
+    print('Progress: [%s%s] %d %%' % (arrow, spaces, percent), end='\r')
+
+def progressBarSimple(current, total):
+    sys.stdout.write("\rProgress: [%d of %d]" %(current, total))
+    sys.stdout.flush()
+
 
 # sets import function calls
 if __name__ == "__main__":
