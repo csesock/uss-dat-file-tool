@@ -94,19 +94,15 @@ def scanForRecord(record_type):
     total_lines = getFileLineCount(download_file_name)
     try:
         with open(download_file_name, 'r') as openfile:
-            start = time.time()
             for line in openfile:
                 progressBarComplex(current_line, total_lines)
                 if line.startswith(record_type):
                     counter+=1
                 current_line+=1
-                
     except FileNotFoundError:
         throwIOException(1)
-    total = time.time()-start
     print()
     print(f"{counter:,d}", "records found")
-    #print("time elapsed: %.2f" % (total), " seconds.")
     print()
     main()
 
@@ -117,7 +113,6 @@ def scanAllRecords():
     total_lines = getFileLineCount(download_file_name)
     try:
         with open(download_file_name, 'r') as openfile:
-                start = time.time()
                 for line in openfile:
                     progressBarComplex(current_line, total_lines)
                     if line.startswith('RHD'):
@@ -153,31 +148,26 @@ def scanAllRecords():
     print(f"{count_rdg:,d}" "\t (RDG) Reading records found.")
     print(f"{count_rff:,d}" "\t (RFF) Radio records found.")
     print("-----------------------------------------")
-    print("time elapsed: %.2f" % (total), " seconds.")
     print()
     main()
 
 # print all of a single record type
 def printSingleRecord(record_type):
+    counter = 0
     current_line = 1
     total_lines = getFileLineCount(download_file_name)
     try:
         with open(download_file_name, 'r') as openfile:
-            counter = 0
-            start = time.time()
             for line in openfile:
                 progressBarComplex(current_line, total_lines)
                 if record_type in line or record_type.lower() in line:
                     counter+=1
                     print("{0}) {1}".format(counter, line))
                 current_line+=1
-        total = time.time()-start
         print(counter, "records printed.")
-        #print("time elapsed: %.2f" % (total), " seconds.")
     except FileNotFoundError:
         throwIOException(1)
     print()
-    time.sleep(1)
     main()
 
 # print all records -- functionally a print() for download.dat
@@ -200,7 +190,6 @@ def exportMissingMeters():
     counter=0
     current_line=1
     total_line = getFileLineCount(download_file_name)
-    start=time.time()
     try:
         with open(download_file_name, 'r') as openfile:
             try:
@@ -222,9 +211,7 @@ def exportMissingMeters():
                 throwIOException(2)
     except FileNotFoundError:
         throwIOException(1)
-    total = time.time()-start
     print("The operation was successful.")
-    print("time elapsed: %.2f" % (total), " seconds.")    
     print()
     print("Export missing meters to .csv file (Y or N)")
     answer = input(">>")
@@ -237,25 +224,25 @@ def exportMissingMeters():
 
 # post export function which converts list of missing meters to a .csv file
 def convertMissingMetersToCSV():
+    current_line = 1
+    total_lines = getFileLineCount(download_file_name)
     try: 
         with open(missing_meter_filename, 'r') as openfile:
             try:
                 with open(missing_meter_csv_filename, 'x') as builtfile:
-                    start = time.time()
                     for line in openfile:
+                        progressBarComplex(current_line, total_lines)
                         line = re.sub('[^\S\r\n]{2,}', ',', line.strip())
                         builtfile.write(line)
                         if line.startswith('CUS'):
                             builtfile.write('\n')
+                        current_line+=1
             except FileExistsError:
                 throwIOException(2)
     except FileNotFoundError:
         throwIOException(1)
     print("The operation was successful.")
-    total = time.time()-start
-    print("time elapsed: %.2f" % (total), " seconds.")   
     print()
-    time.sleep(1)
     main()
 
 # exports a text file of a specified meter translation code
@@ -264,13 +251,12 @@ def convertMissingMetersToCSV():
 ## between the current RDG and previous CUS and the previous CUS gets read
 ## and associated with the wrong RDG record. I am currently working to fix.
 def exportMeterType(user_meter_code):
+    counter = 0
     current_record = deque(maxlen=getCustomerRecordLength()+1) # dynamically re-size the deque to fit customer record
     try:
         with open(download_file_name, 'r') as openfile:
             try:
                 with open(meter_type_filename, 'x') as builtfile:
-                    start = time.time()
-                    counter = 0
                     for line in openfile:
                         if line.startswith('RDG'):
                             meter_code = line[76:78] #range 77-78
@@ -288,16 +274,14 @@ def exportMeterType(user_meter_code):
     except FileNotFoundError:
         throwIOException(1)
     print()
-    time.sleep(1)
     main()
 
 # prints every record of a specified meter type to the console
 def printMeterType(user_meter_code):
+    counter = 0
     current_record = deque(maxlen=6)
     try:
         with open(download_file_name, 'r') as openfile:
-            start = time.time()
-            counter = 0
             for line in openfile:
                 if line.startswith('RDG'):
                     meter_code = line[76:78] #range 77-78
@@ -311,11 +295,9 @@ def printMeterType(user_meter_code):
             if counter == 0:
                 throwIOException(4)
             print(counter, "records printed.")
-            print("time elapsed: %.2f" % (total), " seconds.")
     except FileNotFoundError:
         throwIOException(1)
     print()
-    time.sleep(1)
     main()
 
 # label and print the office-region-zone fields
