@@ -262,7 +262,10 @@ def exportMeterType(user_meter_code):
                 throwIOException(2)
     except FileNotFoundError:
         throwIOException(1)
+    print("The operation was successful.")
+    print(counter, "records exported.")
     print()
+    time.sleep(1)
     main()
 
 # prints every record of a specified meter type to the console
@@ -282,7 +285,6 @@ def printMeterType(user_meter_code):
                 current_record.append(line)
             if counter == 0:
                 throwIOException(4)
-            print(counter, "records printed.")
     except FileNotFoundError:
         throwIOException(1)
     print()
