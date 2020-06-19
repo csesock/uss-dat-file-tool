@@ -134,8 +134,6 @@ def scanAllRecords():
                     current_line+=1
     except FileNotFoundError:
         throwIOException(1)
-
-    total = time.time()-start
     print()
     print("File scan successful.")
     print("-----------------------------------------")
@@ -154,16 +152,12 @@ def scanAllRecords():
 # print all of a single record type
 def printSingleRecord(record_type):
     counter = 0
-    current_line = 1
-    total_lines = getFileLineCount(download_file_name)
     try:
         with open(download_file_name, 'r') as openfile:
             for line in openfile:
-                progressBarComplex(current_line, total_lines)
                 if record_type in line or record_type.lower() in line:
                     counter+=1
                     print("{0}) {1}".format(counter, line))
-                current_line+=1
         print(counter, "records printed.")
     except FileNotFoundError:
         throwIOException(1)
@@ -224,24 +218,19 @@ def exportMissingMeters():
 
 # post export function which converts list of missing meters to a .csv file
 def convertMissingMetersToCSV():
-    current_line = 1
-    total_lines = getFileLineCount(download_file_name)
     try: 
         with open(missing_meter_filename, 'r') as openfile:
             try:
                 with open(missing_meter_csv_filename, 'x') as builtfile:
                     for line in openfile:
-                        progressBarComplex(current_line, total_lines)
                         line = re.sub('[^\S\r\n]{2,}', ',', line.strip())
                         builtfile.write(line)
                         if line.startswith('CUS'):
                             builtfile.write('\n')
-                        current_line+=1
             except FileExistsError:
                 throwIOException(2)
     except FileNotFoundError:
         throwIOException(1)
-    print("The operation was successful.")
     print()
     main()
 
@@ -279,7 +268,7 @@ def exportMeterType(user_meter_code):
 # prints every record of a specified meter type to the console
 def printMeterType(user_meter_code):
     counter = 0
-    current_record = deque(maxlen=6)
+    current_record = deque(maxlen=getCustomerRecordLength()+1)
     try:
         with open(download_file_name, 'r') as openfile:
             for line in openfile:
@@ -291,7 +280,6 @@ def printMeterType(user_meter_code):
                                 print("{0}) {1}".format(counter, record))
                                 counter+=1
                 current_record.append(line)
-            total = time.time()-start
             if counter == 0:
                 throwIOException(4)
             print(counter, "records printed.")
@@ -304,10 +292,8 @@ def printMeterType(user_meter_code):
 def fixOfficeRegionZoneFields():
     try:
         with open(download_file_name, 'r') as openfile:
-            start = time.time()
             for line in openfile:
                 if line.startswith('RHD'):
-                    #region_zone_office = line[71:77]
                     office = line[71:73]
                     if office == "  ":
                         office = "BLANK"
@@ -323,9 +309,6 @@ def fixOfficeRegionZoneFields():
                     print("Zone: \t\t", str(zone))
                     print("-------------------------")
                     break
-        total = time.time()-start
-        print("The operation was successful.")
-        print("time elapsed: %.2f" % (total), " seconds.")
         print()
         main()
     except FileNotFoundError:
@@ -336,7 +319,6 @@ def checkMalformedLatLong():
     malformed_data = False
     try:
         with open(download_file_name, 'r') as openfile:
-            start = time.time()
             for line in openfile:
                 if line.startswith('MTX'):
                     lat_data = line[23:40].rstrip()
@@ -347,9 +329,6 @@ def checkMalformedLatLong():
             print("The data is malformed.")
         else:
             print("The data is not malformed.")
-        total = time.time()-start
-        print("The operation was successful.")
-        print("time elapsed: %.2f" % (total), " seconds.")
         print()
         main()
     except FileNotFoundError:
@@ -360,7 +339,6 @@ def checkMalformedLatLong():
 def checkLatLongSigns():
     try:
         with open(download_file_name, 'r') as openfile:
-            start = time.time()
             for line in openfile:
                 if line.startswith('MTX'):
                     lat_data = int(line[23:40].rstrip())
