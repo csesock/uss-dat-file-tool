@@ -1,6 +1,6 @@
 # Standalone script to print all important records from a download file
 #
-
+import sys, os
 # scan download file for number of each record
 def scanAllRecords():
     count_rhd = count_cus = count_csx = count_mtr = count_mtx = count_mts = count_rdg = count_rff = 0
@@ -42,7 +42,7 @@ def scanAllRecords():
     print(f"{count_rdg:,d}" "\t (RDG) Reading records found.")
     print(f"{count_rff:,d}" "\t (RFF) Radio records found.")
     print("-----------------------------------------")
-    print()
+    os.system('pause')
 
 
 def getFileLineCount(filename):

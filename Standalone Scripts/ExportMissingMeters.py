@@ -1,10 +1,11 @@
 # Standalone script to export missing meters to a .txt file
 # with the option for exporting as a .csv as well
 # Written by: Chris Sesock on 6-19-2020
-import sys, re
+import sys, re, os
 from datetime import datetime
 download_file_name = 'download.dat'
 missing_meter_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + '.txt'
+missing_meter_csv_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + '.csv'
 empty_pattern = re.compile('[^\S\n\t]+')
 
 def exportMissingMeters():
@@ -27,13 +28,13 @@ def exportMissingMeters():
                         current_line+=1
                     if counter == 0: # these few lines fix the problem of making a blank file if there are no missing meters
                         builtfile.close()
-                        removeFile(missing_meter_filename)
+                        os.remove(missing_meter_filename)
             except FileExistsError:
-                throwIOException(2)
+                print("ERROR: File Already Exists")
     except FileNotFoundError:
-        throwIOException(1)
-    print("The operation was successful.")
+        print("ERROR: File Not Found")
     print()
+    print("The operation was successful.")
     print("Export missing meters to .csv file (Y or N)")
     answer = input(">>")
     if answer.upper() == 'Y':
@@ -41,7 +42,7 @@ def exportMissingMeters():
     elif answer.upper() == 'N':
         sys.exit(0)
     else:
-        throwIOException(3)
+        print("ERROR: Unknown Input")
 
 # post export function which converts list of missing meters to a .csv file
 def convertMissingMetersToCSV():
@@ -55,10 +56,11 @@ def convertMissingMetersToCSV():
                         if line.startswith('CUS'):
                             builtfile.write('\n')
             except FileExistsError:
-                throwIOException(2)
+                print("ERROR: File Already Exists")
     except FileNotFoundError:
-        throwIOException(1)
-    sys.exit(0)
+        print("ERROR: File Not Found")
+    print("The operation was successful.")
+    os.system('pause')
 
 def getFileLineCount(filename):
     try:
@@ -68,7 +70,7 @@ def getFileLineCount(filename):
                 counter+=1
         return counter
     except FileNotFoundError:
-        throwIOException(1)
+        print("ERROR: File Not Found")
 
 def progressBarComplex(current, total, barLength = 20):
     percent = float(current) * 100 / total
