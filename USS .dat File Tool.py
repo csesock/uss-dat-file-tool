@@ -54,6 +54,7 @@ def main():
     print("5) Print Office-Region-Zone data")
     print("6) Export missing meters")
     print("7) Export meter type")
+    print("8) Check malformed lat/long data")
     try:
         scan_type = int(input(">>"))
     except ValueError:
@@ -80,7 +81,7 @@ def main():
         print("Enter the meter code to print (ex. 00 or 01)")
         user_meter_code = int(input(">>"))
         exportMeterType(user_meter_code)
-    elif scan_type == 99:
+    elif scan_type == 8:
         checkMalformedLatLong()
     elif scan_type == 0:
         sys.exit(0)
@@ -328,9 +329,12 @@ def checkMalformedLatLong():
                     if not lat_long_pattern.match(lat_data) and lat_long_pattern.match(long_data):
                         malformed_data = True
         if malformed_data == True:
-            print("The data is malformed.")
+            print("The data is malformed in some way.")
         else:
-            print("The data is not malformed.")
+            if checkLatLongSigns() == False:
+                print("The data is not malformed.")
+            else:
+                print("The data has malformed sign values.")
         print()
         main()
     except FileNotFoundError:
@@ -340,11 +344,11 @@ def checkMalformedLatLong():
 # lat data will always be +, long will always be - in our region
 def checkLatLongSigns():
     try:
-        with open(download_file_name, 'r') as openfile:
+        with open('download.dat', 'r') as openfile:
             for line in openfile:
                 if line.startswith('MTX'):
-                    lat_data = int(line[23:40].rstrip())
-                    long_data = int(line[40:57].rstrip())
+                    lat_data = float(line[23:40].rstrip())
+                    long_data = float(line[40:57].rstrip())
                     if lat_data < 0 or long_data > 0:
                         return True # data is malformed
         return False # data is not malformed
@@ -369,6 +373,7 @@ def getFileLineCount(filename):
 # formatted deletion of a file in current directory
 def removeFile(filename):
     os.remove(filename)
+    print()
     print("No records found.")
     print()
     main()
