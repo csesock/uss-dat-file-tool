@@ -11,7 +11,7 @@ from datetime import datetime
 record_pattern = re.compile('[a-z][0-9]*\s*')
 empty_pattern = re.compile('[^\S\n\t]+')
 empty2_pattern = re.compile('[^\S\r\n]{2,}')
-lat_long_pattern = re.compile('-?[0-9]{2}\.\d{2,12}$')
+lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
 
 # download file information
 download_file_name = "download.dat"
@@ -326,8 +326,12 @@ def checkMalformedLatLong():
                 if line.startswith('MTX'):
                     lat_data = line[23:40].rstrip()
                     long_data = line[40:57].rstrip()
-                    if not lat_long_pattern.match(lat_data) and lat_long_pattern.match(long_data):
+                    if not lat_long_pattern.match(lat_data):
+                        malformed_data = True 
+                        print("Malformed data: ", lat_data)
+                    elif not lat_long_pattern.match(long_data):
                         malformed_data = True
+                        print("Malformed data: ", long_data)
         if malformed_data == True:
             print("The data is malformed in some way.")
         else:
