@@ -1,5 +1,5 @@
-# Current build: Version 0.6
-# Current build written on 6-18-2020
+# Current build: Version 0.7
+# Current build written on 6-23-2020
 #
 # Author: Chris Sesock on 6-5-2020
 import csv, sys, re, os, time
@@ -13,8 +13,8 @@ empty_pattern = re.compile('[^\S\n\t]+')
 empty2_pattern = re.compile('[^\S\r\n]{2,}')
 lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
 
-# download file information
-download_file_name = "download.dat"
+# default file information
+working_file_name = "download.dat"
 
 # file names with dynamic dates 
 missing_meter_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + '.txt'
@@ -83,6 +83,8 @@ def main():
         exportMeterType(user_meter_code)
     elif scan_type == 8:
         checkMalformedLatLong()
+    elif scan_type == 9:
+        working_file_name = 'upload.dat'
     elif scan_type == 0:
         sys.exit(0)
     else:
@@ -92,9 +94,9 @@ def main():
 def scanForRecord(record_type):
     counter = 0
     current_line = 1
-    total_lines = getFileLineCount(download_file_name)
+    total_lines = getFileLineCount(working_file_name)
     try:
-        with open(download_file_name, 'r') as openfile:
+        with open(working_file_name, 'r') as openfile:
             for line in openfile:
                 progressBarComplex(current_line, total_lines)
                 if line.startswith(record_type):
@@ -111,9 +113,9 @@ def scanForRecord(record_type):
 def scanAllRecords():
     count_rhd = count_cus = count_csx = count_mtr = count_mtx = count_mts = count_rdg = count_rff = 0
     current_line = 1
-    total_lines = getFileLineCount(download_file_name)
+    total_lines = getFileLineCount(working_file_name)
     try:
-        with open(download_file_name, 'r') as openfile:
+        with open(working_file_name, 'r') as openfile:
                 for line in openfile:
                     progressBarComplex(current_line, total_lines)
                     if line.startswith('RHD'):
@@ -154,7 +156,7 @@ def scanAllRecords():
 def printSingleRecord(record_type):
     counter = 0
     try:
-        with open(download_file_name, 'r') as openfile:
+        with open(working_file_name, 'r') as openfile:
             for line in openfile:
                 if record_type in line or record_type.lower() in line:
                     counter+=1
@@ -169,7 +171,7 @@ def printSingleRecord(record_type):
 # used for debugging, not a visible option for the user
 def printAllRecords():
     try:
-        with open(download_file_name, 'r') as openfile:
+        with open(working_file_name, 'r') as openfile:
             counter = 0
             for line in openfile:
                 print("{0}) {1}".format(counter, line))
@@ -184,9 +186,9 @@ def printAllRecords():
 def exportMissingMeters():
     counter=0
     current_line=1
-    total_line = getFileLineCount(download_file_name)
+    total_line = getFileLineCount(working_file_name)
     try:
-        with open(download_file_name, 'r') as openfile:
+        with open(working_file_name, 'r') as openfile:
             try:
                 with open(missing_meter_filename, 'x') as builtfile:
                     previous_line = ''
@@ -244,7 +246,7 @@ def exportMeterType(user_meter_code):
     counter = 0
     current_record = deque(maxlen=getCustomerRecordLength()+1) # dynamically re-size the deque to fit customer record
     try:
-        with open(download_file_name, 'r') as openfile:
+        with open(working_file_name, 'r') as openfile:
             try:
                 with open(meter_type_filename, 'x') as builtfile:
                     for line in openfile:
@@ -274,7 +276,7 @@ def printMeterType(user_meter_code):
     counter = 0
     current_record = deque(maxlen=getCustomerRecordLength()+1)
     try:
-        with open(download_file_name, 'r') as openfile:
+        with open(working_file_name, 'r') as openfile:
             for line in openfile:
                 if line.startswith('RDG'):
                     meter_code = line[76:78] #range 77-78
@@ -294,7 +296,7 @@ def printMeterType(user_meter_code):
 # label and print the office-region-zone fields
 def fixOfficeRegionZoneFields():
     try:
-        with open(download_file_name, 'r') as openfile:
+        with open(working_file_name, 'r') as openfile:
             for line in openfile:
                 if line.startswith('RHD'):
                     office = line[71:73]
@@ -322,7 +324,7 @@ def checkMalformedLatLong():
     malformed_data = False
     counter=1 #first line in file
     try:
-        with open(download_file_name, 'r') as openfile:
+        with open(working_file_name, 'r') as openfile:
             for line in openfile:
                 if line.startswith('MTX'):
                     lat_data = line[23:40].rstrip()
@@ -380,7 +382,7 @@ def removeFile(filename):
 # returns the number of records associated with each customer
 def getCustomerRecordLength():
     try:
-        with open('download.dat', 'r') as openfile:
+        with open(working_file_name, 'r') as openfile:
             counter = 0
             start_line = 0
             end_line = 0
@@ -404,8 +406,8 @@ def progressBarComplex(current, total, barLength = 20):
 
 # sets import function calls
 if __name__ == "__main__":
-    print("United Systems .dat File Tool [Version 0.6]")
+    print("United Systems .dat File Tool [Version 0.7]")
     print("(c) 2020 United Systems and Software Inc.")
     print()
-    system('title'+'.dat Tool v0.6')
+    system('title'+'.dat Tool v0.7')
     main()
