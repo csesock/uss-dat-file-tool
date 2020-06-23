@@ -320,6 +320,7 @@ def fixOfficeRegionZoneFields():
 # checks that lat/long data matches two digits, period, then trailing digits
 def checkMalformedLatLong():
     malformed_data = False
+    counter=1 #first line in file
     try:
         with open(download_file_name, 'r') as openfile:
             for line in openfile:
@@ -328,14 +329,15 @@ def checkMalformedLatLong():
                     long_data = line[40:57].rstrip()
                     if not lat_long_pattern.match(lat_data):
                         malformed_data = True 
-                        print("Malformed data: ", lat_data)
+                        print("Malformed lat data at line:", counter, "Value:", lat_data)
                     elif not lat_long_pattern.match(long_data):
                         malformed_data = True
-                        print("Malformed data: ", long_data)
+                        print("Malformed long data at line:", counter, "Value:", long_data)
+                counter+=1
         if malformed_data == True:
-            print("The data is malformed in some way.")
+            print("The above data is malformed in some way.")
         else:
-            if checkLatLongSigns() == False:
+            if checkLatLongSigns(float(lat_data), float(long_data)) == False:
                 print("The data is not malformed.")
             else:
                 print("The data has malformed sign values.")
@@ -346,18 +348,11 @@ def checkMalformedLatLong():
 
 # an additional level of checking to make sure that lat/long data is correct
 # lat data will always be +, long will always be - in our region
-def checkLatLongSigns():
-    try:
-        with open('download.dat', 'r') as openfile:
-            for line in openfile:
-                if line.startswith('MTX'):
-                    lat_data = float(line[23:40].rstrip())
-                    long_data = float(line[40:57].rstrip())
-                    if lat_data < 0 or long_data > 0:
-                        return True # data is malformed
-        return False # data is not malformed
-    except FileNotFoundError:
-        throwIOException(1)
+def checkLatLongSigns(lat_data, long_data):
+    if lat_data < 0 or long_data > 0:
+        return True
+    else:
+        return False
 
 #################################
 ###### Helper Functions #########
