@@ -16,6 +16,9 @@ lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
 # default file information
 working_file_name = "download.dat"
 
+# standard wait time
+WAIT_TIME = 0.2
+
 # file names with dynamic dates 
 missing_meter_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + '.txt'
 missing_meter_csv_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + '.csv'
@@ -84,7 +87,10 @@ def main():
     elif scan_type == 8:
         checkMalformedLatLong()
     elif scan_type == 9:
+        global working_file_name
         working_file_name = 'upload.dat'
+        print("Changed to upload files.")
+        main()
     elif scan_type == 0:
         sys.exit(0)
     else:
@@ -150,6 +156,7 @@ def scanAllRecords():
     print(f"{count_rff:,d}" "\t (RFF) Radio records found.")
     print("-----------------------------------------")
     print()
+    time.sleep(WAIT_TIME)
     main()
 
 # print all of a single record type
@@ -208,6 +215,7 @@ def exportMissingMeters():
                 throwIOException(2)
     except FileNotFoundError:
         throwIOException(1)
+    print()
     print("The operation was successful.")
     print()
     print("Export missing meters to .csv file (Y or N)")
@@ -234,6 +242,7 @@ def convertMissingMetersToCSV():
                 throwIOException(2)
     except FileNotFoundError:
         throwIOException(1)
+    time.sleep(WAIT_TIME)
     print()
     main()
 
@@ -268,7 +277,7 @@ def exportMeterType(user_meter_code):
     print("The operation was successful.")
     print(counter, "records exported.")
     print()
-    time.sleep(1)
+    time.sleep(WAIT_TIME)
     main()
 
 # prints every record of a specified meter type to the console
@@ -291,6 +300,7 @@ def printMeterType(user_meter_code):
     except FileNotFoundError:
         throwIOException(1)
     print()
+    time.sleep(WAIT_TIME)
     main()
 
 # label and print the office-region-zone fields
@@ -315,6 +325,7 @@ def fixOfficeRegionZoneFields():
                     print("-------------------------")
                     break
         print()
+        time.sleep(WAIT_TIME)
         main()
     except FileNotFoundError:
         throwIOException(1)
@@ -344,6 +355,7 @@ def checkMalformedLatLong():
             else:
                 print("The data has malformed sign values.")
         print()
+        time.sleep(WAIT_TIME)
         main()
     except FileNotFoundError:
         throwIOException(1)
