@@ -409,16 +409,16 @@ def getCustomerRecordLength():
     except FileNotFoundError:
         throwIOException(1)        
 
-def progressBarComplex(current, total, barLength = 20):
-    percent = float(current) * 100 / total
-    arrow   = '-' * int(percent/100 * barLength - 1) + '>'
-    spaces  = ' ' * (barLength - len(arrow))
+def progressBarComplex(current, total, barLength=20):
+    percent = float(current)*100/total
+    arrow   = '-' * int(percent/100*barLength-1) + '>'
+    spaces  = ' ' * (barLength-len(arrow))
     print('Progress: [%s%s] %d %%' % (arrow, spaces, percent), end='\r')
 
 
 # sets import function calls
 if __name__ == "__main__":
-    print("United Systems .dat File Tool [Version 0.7]")
+    print("United Systems dat File Tool [Version 0.7]")
     print("(c) 2020 United Systems and Software Inc.")
     print()
     system('title'+'.dat Tool v0.7')

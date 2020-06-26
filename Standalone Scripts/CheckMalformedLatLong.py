@@ -6,6 +6,8 @@ WAIT_TIME = 0.2
 def checkMalformedLatLong():
     malformed_data = False
     counter=1 #first line in file
+    lat_data = -999.0
+    long_data = -999.0
     try:
         with open('download.dat', 'r') as openfile:
             for line in openfile:
@@ -27,10 +29,18 @@ def checkMalformedLatLong():
                 print("The data is not malformed.")
                 os.system("PAUSE")
             else:
+                if lat_data == -999.0 or long_data == -999.0:
+                    print("No lat/long data found within the file.")
+                    os.system('PAUSE')
+                    sys.exit(0)
                 print("The data has malformed sign values.")
                 os.system("PAUSE")
-        print()
-        os.system('PAUSE')
+        if lat_data == -999.0 or long_data == -999.0:
+            print("No lat/long data found within the file.")
+            os.system('PAUSE')
+        else:
+            print()
+            os.system('PAUSE')
     except FileNotFoundError:
         print("ERROR: FILE NOT FOUND")
 
