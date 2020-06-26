@@ -1,8 +1,9 @@
-# Current build: Version 0.7
-# Current build written on 6-23-2020
+# Current build: Version 0.7.1
+# Current build written on 6-26-2020
 #
 # Author: Chris Sesock on 6-5-2020
-import csv, sys, re, os, time
+#
+import csv, sys, re, os, time, ctypes
 from os import system
 from collections import deque
 from datetime import datetime
@@ -208,9 +209,12 @@ def exportMissingMeters():
                                 counter+=1
                         previous_line=line
                         current_line+=1
-                    if counter == 0: # these few lines fix the problem of making a blank file if there are no missing meters
+                    if counter == 0:
                         builtfile.close()
-                        removeFile(missing_meter_filename)
+                        os.remove(missing_meter_filename)
+                        print()
+                        print("No records found.")
+                        print()
             except FileExistsError:
                 throwIOException(2)
     except FileNotFoundError:
@@ -253,7 +257,7 @@ def convertMissingMetersToCSV():
 ## and associated with the wrong RDG record. I am currently working to fix.
 def exportMeterType(user_meter_code):
     counter = 0
-    current_record = deque(maxlen=getCustomerRecordLength()+1) # dynamically re-size the deque to fit customer record
+    current_record = deque(maxlen=getCustomerRecordLength()+1)
     try:
         with open(working_file_name, 'r') as openfile:
             try:
@@ -269,7 +273,10 @@ def exportMeterType(user_meter_code):
                         current_record.append(line)
                     if counter == 0:
                         builtfile.close()
-                        removeFile(meter_type_filename)
+                        os.remove(meter_type_filename)
+                        print()
+                        print("No records found.")
+                        print()
             except FileExistsError:
                 throwIOException(2)
     except FileNotFoundError:
@@ -383,21 +390,11 @@ def getFileLineCount(filename):
     except FileNotFoundError:
         throwIOException(1)
 
-# formatted deletion of a file in current directory
-def removeFile(filename):
-    os.remove(filename)
-    print()
-    print("No records found.")
-    print()
-    main()
-
 # returns the number of records associated with each customer
 def getCustomerRecordLength():
     try:
         with open(working_file_name, 'r') as openfile:
-            counter = 0
-            start_line = 0
-            end_line = 0
+            counter = start_line = end_line = 0
             for line in openfile:
                 counter+=1
                 if line.startswith('CUS'):
@@ -415,11 +412,10 @@ def progressBarComplex(current, total, barLength=20):
     spaces  = ' ' * (barLength-len(arrow))
     print('Progress: [%s%s] %d %%' % (arrow, spaces, percent), end='\r')
 
-
 # sets import function calls
 if __name__ == "__main__":
+    ctypes.windll.kernel32.SetConsoleTitleW("USS Dat File Tool v0.7")
     print("United Systems dat File Tool [Version 0.7]")
     print("(c) 2020 United Systems and Software Inc.")
     print()
-    system('title'+'.dat Tool v0.7')
     main()
