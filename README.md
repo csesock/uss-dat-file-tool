@@ -21,7 +21,9 @@ Future improvements include:
 ## Dependencies
 This project has been built from the start for ease of use and, consequently, to have no dependencies. The only requirement to run it is the current version of Python (3.8.X).
 
-## Usage
+## Installation and Usage
+To use the tool, simply install the most recent version of Python (3.X) and ensure that Python exists in the PATH. 
+
 By default, this tool only uses the download file in the current working directory. A future update will add the option to switch to upload files or change file name/paths from the command line. 
 
 ## 
