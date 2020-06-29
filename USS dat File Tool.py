@@ -47,6 +47,7 @@ def throwIOException(errorType):
         print("[ERROR 00]: Unknown Error")
         print()
         sys.exit(0)
+    
 
 # main method -- responsible for IO menu/handling
 def main():
@@ -215,6 +216,7 @@ def exportMissingMeters():
                         print()
                         print("No records found.")
                         print()
+                        main()
             except FileExistsError:
                 throwIOException(2)
     except FileNotFoundError:
@@ -354,13 +356,13 @@ def checkMalformedLatLong():
                         malformed_data = True
                         print("Malformed long data at line:", counter, "Value:", long_data)
                 counter+=1
-        if malformed_data == True:
-            print("The above data is malformed in some way.")
-        else:
-            if checkLatLongSigns(float(lat_data), float(long_data)) == False:
-                print("The data is not malformed.")
+            if malformed_data == True:
+                print("The above data is malformed in some way.")
             else:
-                print("The data has malformed sign values.")
+                if checkLatLongSigns(float(lat_data), float(long_data)) == False:
+                    print("The data is not malformed.")
+                else:
+                    print("The data has malformed sign values.")
         print()
         time.sleep(WAIT_TIME)
         main()
