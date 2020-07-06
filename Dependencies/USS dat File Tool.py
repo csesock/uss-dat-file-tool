@@ -74,7 +74,7 @@ def main():
         record_type = input(">>").upper()
         scanForRecord(record_type)
     elif scan_type == 2:
-        scanAllRecords()
+        scanAllRecordsVerbose()
     elif scan_type == 3:
         print("Enter the record type (ex. CUS or RHD)")
         record_type = input(">>").upper()
@@ -95,8 +95,6 @@ def main():
         exportMeterType(user_meter_code)
     elif scan_type == 8:
         checkMalformedLatLong()
-    elif scan_type == 9:
-        scanAllRecordsVerbose()
     elif scan_type == 0:
         sys.exit(0)
     else:
@@ -119,54 +117,6 @@ def scanForRecord(record_type):
     print()
     print(f"{counter:,d}", "records found")
     print()
-    main()
-
-# scan download file for number of each record
-def scanAllRecords():
-    count_rhd = count_cus = count_csx = count_mtr = count_mtx = count_mts = count_rdg = count_rff = 0
-    current_line = 1
-    total_lines = getFileLineCount(working_file_name)
-    try:
-        with open(working_file_name, 'r') as openfile:
-                #for line in openfile:
-                for n in track(range(total_lines), description="Processing..."):
-                    line = openfile.readline()
-                    #progressBarComplex(current_line, total_lines)
-                    #do_work(line)
-                    if line.startswith('RHD'):
-                        count_rhd+=1
-                    elif line.startswith('CUS'):
-                        count_cus+=1
-                    elif line.startswith('CSX'):
-                        count_csx+=1
-                    elif line.startswith('MTR'):
-                        count_mtr+=1
-                    elif line.startswith('MTX'):
-                        count_mtx+=1
-                    elif line.startswith('MTS'):
-                        count_mts+=1
-                    elif line.startswith('RDG'):
-                        count_rdg+=1
-                    elif line.startswith('RFF'):
-                        count_rff+=1
-                    current_line+=1
-                    #time.sleep(0.000001)
-    except FileNotFoundError:
-        throwIOException(1)
-    print()
-    print("File scan successful.")
-    print("-----------------------------------------")
-    print(f"{count_rhd:,d}", "\t (RHD) Route header records found.")
-    print(f"{count_cus:,d}", "\t (CUS) Customer records found.")
-    print(f"{count_csx:,d}", "\t (CSX) Customer extra records found.")
-    print(f"{count_mtr:,d}", "\t (MTR) Meter records found.")
-    print(f"{count_mtx:,d}" "\t (MTX) Meter extra records found.")
-    print(f"{count_mts:,d}" "\t (MTS) Meter special records found.")
-    print(f"{count_rdg:,d}" "\t (RDG) Reading records found.")
-    print(f"{count_rff:,d}" "\t (RFF) Radio records found.")
-    print("-----------------------------------------")
-    print()
-    time.sleep(WAIT_TIME)
     main()
 
 def scanAllRecordsVerbose():
