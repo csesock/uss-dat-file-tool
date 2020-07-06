@@ -121,23 +121,27 @@ def scanForRecord(record_type):
 
 def scanAllRecordsVerbose():
     all_records = {}
-    with open(working_file_name, 'r') as openfile:
-        for line in openfile:
-            x = line[0:3]
-            if x not in all_records:
-                all_records[x] = 1
-            else:
-                all_records[x]+=1
-        print("File scan successful.")
-        print("---------------------")
-        print("Records found:")
-        for record in all_records:
-            #print(record, ":", all_records[record])
-            print(record, ":\t", f"{all_records[record]:,d}")
-        print("---------------------")
-        print()
-        time.sleep(WAIT_TIME)
-        main()
+    try:
+        with open(working_file_name, 'r') as openfile:
+            for line in openfile:
+                x = line[0:3]
+                if x not in all_records:
+                    all_records[x] = 1
+                else:
+                    all_records[x]+=1
+            print()
+            print("File scan successful.")
+            print("------------------------")
+            print("Records found:")
+            for record in all_records:
+                #print(record, ":", all_records[record])
+                print(record, " . . . . :\t", f"{all_records[record]:,d}")
+            print("------------------------")
+            print()
+            time.sleep(WAIT_TIME)
+            main()
+    except FileNotFoundError:
+        throwIOException(1)
 
 
 # print all of a single record type
