@@ -23,7 +23,8 @@ WAIT_TIME = 0.2
 # file names with dynamic dates 
 missing_meter_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + '.txt'
 missing_meter_csv_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + '.csv'
-meter_type_filename = 'MeterType ' + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + '.txt'
+temp_meter_type = ""
+meter_type_filename = 'MeterType' + str(temp_meter_type) + " " + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + '.txt'
 
 # parameterized error handler for the file reader
 def throwIOException(errorType):
@@ -83,8 +84,10 @@ def main():
     elif scan_type == 6:
         exportMissingMeters()
     elif scan_type == 7:
-        print("Enter the meter code to print (ex. 00 or 01)")
+        print("Enter the meter code to export (ex. 00 or 01)")
         user_meter_code = int(input(">>"))
+        global temp_meter_type
+        temp_meter_type = str(user_meter_code)
         exportMeterType(user_meter_code)
     elif scan_type == 8:
         checkMalformedLatLong()
@@ -260,6 +263,8 @@ def convertMissingMetersToCSV():
 def exportMeterType(user_meter_code):
     counter = 0
     current_record = deque(maxlen=getCustomerRecordLength()+1)
+    global temp_meter_type
+    temp_meter_type = str(user_meter_code)
     try:
         with open(working_file_name, 'r') as openfile:
             try:
