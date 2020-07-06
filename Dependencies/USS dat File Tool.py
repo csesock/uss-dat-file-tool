@@ -96,10 +96,7 @@ def main():
     elif scan_type == 8:
         checkMalformedLatLong()
     elif scan_type == 9:
-        global working_file_name
-        working_file_name = 'upload.dat'
-        print("Changed to upload files.")
-        main()
+        scanAllRecordsVerbose()
     elif scan_type == 0:
         sys.exit(0)
     else:
@@ -171,6 +168,27 @@ def scanAllRecords():
     print()
     time.sleep(WAIT_TIME)
     main()
+
+def scanAllRecordsVerbose():
+    all_records = {}
+    with open(working_file_name, 'r') as openfile:
+        for line in openfile:
+            x = line[0:3]
+            if x not in all_records:
+                all_records[x] = 1
+            else:
+                all_records[x]+=1
+        print("File scan successful.")
+        print("---------------------")
+        print("Records found:")
+        for record in all_records:
+            #print(record, ":", all_records[record])
+            print(record, ":\t", f"{all_records[record]:,d}")
+        print("---------------------")
+        print()
+        time.sleep(WAIT_TIME)
+        main()
+
 
 # print all of a single record type
 def printSingleRecord(record_type):
