@@ -16,6 +16,7 @@ Current features of this tool include:
 Future improvements include:
 - [ ] Modifying download files safely from the command line
 - [ ] Standalone scripts for each operation included
+- [ ] Dependency-free graphical user interface for the tool
 
 
 ## Dependencies
