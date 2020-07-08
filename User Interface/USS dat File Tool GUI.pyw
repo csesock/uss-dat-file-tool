@@ -16,10 +16,9 @@ lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
 # intializing the window
 window = tk.Tk()
 s = ttk.Style()
-print(s.theme_names())
 s.theme_use('clam')
-#window = tk.ThemedTK()
 window.title("USS dat File Tool v0.9")
+window.resizable(False, False)
 
 # configuring size of the window 
 window.geometry('700x350')
@@ -203,9 +202,18 @@ tab2check3 = ttk.Checkbutton(TAB2, text="Meter")
 tab2check3.place(x=30, y=120)
 tab2check4 = ttk.Checkbutton(TAB2, text="Radio Reads")
 tab2check4.place(x=30, y=140)
+tab2check4 = ttk.Checkbutton(TAB2, text="Placeholder")
+tab2check4.place(x=30, y=160)
+tab2check4 = ttk.Checkbutton(TAB2, text="Placeholder2")
+tab2check4.place(x=30, y=180)
+tab2check4 = ttk.Checkbutton(TAB2, text="Placeholder3")
+tab2check4.place(x=30, y=200)
 
-canvas = tk.Canvas(TAB2, width=200, height=200)
-canvas.place(x= 250, y=30)
+redrawbutton = ttk.Button(TAB2, text="Render")
+redrawbutton.place(x=30, y=230)
+
+canvas = tk.Canvas(TAB2, width=440, height=250)
+canvas.place(x= 210, y=30)
 canvas.create_line(0, 0, 200, 100)
 canvas.create_line(0, 100, 200, 0)
 
@@ -224,6 +232,9 @@ tab3exportinput.place(x=20, y=110)
 tab3exportinput.insert(1.0, "C:\\Users\\Alex\\Desktop")
 tab3exportbutton = ttk.Button(TAB3, text="Export... ")
 tab3exportbutton.place(x=350, y=105)
+
+tab3enforcebutton = ttk.Checkbutton(TAB3, text="Enfore referential integrity")
+tab3enforcebutton.place(x=20, y=150)
 
 # menu
 menubar = tk.Menu(window)
