@@ -33,8 +33,8 @@ def singleRecordScan():
                 if line.startswith(answer):
                     counter+=1
     except FileNotFoundError:
-        textBox.delete(1.0, "end")
-        textBox.insert(1.0, "ERROR: FILE NOT FOUND")
+        textBox.insert("end", "ERROR: FILE NOT FOUND.")
+
     textBox.delete(1.0, "end")
     textBox.insert(1.0, f"{counter:,d} " + answer + " records found")
 
@@ -51,8 +51,8 @@ def printSingleRecord():
                     textBox.insert(counter, line + "\n")
                     counter+=1
     except FileNotFoundError:
-        textBox.delete(1.0, "end")
-        textBox.insert(1.0, "ERROR: FILE NOT FOUND.")
+        textBox.insert("end", "ERROR: FILE NOT FOUND.")
+
 
 def printAllRecords():
     try:
@@ -62,8 +62,8 @@ def printAllRecords():
                 textBox.insert(float(counter), line)
                 counter+=1
     except FileNotFoundError:
-        textBox.delete(1.0, "end")
-        textBox.insert(1.0, "ERROR: FILE NOT FOUND.")
+        textBox.insert("end", "ERROR: FILE NOT FOUND.")
+
         
 def fixOfficeRegionZoneFields():
     counter = 1.0
@@ -88,8 +88,8 @@ def fixOfficeRegionZoneFields():
                     textBox.insert(3.0, "Zone . . . . . : \t" + str(zone))
                     break
     except FileNotFoundError:
-        textBox.delete(1.0, "end")
-        textBox.insert(1.0, "ERROR: FILE NOT FOUND.")
+        textBox.insert("end", "ERROR: FILE NOT FOUND.")
+
         
 def scanAllRecordsVerbose():
     all_records = {}
@@ -112,8 +112,8 @@ def scanAllRecordsVerbose():
                 counter+=1
                 textBox.insert(counter, "\n")
     except FileNotFoundError:
-        textBox.delete(1.0, "end")
-        textBox.insert(1.0, "ERROR: FILE NOT FOUND.")
+        textBox.insert("end", "ERROR: FILE NOT FOUND.")
+
 
 def exportMissingMeters():
     counter=0
@@ -137,16 +137,59 @@ def exportMissingMeters():
                         textBox.insert("end", "No missing meters found.")
             except FileExistsError:
                 textBox.insert("end", "file already exists")
+                return
     except FileNotFoundError:
-        textBox.delete(1.0, "end")
-        textBox.insert(1.0, "ERROR: FILE NOT FOUND.")
+        textBox.insert("end", "ERROR: FILE NOT FOUND.")
+        return
     textBox.delete(1.0, "end")
     textBox.insert(1.0, "The operation was successful.")
     textBox.insert(2.0, "\n")
 
-def copy():
-    pass
 
+def checkMalformedLatLong():
+    malformed_data = False
+    counter=1
+    try:
+        with open('download.dat', 'r') as openfile:
+            for line in openfile:
+                if line.startswith('MTX'):
+                    lat_data = line[23:40].rstrip()
+                    long_data = line[40:57].rstrip()
+                    if not lat_long_pattern.match(lat_data):
+                        malformed_data = True 
+                        print("Malformed lat data at line:", counter, "Value:", lat_data)
+                    elif not lat_long_pattern.match(long_data):
+                        malformed_data = True
+                        print("Malformed long data at line:", counter, "Value:", long_data)
+                counter+=1
+            if malformed_data == True:
+                print("The above data is malformed in some way.")
+            else:
+                if checkLatLongSigns(float(lat_data), float(long_data)) == False:
+                    print("The data is not malformed.")
+                else:
+                    print("The data has malformed sign values.")
+    except FileNotFoundError:
+        textBox.insert("end", "ERROR: FILE NOT FOUND.")
+
+# an additional level of checking to make sure that lat/long data is correct
+# lat data will always be +, long will always be - in our region
+def checkLatLongSigns(lat_data, long_data):
+    if lat_data < 0 or long_data > 0:
+        return True
+    else:
+        return False
+
+
+
+def drawCanvas():
+    canvas.create_rectangle(20, 140, 120, 180, fill="red")
+    canvas.create_text(70, 130, text="Projects--20%")
+    canvas.create_rectangle(140, 160, 240, 180, fill="blue")
+    canvas.create_text(190, 150, text="Quizzes--10%")
+    canvas.create_rectangle(260, 120, 360, 180, fill="green")
+    canvas.create_text(310, 110, text="Midterm--30%")
+    canvas.create_line(0, 180, 500, 180)
 
 ################################################
 
@@ -180,7 +223,7 @@ b5 = ttk.Button(TAB1, text="5. Export Missing Meters", command=lambda:exportMiss
 b5.place(x=20, y=180)
 b6 = ttk.Button(TAB1, text="6. Export Meter Type")
 b6.place(x=20, y=220)
-b7 = ttk.Button(TAB1, text="7. Check Malformed Lat/Long")
+b7 = ttk.Button(TAB1, text="7. Check Malformed Lat/Long", command=lambda:checkMalformedLatLong())
 b7.place(x=20, y=260)
 
 consolelabel = ttk.Label(TAB1, text="Console:")
@@ -209,13 +252,11 @@ tab2check4.place(x=30, y=180)
 tab2check4 = ttk.Checkbutton(TAB2, text="Placeholder3")
 tab2check4.place(x=30, y=200)
 
-redrawbutton = ttk.Button(TAB2, text="Render")
+redrawbutton = ttk.Button(TAB2, text="Render", command=lambda:drawCanvas())
 redrawbutton.place(x=30, y=230)
 
 canvas = tk.Canvas(TAB2, width=440, height=250)
 canvas.place(x= 210, y=30)
-canvas.create_line(0, 0, 200, 100)
-canvas.create_line(0, 100, 200, 0)
 
 #Tab3 Widgets
 tab3label = ttk.Label(TAB3, text="Import/Export data:")
