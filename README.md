@@ -18,6 +18,11 @@ Future improvements include:
 - [ ] Standalone scripts for each operation included
 - [ ] Dependency-free graphical user interface for the tool
 
+## User Interface
+An easy-to-use interface for the tool is currently in development, which requires no external libraries.
+
+![GUI](https://i.imgur.com/LcSBSlr.png)
+
 
 ## Dependencies
 There are two included versions of the tool in the repo, one with third-party library dependencies and one without. The actively developed version is the one with dependencies, while the standalone version gets features added after they've been thoroughly tested.
