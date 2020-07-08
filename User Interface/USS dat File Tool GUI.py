@@ -5,7 +5,7 @@ from tkinter import simpledialog
 import sys
 import os
 import re
-import win32clipboard as clipboard
+#import win32clipboard as clipboard
 
 # regular expression patterns
 record_pattern = re.compile('[a-z][0-9]*\s*')
