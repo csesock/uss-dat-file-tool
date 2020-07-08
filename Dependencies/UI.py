@@ -1,11 +1,24 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import simpledialog
+#from ttkthemes import themed_tk as tk
 import sys
 import os
+import re
+import win32clipboard as clipboard
+
+# regular expression patterns
+record_pattern = re.compile('[a-z][0-9]*\s*')
+empty_pattern = re.compile('[^\S\n\t]+')
+empty2_pattern = re.compile('[^\S\r\n]{2,}')
+lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
 
 # intializing the window
 window = tk.Tk()
+s = ttk.Style()
+print(s.theme_names())
+s.theme_use('clam')
+#window = tk.ThemedTK()
 window.title("USS dat File Tool v0.9")
 
 # configuring size of the window 
@@ -69,11 +82,11 @@ def fixOfficeRegionZoneFields():
                     if zone == "  ":
                         zone = "BLANK"
                     textBox.delete(1.0, "end")
-                    textBox.insert(1.0, "Office: \t" + str(office))
+                    textBox.insert(1.0, "Office . . . . : \t" + str(office))
                     textBox.insert(2.0, "\n")
-                    textBox.insert(2.0, "Region: \t" + str(region))
+                    textBox.insert(2.0, "Region . . . . : \t" + str(region))
                     textBox.insert(3.0, "\n")
-                    textBox.insert(3.0, "Zone: \t" + str(zone))
+                    textBox.insert(3.0, "Zone . . . . . : \t" + str(zone))
                     break
     except FileNotFoundError:
         textBox.delete(1.0, "end")
@@ -106,14 +119,12 @@ def scanAllRecordsVerbose():
 def exportMissingMeters():
     counter=0
     current_line=1
-    total_line = getFileLineCount(working_file_name)
     try:
         with open('download.dat', 'r') as openfile:
             try:
-                with open(missing_meter_filename, 'x') as builtfile:
+                with open('missingMeters.txt', 'x') as builtfile:
                     previous_line = ''
                     for line in openfile:
-                        progressBarComplex(current_line, total_line)
                         if line.startswith('MTR'):
                             meter_record = line[45:57]
                             if empty_pattern.match(meter_record):
@@ -123,11 +134,8 @@ def exportMissingMeters():
                         current_line+=1
                     if counter == 0:
                         builtfile.close()
-                        os.remove(missing_meter_filename)
-                        print()
-                        print("No records found.")
-                        print()
-                        main()
+                        os.remove('missingMeters.txt')
+                        textBox.insert("end", "No missing meters found.")
             except FileExistsError:
                 textBox.insert("end", "file already exists")
     except FileNotFoundError:
@@ -137,6 +145,9 @@ def exportMissingMeters():
     textBox.insert(1.0, "The operation was successful.")
     textBox.insert(2.0, "\n")
 
+def copy():
+    pass
+
 
 ################################################
 
@@ -145,7 +156,7 @@ TAB_CONTROL = ttk.Notebook(window)
 
 #Tab1
 TAB1 = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(TAB1, text=' Operations ')
+TAB_CONTROL.add(TAB1, text=' Basic Operations Center ')
 
 #Tab2
 TAB2 = ttk.Frame(TAB_CONTROL)
@@ -158,38 +169,39 @@ TAB_CONTROL.add(TAB3, text=" Import/Export ")
 TAB_CONTROL.pack(expand=1, fill="both")
 
 #Tab1 Widgets
-b1 = tk.Button(TAB1, text="1. Single Record Scan", command=lambda:singleRecordScan())
+b1 = ttk.Button(TAB1, text="1. Single Record Scan", command=lambda:singleRecordScan())
 b1.place(x=20, y=20)
-b2 = tk.Button(TAB1, text="2. Verbose Record Scan", command=lambda:scanAllRecordsVerbose())
+b2 = ttk.Button(TAB1, text="2. Verbose Record Scan", command=lambda:scanAllRecordsVerbose())
 b2.place(x=20, y=60)
-b3 = tk.Button(TAB1, text="3. Print Single Record", command=lambda:printSingleRecord())
+b3 = ttk.Button(TAB1, text="3. Print Single Record", command=lambda:printSingleRecord())
 b3.place(x=20, y=100)
-b4 = tk.Button(TAB1, text="4. Print Office-Region-Zone", command=lambda:fixOfficeRegionZoneFields())
+b4 = ttk.Button(TAB1, text="4. Print Office-Region-Zone", command=lambda:fixOfficeRegionZoneFields())
 b4.place(x=20, y=140)
-b5 = tk.Button(TAB1, text="5. Export Missing Meters")
+b5 = ttk.Button(TAB1, text="5. Export Missing Meters", command=lambda:exportMissingMeters())
 b5.place(x=20, y=180)
-b6 = tk.Button(TAB1, text="6. Export Meter Type")
+b6 = ttk.Button(TAB1, text="6. Export Meter Type")
 b6.place(x=20, y=220)
-b7 = tk.Button(TAB1, text="7. Check Malformed Lat/Long")
+b7 = ttk.Button(TAB1, text="7. Check Malformed Lat/Long")
 b7.place(x=20, y=260)
 
-l = tk.Label(TAB1, text="Console:").place(x=205, y=10)
+consolelabel = ttk.Label(TAB1, text="Console:")
+consolelabel.place(x=205, y=10)
 textBox = tk.Text(TAB1, height=16, width=55, background='black', foreground='lawn green')
 textBox.place(x=210, y=30)
 
 #Tab2 Widgets
-tab2label = tk.Label(TAB2, text="Data Visualization")
+tab2label = ttk.Label(TAB2, text="Data Visualization")
 tab2label.place(x=20, y=20)
-tab2label2 = tk.Label(TAB2, text="Select Data to Display:")
+tab2label2 = ttk.Label(TAB2, text="Select Data to Display:")
 tab2label2.place(x=20, y=50)
 
-tab2check1 = tk.Checkbutton(TAB2, text="Customer")
+tab2check1 = ttk.Checkbutton(TAB2, text="Customer")
 tab2check1.place(x=30, y=80)
-tab2check2 = tk.Checkbutton(TAB2, text="Route")
+tab2check2 = ttk.Checkbutton(TAB2, text="Route")
 tab2check2.place(x=30, y=100)
-tab2check3 = tk.Checkbutton(TAB2, text="Meter")
+tab2check3 = ttk.Checkbutton(TAB2, text="Meter")
 tab2check3.place(x=30, y=120)
-tab2check4 = tk.Checkbutton(TAB2, text="Radio Reads")
+tab2check4 = ttk.Checkbutton(TAB2, text="Radio Reads")
 tab2check4.place(x=30, y=140)
 
 canvas = tk.Canvas(TAB2, width=200, height=200)
@@ -198,12 +210,20 @@ canvas.create_line(0, 0, 200, 100)
 canvas.create_line(0, 100, 200, 0)
 
 #Tab3 Widgets
-tab3label = tk.Label(TAB3, text="Import/Export data:")
-tab3label.place(x=20, y=20)
-tab3importbutton = tk.Button(TAB3, text="Import Data...")
-tab3importbutton.place(x=20, y=50)
-tab3exportbutton = tk.Button(TAB3, text="Export Data...")
-tab3exportbutton.place(x=110, y=50)
+tab3label = ttk.Label(TAB3, text="Import/Export data:")
+tab3label.place(x=20, y=40)
+
+tab3importinput = tk.Text(TAB3, width=40, height=1)
+tab3importinput.place(x=20, y=65)
+tab3importinput.insert(1.0, "C:\\Users\\Alex\\Desktop\\download.dat")
+tab3importbutton = ttk.Button(TAB3, text="Import...")
+tab3importbutton.place(x=350, y=60)
+
+tab3exportinput= tk.Text(TAB3, width=40, height=1)
+tab3exportinput.place(x=20, y=110)
+tab3exportinput.insert(1.0, "C:\\Users\\Alex\\Desktop")
+tab3exportbutton = ttk.Button(TAB3, text="Export... ")
+tab3exportbutton.place(x=350, y=105)
 
 # menu
 menubar = tk.Menu(window)
@@ -213,21 +233,23 @@ filemenu.add_command(label="Open")
 filemenu.add_command(label="Save")
 filemenu.add_separator()
 filemenu.add_command(label="Exit", underline=0, command=lambda:window.destroy())
-menubar.add_cascade(label="File", menu=filemenu)
+menubar.add_cascade(label="File", menu=filemenu, underline=0)
 
 # create more pulldown menus
 editmenu = tk.Menu(menubar, tearoff=0)
 editmenu.add_command(label="Cut")
-editmenu.add_command(label="Copy")
+editmenu.add_command(label="Copy", command=lambda:copy())
 editmenu.add_command(label="Paste")
-menubar.add_cascade(label="Edit", menu=editmenu)
+menubar.add_cascade(label="Edit", menu=editmenu, underline=0)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
 helpmenu.add_command(label="About")
-menubar.add_cascade(label="Help", menu=helpmenu)
+menubar.add_cascade(label="Help", menu=helpmenu, underline=0)
 
 # display the menu
 window.config(menu=menubar)
+
+
 #Calling Main()
 window.mainloop()
 
