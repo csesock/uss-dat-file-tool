@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import simpledialog
 import sys
+import os
 
 # intializing the window
 window = tk.Tk()
@@ -9,30 +11,48 @@ window.title("USS dat File Tool v0.9")
 # configuring size of the window 
 window.geometry('700x350')
 
-def printSingleRecord():
+def singleRecordScan():
+    answer = simpledialog.askstring("Enter Record", "Enter the record type to search:",
+                                parent=window)
     counter = 0
-    record_type = 'RHD'
     try:
         with open('download.dat', 'r') as openfile:
             for line in openfile:
-                if record_type in line or record_type.lower() in line:
+                if line.startswith(answer):
                     counter+=1
-                    textBox.delete(1.0, "end")
-                    textBox.insert(1.0, line + "\n")
     except FileNotFoundError:
-        print("fnf")
+        textBox.delete(1.0, "end")
+        textBox.insert(1.0, "ERROR: FILE NOT FOUND")
+    textBox.delete(1.0, "end")
+    textBox.insert(1.0, f"{counter:,d} " + answer + " records found")
+
+
+def printSingleRecord():
+    counter = 1.0
+    record_type = simpledialog.askstring("Enter Record", "Enter the record type to search:",
+                                parent=window)
+    try:
+        with open('download.dat', 'r') as openfile:
+            textBox.delete(1.0, "end")
+            for line in openfile:
+                if line.startswith(record_type):
+                    textBox.insert(counter, line + "\n")
+                    counter+=1
+    except FileNotFoundError:
+        textBox.delete(1.0, "end")
+        textBox.insert(1.0, "ERROR: FILE NOT FOUND.")
 
 def printAllRecords():
     try:
         with open('download.dat', 'r') as openfile:
             counter = 1
             for line in openfile:
-                #print("{0}) {1}".format(counter, line))
                 textBox.insert(float(counter), line)
                 counter+=1
     except FileNotFoundError:
-        print("fnf")
-
+        textBox.delete(1.0, "end")
+        textBox.insert(1.0, "ERROR: FILE NOT FOUND.")
+        
 def fixOfficeRegionZoneFields():
     counter = 1.0
     try:
@@ -48,11 +68,6 @@ def fixOfficeRegionZoneFields():
                     zone = line[75:77]
                     if zone == "  ":
                         zone = "BLANK"
-##                    print("-------------------------")
-##                    print("Office: \t", str(office))
-##                    print("Region: \t", str(region))
-##                    print("Zone: \t\t", str(zone))
-##                    print("-------------------------")
                     textBox.delete(1.0, "end")
                     textBox.insert(1.0, "Office: \t" + str(office))
                     textBox.insert(2.0, "\n")
@@ -61,11 +76,12 @@ def fixOfficeRegionZoneFields():
                     textBox.insert(3.0, "Zone: \t" + str(zone))
                     break
     except FileNotFoundError:
-        print("fnf")
-
+        textBox.delete(1.0, "end")
+        textBox.insert(1.0, "ERROR: FILE NOT FOUND.")
+        
 def scanAllRecordsVerbose():
     all_records = {}
-    counter = 1.0
+    counter = 3.0
     try:
         with open('download.dat', 'r') as openfile:
             for line in openfile:
@@ -75,13 +91,54 @@ def scanAllRecordsVerbose():
                 else:
                     all_records[x]+=1
             textBox.delete(1.0, "end")
+            textBox.insert(1.0, "File scan successful.")
+            textBox.insert(2.0, "\n")
+            textBox.insert(2.0, "----------------------")
+            textBox.insert(3.0, "\n")
             for record in all_records:
-                #print(record, " . . . . :\t", f"{all_records[record]:,d}")
                 textBox.insert(counter, str(record) + ". . . :\t" + f"{all_records[record]:,d}")
                 counter+=1
                 textBox.insert(counter, "\n")
     except FileNotFoundError:
-        print("fnf")
+        textBox.delete(1.0, "end")
+        textBox.insert(1.0, "ERROR: FILE NOT FOUND.")
+
+def exportMissingMeters():
+    counter=0
+    current_line=1
+    total_line = getFileLineCount(working_file_name)
+    try:
+        with open('download.dat', 'r') as openfile:
+            try:
+                with open(missing_meter_filename, 'x') as builtfile:
+                    previous_line = ''
+                    for line in openfile:
+                        progressBarComplex(current_line, total_line)
+                        if line.startswith('MTR'):
+                            meter_record = line[45:57]
+                            if empty_pattern.match(meter_record):
+                                builtfile.write(previous_line)
+                                counter+=1
+                        previous_line=line
+                        current_line+=1
+                    if counter == 0:
+                        builtfile.close()
+                        os.remove(missing_meter_filename)
+                        print()
+                        print("No records found.")
+                        print()
+                        main()
+            except FileExistsError:
+                textBox.insert("end", "file already exists")
+    except FileNotFoundError:
+        textBox.delete(1.0, "end")
+        textBox.insert(1.0, "ERROR: FILE NOT FOUND.")
+    textBox.delete(1.0, "end")
+    textBox.insert(1.0, "The operation was successful.")
+    textBox.insert(2.0, "\n")
+
+
+################################################
 
 #Create Tab Control
 TAB_CONTROL = ttk.Notebook(window)
@@ -101,11 +158,11 @@ TAB_CONTROL.add(TAB3, text=" Import/Export ")
 TAB_CONTROL.pack(expand=1, fill="both")
 
 #Tab1 Widgets
-b1 = tk.Button(TAB1, text="1. Single Record Scan")
+b1 = tk.Button(TAB1, text="1. Single Record Scan", command=lambda:singleRecordScan())
 b1.place(x=20, y=20)
 b2 = tk.Button(TAB1, text="2. Verbose Record Scan", command=lambda:scanAllRecordsVerbose())
 b2.place(x=20, y=60)
-b3 = tk.Button(TAB1, text="3. Print Single Record", command=lambda:printAllRecords())
+b3 = tk.Button(TAB1, text="3. Print Single Record", command=lambda:printSingleRecord())
 b3.place(x=20, y=100)
 b4 = tk.Button(TAB1, text="4. Print Office-Region-Zone", command=lambda:fixOfficeRegionZoneFields())
 b4.place(x=20, y=140)
@@ -119,7 +176,6 @@ b7.place(x=20, y=260)
 l = tk.Label(TAB1, text="Console:").place(x=205, y=10)
 textBox = tk.Text(TAB1, height=16, width=55, background='black', foreground='lawn green')
 textBox.place(x=210, y=30)
-#S = tk.Scrollbar(window, command=textBox.yview())
 
 #Tab2 Widgets
 tab2label = tk.Label(TAB2, text="Data Visualization")
@@ -156,7 +212,7 @@ filemenu = tk.Menu(menubar, tearoff=0)
 filemenu.add_command(label="Open")
 filemenu.add_command(label="Save")
 filemenu.add_separator()
-filemenu.add_command(label="Exit")
+filemenu.add_command(label="Exit", underline=0, command=lambda:window.destroy())
 menubar.add_cascade(label="File", menu=filemenu)
 
 # create more pulldown menus
