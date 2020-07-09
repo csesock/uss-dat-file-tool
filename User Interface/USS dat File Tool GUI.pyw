@@ -1,31 +1,29 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import simpledialog
-#from ttkthemes import themed_tk as tk
-import sys
-import os
-import re
-#import win32clipboard as clipboard
+import sys, os, re
 
-# regular expression patterns
+# Regular expression patterns
 record_pattern = re.compile('[a-z][0-9]*\s*')
 empty_pattern = re.compile('[^\S\n\t]+')
 empty2_pattern = re.compile('[^\S\r\n]{2,}')
 lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
 
-# intializing the window
+# Initial window setup
 window = tk.Tk()
 s = ttk.Style()
 s.theme_use('clam')
 window.title("USS dat File Tool v0.9")
 window.resizable(False, False)
-
-# configuring size of the window 
 window.geometry('700x350')
+
+# Program functions
 
 def singleRecordScan():
     answer = simpledialog.askstring("Enter Record", "Enter the record type to search:",
                                 parent=window)
+    if answer == None:
+        return
     counter = 0
     try:
         with open('download.dat', 'r') as openfile:
@@ -43,6 +41,8 @@ def printSingleRecord():
     counter = 1.0
     record_type = simpledialog.askstring("Enter Record", "Enter the record type to search:",
                                 parent=window)
+    if record_type == None:
+        return
     try:
         with open('download.dat', 'r') as openfile:
             textBox.delete(1.0, "end")
@@ -172,14 +172,11 @@ def checkMalformedLatLong():
     except FileNotFoundError:
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
 
-# an additional level of checking to make sure that lat/long data is correct
-# lat data will always be +, long will always be - in our region
 def checkLatLongSigns(lat_data, long_data):
     if lat_data < 0 or long_data > 0:
         return True
     else:
         return False
-
 
 
 def drawCanvas():
@@ -196,21 +193,12 @@ def drawCanvas():
 #Create Tab Control
 TAB_CONTROL = ttk.Notebook(window)
 
-#Tab1
+# Tab 1
+##############
 TAB1 = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(TAB1, text=' Basic Operations Center ')
 
-#Tab2
-TAB2 = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(TAB2, text=' Visualizations ')
-TAB_CONTROL.pack(expand=1, fill="both")
-
-#Tab3
-TAB3 = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(TAB3, text=" Import/Export ")
-TAB_CONTROL.pack(expand=1, fill="both")
-
-#Tab1 Widgets
+# Tab 1 Widgets
 b1 = ttk.Button(TAB1, text="1. Single Record Scan", command=lambda:singleRecordScan())
 b1.place(x=20, y=20)
 b2 = ttk.Button(TAB1, text="2. Verbose Record Scan", command=lambda:scanAllRecordsVerbose())
@@ -231,7 +219,13 @@ consolelabel.place(x=205, y=10)
 textBox = tk.Text(TAB1, height=16, width=55, background='black', foreground='lawn green')
 textBox.place(x=210, y=30)
 
-#Tab2 Widgets
+# Tab 2
+##############
+TAB2 = ttk.Frame(TAB_CONTROL)
+TAB_CONTROL.add(TAB2, text=' Visualizations ')
+TAB_CONTROL.pack(expand=1, fill="both")
+
+#Tab 2 Widgets
 tab2label = ttk.Label(TAB2, text="Data Visualization")
 tab2label.place(x=20, y=20)
 tab2label2 = ttk.Label(TAB2, text="Select Data to Display:")
@@ -258,7 +252,13 @@ redrawbutton.place(x=30, y=230)
 canvas = tk.Canvas(TAB2, width=440, height=250)
 canvas.place(x= 210, y=30)
 
-#Tab3 Widgets
+# Tab 3
+##############
+TAB3 = ttk.Frame(TAB_CONTROL)
+TAB_CONTROL.add(TAB3, text=" Import/Export ")
+TAB_CONTROL.pack(expand=1, fill="both")
+
+#Tab 3 Widgets
 tab3label = ttk.Label(TAB3, text="Import/Export data:")
 tab3label.place(x=20, y=40)
 
@@ -276,6 +276,9 @@ tab3exportbutton.place(x=350, y=105)
 
 tab3enforcebutton = ttk.Checkbutton(TAB3, text="Enfore referential integrity")
 tab3enforcebutton.place(x=20, y=150)
+tab3cleardatabutton = ttk.Checkbutton(TAB3, text="Clear data")
+tab3cleardatabutton.place(x=20, y=170)
+
 
 # menu
 menubar = tk.Menu(window)
@@ -298,14 +301,11 @@ helpmenu = tk.Menu(menubar, tearoff=0)
 helpmenu.add_command(label="About")
 menubar.add_cascade(label="Help", menu=helpmenu, underline=0)
 
+
 # display the menu
 window.config(menu=menubar)
-
-
 #Calling Main()
 window.mainloop()
-
-
 
 
 
