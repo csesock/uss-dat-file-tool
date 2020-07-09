@@ -1,8 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import simpledialog
+from tkinter import *
 import sys, os, re, time
 from datetime import datetime
+from tkinter.filedialog import asksaveasfile
+from tkinter import messagebox
 
 # Regular expression patterns
 record_pattern = re.compile('[a-z][0-9]*\s*')
@@ -18,7 +21,11 @@ s = ttk.Style()
 s.theme_use('clam')
 window.title("USS dat File Tool v0.9")
 window.resizable(False, False)
-window.geometry('700x350')
+window.geometry('700x370')
+
+dirp = os.path.dirname(__file__)
+photo = PhotoImage(file="assets\\Favicon.png")
+window.iconphoto(False, photo)
 
 # Program functions
 
@@ -200,6 +207,17 @@ def drawCanvas():
     canvas.create_text(310, 110, text="Midterm--30%")
     canvas.create_line(0, 180, 500, 180)
 
+def clearText():
+    textBox.delete(1.0, "end")
+
+def save():
+    files = [('All Files', '*.*'), ('Python Files', '*.py'), ('Text Document', '*.txt')]
+    file = asksaveasfile(filetypes = files, defaultextension = files)
+
+def aboutDialog():
+    dialog = """Version: 0.9 \n Commit: fa35902dcd98d85f7400ac297a9f61a7200c5803 \n Date: 2020-07-09:12:00:00 \n Python: 3.9.1 \n OS: Windows_NT x64 10.0.10363
+            """
+    messagebox.showinfo("About", dialog)
 
 ################################################
 
@@ -247,10 +265,24 @@ b07.place(x=10, y=260)
 b7 = ttk.Button(TAB1, text="Check Malformed Lat/Long", command=lambda:checkMalformedLatLong())
 b7.place(x=40, y=260)
 
+
 consolelabel = ttk.Label(TAB1, text="Console:")
-consolelabel.place(x=215, y=10)
+consolelabel.place(x=220, y=17)
+consoleclearbutton = ttk.Button(TAB1, text="clear", width=4.5, command=lambda:clearText())
+consoleclearbutton.place(x=622, y=6)
+
 textBox = tk.Text(TAB1, height=16, width=55, background='black', foreground='lawn green')
-textBox.place(x=220, y=30)
+textBox.place(x=220, y=40)
+textBox.insert(1.0, "United Systems dat File Tool")
+textBox.insert(2.0, "\n")
+textBox.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
+textBox.insert(3.0, "\n")
+
+##scrollbar = tk.Scrollbar(window)
+###scrollbar = tk.Scrollbar(textBox)
+##scrollbar.pack(side=RIGHT, fill=Y)
+##textBox.config(yscrollcommand=scrollbar.set)
+##scrollbar.config(command=textBox.yview)
 
 # Tab 2
 ##############
@@ -304,7 +336,7 @@ tab3importbutton.place(x=350, y=60)
 tab3exportinput= tk.Text(TAB3, width=40, height=1)
 tab3exportinput.place(x=20, y=110)
 tab3exportinput.insert(1.0, "C:\\Users\\Alex\\Desktop")
-tab3exportbutton = ttk.Button(TAB3, text="Export... ")
+tab3exportbutton = ttk.Button(TAB3, text="Export... ", command=lambda:save())
 tab3exportbutton.place(x=350, y=105)
 
 tab3enforcebutton = ttk.Checkbutton(TAB3, text="Enfore referential integrity")
@@ -325,15 +357,14 @@ menubar.add_cascade(label="File", menu=filemenu, underline=0)
 
 # create more pulldown menus
 editmenu = tk.Menu(menubar, tearoff=0)
-editmenu.add_command(label="Cut")
-editmenu.add_command(label="Copy", command=lambda:copy())
-editmenu.add_command(label="Paste")
+#editmenu.add_command(label="Cut")
+editmenu.add_command(label="Clear", underline=1, command=lambda:clearText())
+#editmenu.add_command(label="Paste")
 menubar.add_cascade(label="Edit", menu=editmenu, underline=0)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
-helpmenu.add_command(label="About")
+helpmenu.add_command(label="About", underline=0, command=lambda:aboutDialog())
 menubar.add_cascade(label="Help", menu=helpmenu, underline=0)
-
 
 # display the menu
 window.config(menu=menubar)
