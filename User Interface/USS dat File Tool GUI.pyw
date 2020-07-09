@@ -1,13 +1,16 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import simpledialog
-import sys, os, re
+import sys, os, re, time
+from datetime import datetime
 
 # Regular expression patterns
 record_pattern = re.compile('[a-z][0-9]*\s*')
 empty_pattern = re.compile('[^\S\n\t]+')
 empty2_pattern = re.compile('[^\S\r\n]{2,}')
 lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
+
+missing_meter_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + '.txt'
 
 # Initial window setup
 window = tk.Tk()
@@ -35,7 +38,8 @@ def singleRecordScan():
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
 
     textBox.delete(1.0, "end")
-    textBox.insert(1.0, f"{counter:,d} " + answer + " records found")
+    textBox.insert("end", f"{counter:,d} " + answer + " records found")
+    textBox.insert("end", "\n")
 
 
 def printSingleRecord():
@@ -43,7 +47,7 @@ def printSingleRecord():
                                 parent=window)
     if record_type == None:
         return
-    answer = answer.upper()
+    record_type = record_type.upper()
     counter = 1.0
     try:
         with open('download.dat', 'r') as openfile:
@@ -95,7 +99,7 @@ def fixOfficeRegionZoneFields():
         
 def scanAllRecordsVerbose():
     all_records = {}
-    counter = 3.0
+    counter = 1.0
     try:
         with open('download.dat', 'r') as openfile:
             for line in openfile:
@@ -104,26 +108,28 @@ def scanAllRecordsVerbose():
                     all_records[x] = 1
                 else:
                     all_records[x]+=1
-            textBox.delete(1.0, "end")
-            textBox.insert(1.0, "File scan successful.")
-            textBox.insert(2.0, "\n")
-            textBox.insert(2.0, "----------------------")
-            textBox.insert(3.0, "\n")
+            textBox.delete(counter, "end")
+            textBox.insert(counter, "File scan successful")
+            counter+=1
+            textBox.insert(counter, "\n")
+            textBox.insert(counter, "--------------------")
+            counter+=1
+            textBox.insert(counter, "\n")
             for record in all_records:
                 textBox.insert(counter, str(record) + ". . . :\t" + f"{all_records[record]:,d}")
                 counter+=1
                 textBox.insert(counter, "\n")
+            textBox.insert(counter, "--------------------")
     except FileNotFoundError:
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
 
 
 def exportMissingMeters():
     counter=0
-    record_load = 100
     try:
         with open('download.dat', 'r') as openfile:
             try:
-                with open('missingMeters.txt', 'x') as builtfile:
+                with open(missing_meter_filename, 'x') as builtfile:
                     previous_line = ''
                     textBox.delete(1.0, "end")
                     textBox.insert(1.0, "Attempting to export missing meters...")
@@ -134,15 +140,13 @@ def exportMissingMeters():
                             if empty_pattern.match(meter_record):
                                 builtfile.write(previous_line)
                                 counter+=1
-                                record_load+=1
-                                if record_load % 100 == 0:
-                                    textBox.insert("end", "...")
-                                    textBox.insert("end", "\n")
                         previous_line=line
                     if counter == 0:
                         builtfile.close()
-                        os.remove('missingMeters.txt')
+                        os.remove(missing_meter_filename)
+                        textBox.insert("end", "\n")
                         textBox.insert("end", "No missing meters found.")
+                        return
             except FileExistsError:
                 textBox.insert("end", "ERROR: FILE ALREADY EXISTS")
                 return
@@ -195,6 +199,7 @@ def drawCanvas():
     canvas.create_rectangle(260, 120, 360, 180, fill="green")
     canvas.create_text(310, 110, text="Midterm--30%")
     canvas.create_line(0, 180, 500, 180)
+
 
 ################################################
 
@@ -249,36 +254,36 @@ textBox.place(x=220, y=30)
 
 # Tab 2
 ##############
-TAB2 = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(TAB2, text=' Visualizations ')
-TAB_CONTROL.pack(expand=1, fill="both")
-
-#Tab 2 Widgets
-tab2label = ttk.Label(TAB2, text="Data Visualization")
-tab2label.place(x=20, y=20)
-tab2label2 = ttk.Label(TAB2, text="Select Data to Display:")
-tab2label2.place(x=20, y=50)
-
-tab2check1 = ttk.Checkbutton(TAB2, text="Customer")
-tab2check1.place(x=30, y=80)
-tab2check2 = ttk.Checkbutton(TAB2, text="Route")
-tab2check2.place(x=30, y=100)
-tab2check3 = ttk.Checkbutton(TAB2, text="Meter")
-tab2check3.place(x=30, y=120)
-tab2check4 = ttk.Checkbutton(TAB2, text="Radio Reads")
-tab2check4.place(x=30, y=140)
-tab2check4 = ttk.Checkbutton(TAB2, text="Placeholder")
-tab2check4.place(x=30, y=160)
-tab2check4 = ttk.Checkbutton(TAB2, text="Placeholder2")
-tab2check4.place(x=30, y=180)
-tab2check4 = ttk.Checkbutton(TAB2, text="Placeholder3")
-tab2check4.place(x=30, y=200)
-
-redrawbutton = ttk.Button(TAB2, text="Render", command=lambda:drawCanvas())
-redrawbutton.place(x=30, y=230)
-
-canvas = tk.Canvas(TAB2, width=440, height=250)
-canvas.place(x= 210, y=30)
+##TAB2 = ttk.Frame(TAB_CONTROL)
+##TAB_CONTROL.add(TAB2, text=' Visualizations ')
+##TAB_CONTROL.pack(expand=1, fill="both")
+##
+###Tab 2 Widgets
+##tab2label = ttk.Label(TAB2, text="Data Visualization")
+##tab2label.place(x=20, y=20)
+##tab2label2 = ttk.Label(TAB2, text="Select Data to Display:")
+##tab2label2.place(x=20, y=50)
+##
+##tab2check1 = ttk.Checkbutton(TAB2, text="Customer")
+##tab2check1.place(x=30, y=80)
+##tab2check2 = ttk.Checkbutton(TAB2, text="Route")
+##tab2check2.place(x=30, y=100)
+##tab2check3 = ttk.Checkbutton(TAB2, text="Meter")
+##tab2check3.place(x=30, y=120)
+##tab2check4 = ttk.Checkbutton(TAB2, text="Radio Reads")
+##tab2check4.place(x=30, y=140)
+##tab2check4 = ttk.Checkbutton(TAB2, text="Placeholder")
+##tab2check4.place(x=30, y=160)
+##tab2check4 = ttk.Checkbutton(TAB2, text="Placeholder2")
+##tab2check4.place(x=30, y=180)
+##tab2check4 = ttk.Checkbutton(TAB2, text="Placeholder3")
+##tab2check4.place(x=30, y=200)
+##
+##redrawbutton = ttk.Button(TAB2, text="Render", command=lambda:drawCanvas())
+##redrawbutton.place(x=30, y=230)
+##
+##canvas = tk.Canvas(TAB2, width=440, height=250)
+##canvas.place(x= 210, y=30)
 
 # Tab 3
 ##############
@@ -304,8 +309,8 @@ tab3exportbutton.place(x=350, y=105)
 
 tab3enforcebutton = ttk.Checkbutton(TAB3, text="Enfore referential integrity")
 tab3enforcebutton.place(x=20, y=150)
-tab3cleardatabutton = ttk.Checkbutton(TAB3, text="Clear data")
-tab3cleardatabutton.place(x=20, y=170)
+#tab3cleardatabutton = ttk.Checkbutton(TAB3, text="Clear data")
+#tab3cleardatabutton.place(x=20, y=170)
 
 
 # menu
