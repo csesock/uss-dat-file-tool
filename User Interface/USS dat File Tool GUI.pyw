@@ -24,6 +24,7 @@ def singleRecordScan():
                                 parent=window)
     if answer == None:
         return
+    answer = answer.upper()
     counter = 0
     try:
         with open('download.dat', 'r') as openfile:
@@ -38,11 +39,12 @@ def singleRecordScan():
 
 
 def printSingleRecord():
-    counter = 1.0
     record_type = simpledialog.askstring("Enter Record", "Enter the record type to search:",
                                 parent=window)
     if record_type == None:
         return
+    answer = answer.upper()
+    counter = 1.0
     try:
         with open('download.dat', 'r') as openfile:
             textBox.delete(1.0, "end")
@@ -117,26 +119,32 @@ def scanAllRecordsVerbose():
 
 def exportMissingMeters():
     counter=0
-    current_line=1
+    record_load = 100
     try:
         with open('download.dat', 'r') as openfile:
             try:
                 with open('missingMeters.txt', 'x') as builtfile:
                     previous_line = ''
+                    textBox.delete(1.0, "end")
+                    textBox.insert(1.0, "Attempting to export missing meters...")
+                    textBox.insert("end", "\n")
                     for line in openfile:
                         if line.startswith('MTR'):
                             meter_record = line[45:57]
                             if empty_pattern.match(meter_record):
                                 builtfile.write(previous_line)
                                 counter+=1
+                                record_load+=1
+                                if record_load % 100 == 0:
+                                    textBox.insert("end", "...")
+                                    textBox.insert("end", "\n")
                         previous_line=line
-                        current_line+=1
                     if counter == 0:
                         builtfile.close()
                         os.remove('missingMeters.txt')
                         textBox.insert("end", "No missing meters found.")
             except FileExistsError:
-                textBox.insert("end", "file already exists")
+                textBox.insert("end", "ERROR: FILE ALREADY EXISTS")
                 return
     except FileNotFoundError:
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
@@ -199,25 +207,45 @@ TAB1 = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(TAB1, text=' Basic Operations Center ')
 
 # Tab 1 Widgets
-b1 = ttk.Button(TAB1, text="1. Single Record Scan", command=lambda:singleRecordScan())
-b1.place(x=20, y=20)
-b2 = ttk.Button(TAB1, text="2. Verbose Record Scan", command=lambda:scanAllRecordsVerbose())
-b2.place(x=20, y=60)
-b3 = ttk.Button(TAB1, text="3. Print Single Record", command=lambda:printSingleRecord())
-b3.place(x=20, y=100)
-b4 = ttk.Button(TAB1, text="4. Print Office-Region-Zone", command=lambda:fixOfficeRegionZoneFields())
-b4.place(x=20, y=140)
-b5 = ttk.Button(TAB1, text="5. Export Missing Meters", command=lambda:exportMissingMeters())
-b5.place(x=20, y=180)
-b6 = ttk.Button(TAB1, text="6. Export Meter Type")
-b6.place(x=20, y=220)
-b7 = ttk.Button(TAB1, text="7. Check Malformed Lat/Long", command=lambda:checkMalformedLatLong())
-b7.place(x=20, y=260)
+b01 = ttk.Button(TAB1, text="1.", width=1.5)
+b01.place(x=10, y=20)
+b1 = ttk.Button(TAB1, text="Single Record Scan", command=lambda:singleRecordScan())
+b1.place(x=40, y=20)
+
+b02 = ttk.Button(TAB1, text="2.", width=1.5)
+b02.place(x=10, y=60)
+b2 = ttk.Button(TAB1, text="Full Record Scan", command=lambda:scanAllRecordsVerbose())
+b2.place(x=40, y=60)
+
+b03 = ttk.Button(TAB1, text="3.", width=1.5)
+b03.place(x=10, y=100)
+b3 = ttk.Button(TAB1, text="Print Single Record", command=lambda:printSingleRecord())
+b3.place(x=40, y=100)
+
+b04 = ttk.Button(TAB1, text="4.", width=1.5)
+b04.place(x=10, y=140)
+b4 = ttk.Button(TAB1, text="Print Office-Region-Zone", command=lambda:fixOfficeRegionZoneFields())
+b4.place(x=40, y=140)
+
+b05 = ttk.Button(TAB1, text="5.", width=1.5)
+b05.place(x=10, y=180)
+b5 = ttk.Button(TAB1, text="Export Missing Meters", command=lambda:exportMissingMeters())
+b5.place(x=40, y=180)
+
+b06 = ttk.Button(TAB1, text="6.", width=1.5)
+b06.place(x=10, y=220)
+b6 = ttk.Button(TAB1, text="Export Meter Type")
+b6.place(x=40, y=220)
+
+b07 = ttk.Button(TAB1, text="7.", width=1.5)
+b07.place(x=10, y=260)
+b7 = ttk.Button(TAB1, text="Check Malformed Lat/Long", command=lambda:checkMalformedLatLong())
+b7.place(x=40, y=260)
 
 consolelabel = ttk.Label(TAB1, text="Console:")
-consolelabel.place(x=205, y=10)
+consolelabel.place(x=215, y=10)
 textBox = tk.Text(TAB1, height=16, width=55, background='black', foreground='lawn green')
-textBox.place(x=210, y=30)
+textBox.place(x=220, y=30)
 
 # Tab 2
 ##############
