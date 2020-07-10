@@ -1,3 +1,7 @@
+# USS dat File Tool with GUI
+# Authored by Chris Sesock
+#
+
 import tkinter as tk
 from tkinter import ttk
 from tkinter import simpledialog
@@ -21,7 +25,7 @@ download_filename = 'download.dat'
 window = tk.Tk()
 s = ttk.Style()
 s.theme_use('clam')
-window.title("USS dat File Tool v0.9")
+window.title("USS dat File Tool v1.0")
 window.resizable(False, False)
 window.geometry('700x370')
 
@@ -60,7 +64,7 @@ def singleRecordScan(event=None):
     textBox.insert("end", "\n")
 
 
-def printSingleRecord():
+def printSingleRecord(event=None):
     record_type = simpledialog.askstring("Enter Record", "Enter the record type to search:",
                                 parent=window)
     if record_type == None:
@@ -78,7 +82,7 @@ def printSingleRecord():
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
 
 
-def printAllRecords():
+def printAllRecords(event=None):
     try:
         with open(download_filename, 'r') as openfile:
             counter = 1
@@ -89,7 +93,7 @@ def printAllRecords():
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
 
         
-def fixOfficeRegionZoneFields():
+def fixOfficeRegionZoneFields(event=None):
     counter = 1.0
     try:
         with open(download_filename, 'r') as openfile:
@@ -115,7 +119,7 @@ def fixOfficeRegionZoneFields():
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
 
         
-def scanAllRecordsVerbose():
+def scanAllRecordsVerbose(event=None):
     all_records = {}
     counter = 1.0
     try:
@@ -142,7 +146,7 @@ def scanAllRecordsVerbose():
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
 
 
-def exportMissingMeters():
+def exportMissingMeters(event=None):
     counter=0
     try:
         with open(download_filename, 'r') as openfile:
@@ -175,7 +179,7 @@ def exportMissingMeters():
     textBox.insert(1.0, "The operation was successful.")
     textBox.insert(2.0, "\n")
 
-def missingMeters():
+def missingMeters(event=None):
     counter = 0
     empty_pattern = re.compile('[^\S\n\t]+')
     try:
@@ -188,7 +192,6 @@ def missingMeters():
                         if line.startswith('MTR'):
                             meter_record = line[45:57]
                             if empty_pattern.match(meter_record):
-                                #builtfile.write(previous_line)
                                 textBox.insert("end", previous_line)
                                 textBox.insert("end", "\n")
                                 counter+=1
@@ -200,11 +203,8 @@ def missingMeters():
     except FileNotFoundError:
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
         return
-##    textBox.delete(1.0, "end")
-##    textBox.insert(1.0, "The operation was successful.")
-##    textBox.insert(2.0, "\n")
 
-def printMeterType():
+def printMeterType(event=None):
     user_meter_code = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
     if user_meter_code == None:
         return
@@ -230,7 +230,7 @@ def printMeterType():
         return
 
 
-def checkMalformedLatLong():
+def checkMalformedLatLong(event=None):
     malformed_data = False
     counter=1
     try:
@@ -241,18 +241,18 @@ def checkMalformedLatLong():
                     long_data = line[40:57].rstrip()
                     if not lat_long_pattern.match(lat_data):
                         malformed_data = True 
-                        print("Malformed lat data at line:", counter, "Value:", lat_data)
+                        textBox.insert(1.0, "Malformed lat data at line:" + counter + "Value:" + lat_data)
                     elif not lat_long_pattern.match(long_data):
                         malformed_data = True
-                        print("Malformed long data at line:", counter, "Value:", long_data)
+                        textBox.insert("end", "Malformed long data at line:" + counter + "Value:" + long_data)
                 counter+=1
             if malformed_data == True:
-                print("The above data is malformed in some way.")
+                textBox.insert("end", "The above data is malformed in some way.")
             else:
                 if checkLatLongSigns(float(lat_data), float(long_data)) == False:
-                    print("The data is not malformed.")
+                    textBox.insert("end", "The data is not malformed.")
                 else:
-                    print("The data has malformed sign values.")
+                    textBox.insert("end", "The data has malformed sign values.")
     except FileNotFoundError:
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
 
@@ -262,6 +262,7 @@ def checkLatLongSigns(lat_data, long_data):
     else:
         return False
 
+### Helper Functions ###
 
 def getCustomerRecordLength():
     try:
@@ -300,12 +301,19 @@ def save():
 
 def openFile():
     filename = tk.filedialog.askopenfilename(title="Import File")
+    if tab3enforcebutton.instate(['selected']):
+        if not filename.lower().endswith(('.dat', '.DAT', '.hdl')):
+            textBox.delete(1.0, "end")
+            textBox.insert(1.0, "ERROR: FILETYPE INCORRECT")
+            textBox.insert(2.0, "\n")
+            textBox.insert(2.0, "FILE DOES NOT MEET INTEGRITY CHECK")
+            return
     global download_filename
     download_filename = filename
        
 
 def aboutDialog():
-    dialog = """Version: 0.9 \n Commit: fa35902dcd98d85f7400ac297a9f61a7200c5803 \n Date: 2020-07-09:12:00:00 \n Python: 3.9.1 \n OS: Windows_NT x64 10.0.10363
+    dialog = """Version: 1.0 \n Commit: fa35902dcd98d85f7400ac297a9f61a7200c5803 \n Date: 2020-07-10:12:00:00 \n Python: 3.9.1 \n OS: Windows_NT x64 10.0.10363
             """
     messagebox.showinfo("About", dialog)
 
@@ -358,7 +366,7 @@ b7.place(x=50, y=260)
 
 consolelabel = ttk.Label(TAB1, text="Console:")
 consolelabel.place(x=220, y=17)
-consoleclearbutton = ttk.Button(TAB1, text="clear", width=4.5, command=lambda:clearText())
+consoleclearbutton = ttk.Button(TAB1, text="clear", width=4.25, command=lambda:clearText())
 consoleclearbutton.place(x=622, y=6)
 
 textBox = tk.Text(TAB1, height=16, width=55, background='black', foreground='lawn green')
@@ -441,8 +449,8 @@ tab3enforcebutton.place(x=20, y=280)
 menubar = tk.Menu(window)
 
 filemenu = tk.Menu(menubar, tearoff=0)
-filemenu.add_command(label="Open", underline=1, command=lambda:openFile())
-filemenu.add_command(label="Save", underline=0, command=lambda:save())
+filemenu.add_command(label="Open", underline=1, accelerator='Ctrl+O', command=lambda:openFile())
+filemenu.add_command(label="Save", underline=0, accelerator='Ctrl+S', command=lambda:save())
 filemenu.add_separator()
 filemenu.add_command(label="Exit", underline=0, command=lambda:window.destroy())
 menubar.add_cascade(label="File", menu=filemenu, underline=0)
@@ -450,17 +458,16 @@ menubar.add_cascade(label="File", menu=filemenu, underline=0)
 # create more pulldown menus
 editmenu = tk.Menu(menubar, tearoff=0)
 #editmenu.add_command(label="Cut")
-editmenu.add_command(label="Clear", underline=1, command=lambda:clearText())
+editmenu.add_command(label="Clear", underline=1, accelerator="Ctrl+C", command=lambda:clearText())
 #editmenu.add_command(label="Paste")
 menubar.add_cascade(label="Edit", menu=editmenu, underline=0)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
-helpmenu.add_command(label="About", underline=0, command=lambda:aboutDialog())
+helpmenu.add_command(label="About", underline=0, accelerator='F1', command=lambda:aboutDialog())
 menubar.add_cascade(label="Help", menu=helpmenu, underline=0)
 
-# display the menu
+
 window.config(menu=menubar)
-#Calling Main()
 window.mainloop()
 
 
