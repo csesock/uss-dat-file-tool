@@ -29,11 +29,18 @@ dirp = os.path.dirname(__file__)
 photo = PhotoImage(file="assets\\Favicon.png")
 window.iconphoto(False, photo)
 
+window.bind('1', lambda event: singleRecordScan())
+window.bind('2', lambda event: scanAllRecordsVerbose())
+window.bind('3', lambda event: printSingleRecord())
+window.bind('4', lambda event: fixOfficeRegionZoneFields())
+window.bind('5', lambda event: missingMeters())
+window.bind('6', lambda event: printMeterType())
+window.bind('7', lambda event: checkMalformedLatLong())
 
 
 # Program functions
 
-def singleRecordScan():
+def singleRecordScan(event=None):
     answer = simpledialog.askstring("Enter Record", "Enter the record type to search:",
                                 parent=window)
     if answer == None:
@@ -288,6 +295,8 @@ def save():
     with open(export_filename, 'w') as openfile:
         text = textBox.get('1.0', 'end')
         openfile.write(text)
+    textBox.insert("end", "\n")
+    textBox.insert("end", "Console data successfully exported.")
 
 def openFile():
     filename = tk.filedialog.askopenfilename(title="Import File")
