@@ -11,17 +11,16 @@ Current features of this tool include:
 - [x] Print Office-Region-Zone fields for debugging
 - [x] Check for malformed lat/long data
 - [x] Perform full scans of download files
-
+- [x] Graphical user interface for ease-of-use
 
 Future improvements include:
 - [ ] Modifying download files safely from the command line
 - [ ] Standalone scripts for each operation included
-- [ ] Dependency-free graphical user interface for the tool
 
 ## User Interface
 An easy-to-use interface for the tool is currently in development, which requires no external libraries.
 
-![GUI](https://imgur.com/zqnQJTL.png)
+![GUI](https://imgur.com/F9JWlnC.png)
 
 ## Dependencies
 There are two included versions of the tool in the repo, one with third-party library dependencies and one without. The actively developed version is the one with dependencies, while the standalone version gets features added after they've been thoroughly tested.
