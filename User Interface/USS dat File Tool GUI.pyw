@@ -25,12 +25,16 @@ download_filename = 'download.dat'
 window = tk.Tk()
 s = ttk.Style()
 s.theme_use('clam')
-window.title("USS dat File Tool v1.0")
+window.title("USS dat File Tool v1.0.1")
 window.resizable(False, False)
-window.geometry('700x370')
+
+height = window.winfo_screenheight()/4
+width = window.winfo_screenwidth()/4
+window.geometry('700x370+300+250')
+window.geometry('700x370+%d+%d' %(width, height))
 
 dirp = os.path.dirname(__file__)
-photo = PhotoImage(file="assets\\Favicon.png")
+photo = PhotoImage(file="assets\\IconSmall.png")
 window.iconphoto(False, photo)
 
 window.bind('1', lambda event: singleRecordScan())
@@ -40,7 +44,6 @@ window.bind('4', lambda event: fixOfficeRegionZoneFields())
 window.bind('5', lambda event: missingMeters())
 window.bind('6', lambda event: printMeterType())
 window.bind('7', lambda event: checkMalformedLatLong())
-
 
 # Program functions
 
@@ -134,14 +137,14 @@ def scanAllRecordsVerbose(event=None):
             textBox.insert(counter, "File scan successful")
             counter+=1
             textBox.insert(counter, "\n")
-            textBox.insert(counter, "--------------------")
+            textBox.insert(counter, "--------------------------")
             counter+=1
             textBox.insert(counter, "\n")
             for record in all_records:
-                textBox.insert(counter, str(record) + ". . . :\t" + f"{all_records[record]:,d}")
+                textBox.insert(counter, str(record) + ". . . :\t" + f"{all_records[record]:,d} " + "\t\t |")
                 counter+=1
                 textBox.insert(counter, "\n")
-            textBox.insert(counter, "--------------------")
+            textBox.insert(counter, "--------------------------")
     except FileNotFoundError:
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
 
@@ -262,7 +265,9 @@ def checkLatLongSigns(lat_data, long_data):
     else:
         return False
 
+########################
 ### Helper Functions ###
+########################
 
 def getCustomerRecordLength():
     try:
@@ -296,24 +301,37 @@ def save():
     with open(export_filename, 'w') as openfile:
         text = textBox.get('1.0', 'end')
         openfile.write(text)
-    textBox.insert("end", "\n")
-    textBox.insert("end", "Console data successfully exported.")
+    #textBox.insert("end", "\n")
+    #textBox.insert("end", "Console data successfully exported.")
+    messagebox.showinfo("Export", "Data successfully exported!")
 
 def openFile():
     filename = tk.filedialog.askopenfilename(title="Import File")
     if tab3enforcebutton.instate(['selected']):
         if not filename.lower().endswith(('.dat', '.DAT', '.hdl')):
-            textBox.delete(1.0, "end")
-            textBox.insert(1.0, "ERROR: FILETYPE INCORRECT")
-            textBox.insert(2.0, "\n")
-            textBox.insert(2.0, "FILE DOES NOT MEET INTEGRITY CHECK")
+##            textBox.delete(1.0, "end")
+##            textBox.insert(1.0, "ERROR: FILETYPE INCORRECT")
+##            textBox.insert(2.0, "\n")
+##            textBox.insert(2.0, "FILE DOES NOT MEET INTEGRITY CHECK")
+            messagebox.showinfo("ERROR", "Incompatible filetype. Please select another file.")
             return
     global download_filename
     download_filename = filename
+    text.set(os.path.basename(download_filename))
        
+def resizeWindow():
+    width = window.winfo_screenwidth()
+    height = window.winfo_screenheight()
+    window.geometry('%dx%d+0+0' %(width, height))
+
+def setResizable():
+    window.resizable(True, True)
+
+def resetWindow():
+    window.geometry('700x370+300+250')
 
 def aboutDialog():
-    dialog = """Version: 1.0 \n Commit: fa35902dcd98d85f7400ac297a9f61a7200c5803 \n Date: 2020-07-10:12:00:00 \n Python: 3.9.1 \n OS: Windows_NT x64 10.0.10363
+    dialog = """ Author: Chris Sesock \n Version: 1.0 \n Commit: aebb993a87843e0ffc8b5fc2f32813638cc9be90 \n Date: 2020-07-10:12:00:00 \n Python: 3.9.1 \n OS: Windows_NT x64 10.0.10363
             """
     messagebox.showinfo("About", dialog)
 
@@ -364,8 +382,17 @@ b7 = ttk.Button(TAB1, text="Malformed Lat/Long", command=lambda:checkMalformedLa
 b7.place(x=50, y=260)
 
 
-consolelabel = ttk.Label(TAB1, text="Console:")
-consolelabel.place(x=220, y=17)
+##consolelabel = ttk.Label(TAB1, text="Console")
+##consolelabel.place(x=220, y=0)
+currentlabel = ttk.Label(TAB1, text="Current file: ")
+currentlabel.place(x=220, y=20)
+
+text = tk.StringVar()
+text.set(download_filename)
+label = ttk.Label(TAB1, textvariable=text)
+label.place(x=290, y=20)
+
+
 consoleclearbutton = ttk.Button(TAB1, text="clear", width=4.25, command=lambda:clearText())
 consoleclearbutton.place(x=622, y=6)
 
@@ -439,8 +466,9 @@ tab3exportinput.insert(1.0, os.getcwd())
 tab3exportbutton = ttk.Button(TAB3, text="Export... ", command=lambda:save())
 tab3exportbutton.place(x=515, y=135)
 
-tab3enforcebutton = ttk.Checkbutton(TAB3, text="Enforce referential integrity")
+tab3enforcebutton = ttk.Checkbutton(TAB3, text="Enforce file integrity (recommended)")
 tab3enforcebutton.place(x=20, y=280)
+tab3enforcebutton.state(['selected'])
 #tab3cleardatabutton = ttk.Checkbutton(TAB3, text="Clear data")
 #tab3cleardatabutton.place(x=20, y=170)
 
@@ -449,21 +477,30 @@ tab3enforcebutton.place(x=20, y=280)
 menubar = tk.Menu(window)
 
 filemenu = tk.Menu(menubar, tearoff=0)
-filemenu.add_command(label="Open", underline=1, accelerator='Ctrl+O', command=lambda:openFile())
+filemenu.add_command(label="Open...", underline=1, accelerator='Ctrl+O', command=lambda:openFile())
 filemenu.add_command(label="Save", underline=0, accelerator='Ctrl+S', command=lambda:save())
 filemenu.add_separator()
-filemenu.add_command(label="Exit", underline=0, command=lambda:window.destroy())
+filemenu.add_command(label="Exit", underline=0, accelerator='Alt+F4', command=lambda:window.destroy())
 menubar.add_cascade(label="File", menu=filemenu, underline=0)
 
 # create more pulldown menus
 editmenu = tk.Menu(menubar, tearoff=0)
 #editmenu.add_command(label="Cut")
-editmenu.add_command(label="Clear", underline=1, accelerator="Ctrl+C", command=lambda:clearText())
+editmenu.add_command(label="Clear Console", underline=1, accelerator="Ctrl+C", command=lambda:clearText())
 #editmenu.add_command(label="Paste")
+editmenu.add_separator()
+editmenu.add_command(label="Undo", underline=1, accelerator="Ctrl+U")
+editmenu.add_command(label="Redo", underline=1, accelerator="Ctrl+R")
 menubar.add_cascade(label="Edit", menu=editmenu, underline=0)
 
+windowmenu = tk.Menu(menubar, tearoff=0)
+windowmenu.add_command(label="Set Resizable", command=lambda:setResizable())
+windowmenu.add_command(label="Full Screen", command=lambda:resizeWindow())
+windowmenu.add_command(label="Reset Window", command=lambda:resetWindow())
+menubar.add_cascade(label="Window", menu=windowmenu, underline=0)
+
 helpmenu = tk.Menu(menubar, tearoff=0)
-helpmenu.add_command(label="About", underline=0, accelerator='F1', command=lambda:aboutDialog())
+helpmenu.add_command(label="About This Tool", underline=0, accelerator='F1', command=lambda:aboutDialog())
 menubar.add_cascade(label="Help", menu=helpmenu, underline=0)
 
 
