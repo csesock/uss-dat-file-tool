@@ -6,6 +6,7 @@ import sys, os, re, time
 from datetime import datetime
 from tkinter.filedialog import asksaveasfile
 from tkinter import messagebox
+from collections import deque
 
 # Regular expression patterns
 record_pattern = re.compile('[a-z][0-9]*\s*')
@@ -14,6 +15,7 @@ empty2_pattern = re.compile('[^\S\r\n]{2,}')
 lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
 
 missing_meter_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + '.txt'
+download_filename = 'download.dat'
 
 # Initial window setup
 window = tk.Tk()
@@ -27,6 +29,8 @@ dirp = os.path.dirname(__file__)
 photo = PhotoImage(file="assets\\Favicon.png")
 window.iconphoto(False, photo)
 
+
+
 # Program functions
 
 def singleRecordScan():
@@ -37,7 +41,7 @@ def singleRecordScan():
     answer = answer.upper()
     counter = 0
     try:
-        with open('download.dat', 'r') as openfile:
+        with open(download_filename, 'r') as openfile:
             for line in openfile:
                 if line.startswith(answer):
                     counter+=1
@@ -57,7 +61,7 @@ def printSingleRecord():
     record_type = record_type.upper()
     counter = 1.0
     try:
-        with open('download.dat', 'r') as openfile:
+        with open(download_filename, 'r') as openfile:
             textBox.delete(1.0, "end")
             for line in openfile:
                 if line.startswith(record_type):
@@ -69,7 +73,7 @@ def printSingleRecord():
 
 def printAllRecords():
     try:
-        with open('download.dat', 'r') as openfile:
+        with open(download_filename, 'r') as openfile:
             counter = 1
             for line in openfile:
                 textBox.insert(float(counter), line)
@@ -81,7 +85,7 @@ def printAllRecords():
 def fixOfficeRegionZoneFields():
     counter = 1.0
     try:
-        with open('download.dat', 'r') as openfile:
+        with open(download_filename, 'r') as openfile:
             for line in openfile:
                 if line.startswith('RHD'):
                     office = line[71:73]
@@ -108,7 +112,7 @@ def scanAllRecordsVerbose():
     all_records = {}
     counter = 1.0
     try:
-        with open('download.dat', 'r') as openfile:
+        with open(download_filename, 'r') as openfile:
             for line in openfile:
                 x = line[0:3]
                 if x not in all_records:
@@ -134,7 +138,7 @@ def scanAllRecordsVerbose():
 def exportMissingMeters():
     counter=0
     try:
-        with open('download.dat', 'r') as openfile:
+        with open(download_filename, 'r') as openfile:
             try:
                 with open(missing_meter_filename, 'x') as builtfile:
                     previous_line = ''
@@ -168,7 +172,7 @@ def missingMeters():
     counter = 0
     empty_pattern = re.compile('[^\S\n\t]+')
     try:
-        with open('download.dat', 'r') as openfile:
+        with open(download_filename, 'r') as openfile:
             previous_line = ''
             textBox.delete(1.0, "end")
             textBox.insert(1.0, "Attempting to find missing meters...")
@@ -183,8 +187,6 @@ def missingMeters():
                                 counter+=1
                         previous_line=line
             if counter == 0:
-                builtfile.close()
-                os.remove(missing_meter_filename)
                 textBox.insert("end", "\n")
                 textBox.insert("end", "No missing meters found.")
                 return
@@ -195,12 +197,37 @@ def missingMeters():
 ##    textBox.insert(1.0, "The operation was successful.")
 ##    textBox.insert(2.0, "\n")
 
+def printMeterType():
+    user_meter_code = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
+    if user_meter_code == None:
+        return
+    user_meter_code = user_meter_code.upper()
+    counter = 0
+    current_record = deque(maxlen=getCustomerRecordLength()+1)
+    try:
+        with open(download_filename, 'r') as openfile:
+            textBox.delete(1.0, "end")
+            for line in openfile:
+                if line.startswith('RDG'):
+                    meter_code = line[76:78] #range 77-78
+                    if int(meter_code) == int(user_meter_code):
+                        for record in current_record:
+                            if record.startswith('CUS'):
+                                textBox.insert("end", "{0} {1}".format(counter, record))
+                                counter+=1
+                current_record.append(line)
+            if counter == 0:
+                textBox.insert("end", "No meters of that type found.")
+    except FileNotFoundError:
+        textBox.insert("end", "ERROR: FILE NOT FOUND.")
+        return
+
 
 def checkMalformedLatLong():
     malformed_data = False
     counter=1
     try:
-        with open('download.dat', 'r') as openfile:
+        with open(download_filename, 'r') as openfile:
             for line in openfile:
                 if line.startswith('MTX'):
                     lat_data = line[23:40].rstrip()
@@ -229,6 +256,21 @@ def checkLatLongSigns(lat_data, long_data):
         return False
 
 
+def getCustomerRecordLength():
+    try:
+        with open(download_filename, 'r') as openfile:
+            counter = start_line = end_line = 0
+            for line in openfile:
+                counter+=1
+                if line.startswith('CUS'):
+                    start_line = counter
+                if line.startswith('RFF'):
+                    end_line = counter
+                    length = (end_line-start_line)+1
+                    return length
+    except FileNotFoundError:
+        textBox.insert("end", "ERROR: FILE NOT FOUND")        
+
 def drawCanvas():
     canvas.create_rectangle(20, 140, 120, 180, fill="red")
     canvas.create_text(70, 130, text="Projects--20%")
@@ -246,7 +288,12 @@ def save():
     with open(export_filename, 'w') as openfile:
         text = textBox.get('1.0', 'end')
         openfile.write(text)
-        
+
+def openFile():
+    filename = tk.filedialog.askopenfilename(title="Import File")
+    global download_filename
+    download_filename = filename
+       
 
 def aboutDialog():
     dialog = """Version: 0.9 \n Commit: fa35902dcd98d85f7400ac297a9f61a7200c5803 \n Date: 2020-07-09:12:00:00 \n Python: 3.9.1 \n OS: Windows_NT x64 10.0.10363
@@ -291,7 +338,7 @@ b5.place(x=50, y=180)
 
 b06 = ttk.Button(TAB1, text="6.", width=1.5)
 b06.place(x=20, y=220)
-b6 = ttk.Button(TAB1, text="Display Meter Type", width=20)
+b6 = ttk.Button(TAB1, text="Display Meter Type", command=lambda:printMeterType(), width=20)
 b6.place(x=50, y=220)
 
 b07 = ttk.Button(TAB1, text="7.", width=1.5)
@@ -366,7 +413,7 @@ tab3label2.place(x=20, y=115)
 tab3importinput = tk.Text(TAB3, width=60, height=1)
 tab3importinput.place(x=20, y=65)
 tab3importinput.insert(1.0, "C:\\Users\\Alex\\Desktop\\download.dat")
-tab3importbutton = ttk.Button(TAB3, text="Import...")
+tab3importbutton = ttk.Button(TAB3, text="Import...", command=lambda:openFile())
 tab3importbutton.place(x=515, y=60)
 
 tab3exportinput= tk.Text(TAB3, width=60, height=1)
@@ -375,7 +422,7 @@ tab3exportinput.insert(1.0, os.getcwd())
 tab3exportbutton = ttk.Button(TAB3, text="Export... ", command=lambda:save())
 tab3exportbutton.place(x=515, y=135)
 
-tab3enforcebutton = ttk.Checkbutton(TAB3, text="Enfore referential integrity")
+tab3enforcebutton = ttk.Checkbutton(TAB3, text="Enforce referential integrity")
 tab3enforcebutton.place(x=20, y=280)
 #tab3cleardatabutton = ttk.Checkbutton(TAB3, text="Clear data")
 #tab3cleardatabutton.place(x=20, y=170)
@@ -385,8 +432,8 @@ tab3enforcebutton.place(x=20, y=280)
 menubar = tk.Menu(window)
 
 filemenu = tk.Menu(menubar, tearoff=0)
-filemenu.add_command(label="Open")
-filemenu.add_command(label="Save")
+filemenu.add_command(label="Open", underline=1, command=lambda:openFile())
+filemenu.add_command(label="Save", underline=0, command=lambda:save())
 filemenu.add_separator()
 filemenu.add_command(label="Exit", underline=0, command=lambda:window.destroy())
 menubar.add_cascade(label="File", menu=filemenu, underline=0)
