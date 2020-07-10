@@ -164,6 +164,37 @@ def exportMissingMeters():
     textBox.insert(1.0, "The operation was successful.")
     textBox.insert(2.0, "\n")
 
+def missingMeters():
+    counter = 0
+    empty_pattern = re.compile('[^\S\n\t]+')
+    try:
+        with open('download.dat', 'r') as openfile:
+            previous_line = ''
+            textBox.delete(1.0, "end")
+            textBox.insert(1.0, "Attempting to find missing meters...")
+            textBox.insert(2.0, "\n")
+            for line in openfile:
+                        if line.startswith('MTR'):
+                            meter_record = line[45:57]
+                            if empty_pattern.match(meter_record):
+                                #builtfile.write(previous_line)
+                                textBox.insert("end", previous_line)
+                                textBox.insert("end", "\n")
+                                counter+=1
+                        previous_line=line
+            if counter == 0:
+                builtfile.close()
+                os.remove(missing_meter_filename)
+                textBox.insert("end", "\n")
+                textBox.insert("end", "No missing meters found.")
+                return
+    except FileNotFoundError:
+        textBox.insert("end", "ERROR: FILE NOT FOUND.")
+        return
+##    textBox.delete(1.0, "end")
+##    textBox.insert(1.0, "The operation was successful.")
+##    textBox.insert(2.0, "\n")
+
 
 def checkMalformedLatLong():
     malformed_data = False
@@ -211,8 +242,11 @@ def clearText():
     textBox.delete(1.0, "end")
 
 def save():
-    files = [('All Files', '*.*'), ('Python Files', '*.py'), ('Text Document', '*.txt')]
-    file = asksaveasfile(filetypes = files, defaultextension = files)
+    export_filename = "Export " + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + ".txt"
+    with open(export_filename, 'w') as openfile:
+        text = textBox.get('1.0', 'end')
+        openfile.write(text)
+        
 
 def aboutDialog():
     dialog = """Version: 0.9 \n Commit: fa35902dcd98d85f7400ac297a9f61a7200c5803 \n Date: 2020-07-09:12:00:00 \n Python: 3.9.1 \n OS: Windows_NT x64 10.0.10363
@@ -231,39 +265,39 @@ TAB_CONTROL.add(TAB1, text=' Basic Operations Center ')
 
 # Tab 1 Widgets
 b01 = ttk.Button(TAB1, text="1.", width=1.5)
-b01.place(x=10, y=20)
-b1 = ttk.Button(TAB1, text="Single Record Scan", command=lambda:singleRecordScan())
-b1.place(x=40, y=20)
+b01.place(x=20, y=20)
+b1 = ttk.Button(TAB1, text="Single Record Scan", command=lambda:singleRecordScan(), width=20)
+b1.place(x=50, y=20)
 
 b02 = ttk.Button(TAB1, text="2.", width=1.5)
-b02.place(x=10, y=60)
-b2 = ttk.Button(TAB1, text="Full Record Scan", command=lambda:scanAllRecordsVerbose())
-b2.place(x=40, y=60)
+b02.place(x=20, y=60)
+b2 = ttk.Button(TAB1, text="Full Record Scan", command=lambda:scanAllRecordsVerbose(), width=20)
+b2.place(x=50, y=60)
 
 b03 = ttk.Button(TAB1, text="3.", width=1.5)
-b03.place(x=10, y=100)
-b3 = ttk.Button(TAB1, text="Print Single Record", command=lambda:printSingleRecord())
-b3.place(x=40, y=100)
+b03.place(x=20, y=100)
+b3 = ttk.Button(TAB1, text="Display Record Type", command=lambda:printSingleRecord(), width=20)
+b3.place(x=50, y=100)
 
 b04 = ttk.Button(TAB1, text="4.", width=1.5)
-b04.place(x=10, y=140)
-b4 = ttk.Button(TAB1, text="Print Office-Region-Zone", command=lambda:fixOfficeRegionZoneFields())
-b4.place(x=40, y=140)
+b04.place(x=20, y=140)
+b4 = ttk.Button(TAB1, text="Office-Region-Zone", command=lambda:fixOfficeRegionZoneFields(), width=20)
+b4.place(x=50, y=140)
 
 b05 = ttk.Button(TAB1, text="5.", width=1.5)
-b05.place(x=10, y=180)
-b5 = ttk.Button(TAB1, text="Export Missing Meters", command=lambda:exportMissingMeters())
-b5.place(x=40, y=180)
+b05.place(x=20, y=180)
+b5 = ttk.Button(TAB1, text="Missing Meters", command=lambda:missingMeters(), width=20)
+b5.place(x=50, y=180)
 
 b06 = ttk.Button(TAB1, text="6.", width=1.5)
-b06.place(x=10, y=220)
-b6 = ttk.Button(TAB1, text="Export Meter Type")
-b6.place(x=40, y=220)
+b06.place(x=20, y=220)
+b6 = ttk.Button(TAB1, text="Display Meter Type", width=20)
+b6.place(x=50, y=220)
 
 b07 = ttk.Button(TAB1, text="7.", width=1.5)
-b07.place(x=10, y=260)
-b7 = ttk.Button(TAB1, text="Check Malformed Lat/Long", command=lambda:checkMalformedLatLong())
-b7.place(x=40, y=260)
+b07.place(x=20, y=260)
+b7 = ttk.Button(TAB1, text="Malformed Lat/Long", command=lambda:checkMalformedLatLong(), width=20)
+b7.place(x=50, y=260)
 
 
 consolelabel = ttk.Label(TAB1, text="Console:")
@@ -324,23 +358,25 @@ TAB_CONTROL.add(TAB3, text=" Import/Export ")
 TAB_CONTROL.pack(expand=1, fill="both")
 
 #Tab 3 Widgets
-tab3label = ttk.Label(TAB3, text="Import/Export data:")
+tab3label = ttk.Label(TAB3, text="Import data from download file:")
 tab3label.place(x=20, y=40)
+tab3label2 = ttk.Label(TAB3, text="Export current console data:")
+tab3label2.place(x=20, y=115)
 
-tab3importinput = tk.Text(TAB3, width=40, height=1)
+tab3importinput = tk.Text(TAB3, width=60, height=1)
 tab3importinput.place(x=20, y=65)
 tab3importinput.insert(1.0, "C:\\Users\\Alex\\Desktop\\download.dat")
 tab3importbutton = ttk.Button(TAB3, text="Import...")
-tab3importbutton.place(x=350, y=60)
+tab3importbutton.place(x=515, y=60)
 
-tab3exportinput= tk.Text(TAB3, width=40, height=1)
-tab3exportinput.place(x=20, y=110)
-tab3exportinput.insert(1.0, "C:\\Users\\Alex\\Desktop")
+tab3exportinput= tk.Text(TAB3, width=60, height=1)
+tab3exportinput.place(x=20, y=140)
+tab3exportinput.insert(1.0, os.getcwd())
 tab3exportbutton = ttk.Button(TAB3, text="Export... ", command=lambda:save())
-tab3exportbutton.place(x=350, y=105)
+tab3exportbutton.place(x=515, y=135)
 
 tab3enforcebutton = ttk.Checkbutton(TAB3, text="Enfore referential integrity")
-tab3enforcebutton.place(x=20, y=150)
+tab3enforcebutton.place(x=20, y=280)
 #tab3cleardatabutton = ttk.Checkbutton(TAB3, text="Clear data")
 #tab3cleardatabutton.place(x=20, y=170)
 
