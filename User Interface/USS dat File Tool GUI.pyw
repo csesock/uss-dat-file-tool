@@ -26,7 +26,8 @@ window = tk.Tk()
 s = ttk.Style()
 s.theme_use('clam')
 window.title("USS dat File Tool v1.0.1")
-window.resizable(False, False)
+resizable = False
+window.resizable(resizable, resizable)
 
 height = window.winfo_screenheight()/4
 width = window.winfo_screenwidth()/4
@@ -37,6 +38,7 @@ dirp = os.path.dirname(__file__)
 photo = PhotoImage(file="assets\\IconSmall.png")
 window.iconphoto(False, photo)
 
+#keypress binds
 window.bind('1', lambda event: singleRecordScan())
 window.bind('2', lambda event: scanAllRecordsVerbose())
 window.bind('3', lambda event: printSingleRecord())
@@ -44,6 +46,14 @@ window.bind('4', lambda event: fixOfficeRegionZoneFields())
 window.bind('5', lambda event: missingMeters())
 window.bind('6', lambda event: printMeterType())
 window.bind('7', lambda event: checkMalformedLatLong())
+
+# binds for menu shortcuts
+window.bind('<Control-o>', lambda event: openFile())
+window.bind('<Control-s>', lambda event: save())
+window.bind('<Control-c>', lambda event: textBox.delete(1.0, "end"))
+window.bind('<F1>', lambda event: aboutDialog())
+window.bind('<F10>', lambda event: resetWindow())
+
 
 # Program functions
 
@@ -305,6 +315,9 @@ def save():
     #textBox.insert("end", "Console data successfully exported.")
     messagebox.showinfo("Export", "Data successfully exported!")
 
+def saveAs():
+    pass
+
 def openFile():
     filename = tk.filedialog.askopenfilename(title="Import File")
     if tab3enforcebutton.instate(['selected']):
@@ -325,7 +338,10 @@ def resizeWindow():
     window.geometry('%dx%d+0+0' %(width, height))
 
 def setResizable():
-    window.resizable(True, True)
+    if resizable == False:
+        window.resizable(True, True)
+    else:
+        window.resizable(False, False)
 
 def resetWindow():
     window.geometry('700x370+300+250')
@@ -479,6 +495,7 @@ menubar = tk.Menu(window)
 filemenu = tk.Menu(menubar, tearoff=0)
 filemenu.add_command(label="Open...", underline=1, accelerator='Ctrl+O', command=lambda:openFile())
 filemenu.add_command(label="Save", underline=0, accelerator='Ctrl+S', command=lambda:save())
+filemenu.add_command(label="Save As...", underline=0, accelerator='Ctrl+Shift+S', command=lambda:saveAs())
 filemenu.add_separator()
 filemenu.add_command(label="Exit", underline=0, accelerator='Alt+F4', command=lambda:window.destroy())
 menubar.add_cascade(label="File", menu=filemenu, underline=0)
@@ -494,9 +511,10 @@ editmenu.add_command(label="Redo", underline=1, accelerator="Ctrl+R")
 menubar.add_cascade(label="Edit", menu=editmenu, underline=0)
 
 windowmenu = tk.Menu(menubar, tearoff=0)
-windowmenu.add_command(label="Set Resizable", command=lambda:setResizable())
-windowmenu.add_command(label="Full Screen", command=lambda:resizeWindow())
-windowmenu.add_command(label="Reset Window", command=lambda:resetWindow())
+windowmenu.add_command(label="Toggle Resizable", command=lambda:setResizable())
+windowmenu.add_command(label="Full Screen", accelerator="F11", command=lambda:resizeWindow())
+windowmenu.add_separator()
+windowmenu.add_command(label="Reset Window", accelerator="F10", command=lambda:resetWindow())
 menubar.add_cascade(label="Window", menu=windowmenu, underline=0)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
