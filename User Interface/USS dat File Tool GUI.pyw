@@ -315,8 +315,18 @@ def save():
     #textBox.insert("end", "Console data successfully exported.")
     messagebox.showinfo("Export", "Data successfully exported!")
 
-def saveAs():
-    pass
+def saveAs(): 
+    files = [('All Files', '*.*'),  
+             ('Python Files', '*.py'), 
+             ('Text Document', '*.txt')] 
+    file = asksaveasfile(filetypes = files, defaultextension = files)
+    with open(file, 'w') as openfile:
+        text = textBox.get('1.0', 'end')
+        openfile.write(text)
+    messagebox.showinfo("Save As", "Data successfully Saved!")
+  
+##    btn = ttk.Button(window, text = 'Save', command = lambda : save()) 
+##    btn.pack(side = TOP, pady = 20) 
 
 def openFile():
     filename = tk.filedialog.askopenfilename(title="Import File")
@@ -326,7 +336,7 @@ def openFile():
 ##            textBox.insert(1.0, "ERROR: FILETYPE INCORRECT")
 ##            textBox.insert(2.0, "\n")
 ##            textBox.insert(2.0, "FILE DOES NOT MEET INTEGRITY CHECK")
-            messagebox.showinfo("ERROR", "Incompatible filetype. Please select another file.")
+            #messagebox.showinfo("ERROR", "Incompatible filetype. Please select another file.")
             return
     global download_filename
     download_filename = filename
@@ -389,7 +399,7 @@ b5.place(x=50, y=180)
 
 b06 = ttk.Button(TAB1, text="6.", width=1.5)
 b06.place(x=20, y=220)
-b6 = ttk.Button(TAB1, text="Display Meter Type", command=lambda:printMeterType(), width=20)
+b6 = ttk.Button(TAB1, text="Display Read Type", command=lambda:printMeterType(), width=20)
 b6.place(x=50, y=220)
 
 b07 = ttk.Button(TAB1, text="7.", width=1.5)
@@ -493,33 +503,33 @@ tab3enforcebutton.state(['selected'])
 menubar = tk.Menu(window)
 
 filemenu = tk.Menu(menubar, tearoff=0)
-filemenu.add_command(label="Open...", underline=1, accelerator='Ctrl+O', command=lambda:openFile())
-filemenu.add_command(label="Save", underline=0, accelerator='Ctrl+S', command=lambda:save())
-filemenu.add_command(label="Save As...", underline=0, accelerator='Ctrl+Shift+S', command=lambda:saveAs())
+filemenu.add_command(label="Open...", accelerator='Ctrl+O', command=lambda:openFile())
+filemenu.add_command(label="Save", accelerator='Ctrl+S', command=lambda:save())
+#filemenu.add_command(label="Save As...", underline=0, accelerator='Ctrl+Shift+S', command=lambda:saveAs())
 filemenu.add_separator()
-filemenu.add_command(label="Exit", underline=0, accelerator='Alt+F4', command=lambda:window.destroy())
-menubar.add_cascade(label="File", menu=filemenu, underline=0)
+filemenu.add_command(label="Exit", accelerator='Alt+F4', command=lambda:window.destroy())
+menubar.add_cascade(label="File", menu=filemenu)
 
 # create more pulldown menus
 editmenu = tk.Menu(menubar, tearoff=0)
 #editmenu.add_command(label="Cut")
 editmenu.add_command(label="Clear Console", underline=1, accelerator="Ctrl+C", command=lambda:clearText())
 #editmenu.add_command(label="Paste")
-editmenu.add_separator()
-editmenu.add_command(label="Undo", underline=1, accelerator="Ctrl+U")
-editmenu.add_command(label="Redo", underline=1, accelerator="Ctrl+R")
-menubar.add_cascade(label="Edit", menu=editmenu, underline=0)
+#editmenu.add_separator()
+#editmenu.add_command(label="Undo", accelerator="Ctrl+U")
+#editmenu.add_command(label="Redo", accelerator="Ctrl+R")
+menubar.add_cascade(label="Edit", menu=editmenu)
 
 windowmenu = tk.Menu(menubar, tearoff=0)
-windowmenu.add_command(label="Toggle Resizable", command=lambda:setResizable())
+#windowmenu.add_command(label="Toggle Resizable", command=lambda:setResizable())
 windowmenu.add_command(label="Full Screen", accelerator="F11", command=lambda:resizeWindow())
 windowmenu.add_separator()
 windowmenu.add_command(label="Reset Window", accelerator="F10", command=lambda:resetWindow())
-menubar.add_cascade(label="Window", menu=windowmenu, underline=0)
+menubar.add_cascade(label="Window", menu=windowmenu)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
-helpmenu.add_command(label="About This Tool", underline=0, accelerator='F1', command=lambda:aboutDialog())
-menubar.add_cascade(label="Help", menu=helpmenu, underline=0)
+helpmenu.add_command(label="About This Tool", accelerator='F1', command=lambda:aboutDialog())
+menubar.add_cascade(label="Help", menu=helpmenu)
 
 
 window.config(menu=menubar)
