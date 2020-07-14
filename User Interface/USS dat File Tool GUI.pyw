@@ -18,12 +18,11 @@ download_filename = 'download.dat'
 window = tk.Tk()
 s = ttk.Style()
 s.theme_use('clam')
-window.title("USS dat File Tool v1.0.1")
+window.title("USS dat File Tool v1.0.2")
 window.resizable(False, False)
 
-height = window.winfo_screenheight()/4
-width = window.winfo_screenwidth()/4
-window.geometry('700x370+300+250')
+height = window.winfo_screenheight()/3
+width = window.winfo_screenwidth()/3
 window.geometry('700x370+%d+%d' %(width, height))
 
 try:
@@ -33,7 +32,6 @@ try:
 except:
     pass
 
-#keypress binds
 window.bind('1', lambda event: singleRecordScan())
 window.bind('2', lambda event: scanAllRecordsVerbose())
 window.bind('3', lambda event: printSingleRecord())
@@ -42,7 +40,6 @@ window.bind('5', lambda event: missingMeters())
 window.bind('6', lambda event: printMeterType())
 window.bind('7', lambda event: checkMalformedLatLong())
 
-# binds for menu shortcuts
 window.bind('<Control-o>', lambda event: openFile())
 window.bind('<Control-s>', lambda event: save())
 window.bind('<Control-c>', lambda event: textBox.delete(1.0, "end"))
@@ -83,7 +80,6 @@ def printSingleRecord(event=None):
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
         
 def fixOfficeRegionZoneFields(event=None):
-    counter = 1.0
     try:
         with open(download_filename, 'r') as openfile:
             for line in openfile:
@@ -135,7 +131,6 @@ def scanAllRecordsVerbose(event=None):
 
 def missingMeters(event=None):
     counter = 0
-    empty_pattern = re.compile('[^\S\n\t]+')
     try:
         with open(download_filename, 'r') as openfile:
             previous_line = ''
@@ -156,7 +151,6 @@ def missingMeters(event=None):
                 return
     except FileNotFoundError:
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
-        return
 
 def printMeterType(event=None):
     user_meter_code = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
@@ -183,7 +177,6 @@ def printMeterType(event=None):
                 textBox.insert("end", counter)
     except FileNotFoundError:
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
-        return
 
 def checkMalformedLatLong(event=None):
     malformed_data = False
@@ -246,8 +239,6 @@ def save():
     with open(export_filename, 'w') as openfile:
         text = textBox.get('1.0', 'end')
         openfile.write(text)
-    #textBox.insert("end", "\n")
-    #textBox.insert("end", "Console data successfully exported.")
     messagebox.showinfo("Export", "Data successfully exported!")
 
 def saveAs(): 
@@ -264,11 +255,7 @@ def openFile():
     filename = tk.filedialog.askopenfilename(title="Import File")
     if tab3enforcebutton.instate(['selected']):
         if not filename.lower().endswith(('.dat', '.DAT', '.hdl')):
-##            textBox.delete(1.0, "end")
-##            textBox.insert(1.0, "ERROR: FILETYPE INCORRECT")
-##            textBox.insert(2.0, "\n")
-##            textBox.insert(2.0, "FILE DOES NOT MEET INTEGRITY CHECK")
-            #messagebox.showinfo("ERROR", "Incompatible filetype. Please select another file.")
+            messagebox.showinfo("ERROR", "An error occured. Please select another file.")
             return
     global download_filename
     download_filename = filename
@@ -278,12 +265,6 @@ def resizeWindow():
     width = window.winfo_screenwidth()
     height = window.winfo_screenheight()
     window.geometry('%dx%d+0+0' %(width, height))
-
-def setResizable():
-    if resizable == False:
-        window.resizable(True, True)
-    else:
-        window.resizable(False, False)
 
 def resetWindow():
     window.geometry('700x370+300+250')
@@ -297,7 +278,6 @@ def aboutDialog():
 TAB_CONTROL = ttk.Notebook(window)
 
 # Tab 1
-##############
 TAB1 = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(TAB1, text=' Basic Operations Center ')
 
@@ -399,7 +379,6 @@ editmenu.add_command(label="Clear Console", underline=1, accelerator="Ctrl+C", c
 menubar.add_cascade(label="Edit", menu=editmenu)
 
 windowmenu = tk.Menu(menubar, tearoff=0)
-#windowmenu.add_command(label="Toggle Resizable", command=lambda:setResizable())
 windowmenu.add_command(label="Full Screen", accelerator="F11", command=lambda:resizeWindow())
 windowmenu.add_separator()
 windowmenu.add_command(label="Reset Window", accelerator="F10", command=lambda:resetWindow())
