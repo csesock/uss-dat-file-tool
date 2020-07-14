@@ -253,7 +253,7 @@ def saveAs():
 
 def openFile():
     filename = tk.filedialog.askopenfilename(title="Import File")
-    if tab3enforcebutton.instate(['selected']):
+    if tab2enforcebutton.instate(['selected']):
         if not filename.lower().endswith(('.dat', '.DAT', '.hdl')):
             messagebox.showinfo("ERROR", "An error occured. Please select another file.")
             return
@@ -274,7 +274,7 @@ def aboutDialog():
             """
     messagebox.showinfo("About", dialog)
 
-#Create Tab Control
+# Create Tab Control
 TAB_CONTROL = ttk.Notebook(window)
 
 # Tab 1
@@ -282,41 +282,34 @@ TAB1 = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(TAB1, text=' Basic Operations Center ')
 
 # Tab 1 Widgets
-b01 = ttk.Button(TAB1, text="1.", width=1.5)
-b01.place(x=20, y=20)
-b1 = ttk.Button(TAB1, text="Single Record Scan", command=lambda:singleRecordScan(), width=20)
-b1.place(x=50, y=20)
-
-b02 = ttk.Button(TAB1, text="2.", width=1.5)
-b02.place(x=20, y=60)
-b2 = ttk.Button(TAB1, text="Full Record Scan", command=lambda:scanAllRecordsVerbose(), width=20)
-b2.place(x=50, y=60)
-
-b03 = ttk.Button(TAB1, text="3.", width=1.5)
-b03.place(x=20, y=100)
-b3 = ttk.Button(TAB1, text="Display Record Type", command=lambda:printSingleRecord(), width=20)
-b3.place(x=50, y=100)
-
-b04 = ttk.Button(TAB1, text="4.", width=1.5)
-b04.place(x=20, y=140)
-b4 = ttk.Button(TAB1, text="Office-Region-Zone", command=lambda:fixOfficeRegionZoneFields(), width=20)
-b4.place(x=50, y=140)
-
-b05 = ttk.Button(TAB1, text="5.", width=1.5)
-b05.place(x=20, y=180)
-b5 = ttk.Button(TAB1, text="Missing Meters", command=lambda:missingMeters(), width=20)
-b5.place(x=50, y=180)
-
-b06 = ttk.Button(TAB1, text="6.", width=1.5)
-b06.place(x=20, y=220)
-b6 = ttk.Button(TAB1, text="Display Read Type", command=lambda:printMeterType(), width=20)
-b6.place(x=50, y=220)
-
-b07 = ttk.Button(TAB1, text="7.", width=1.5)
-b07.place(x=20, y=260)
-b7 = ttk.Button(TAB1, text="Malformed Lat/Long", command=lambda:checkMalformedLatLong(), width=20)
-b7.place(x=50, y=260)
-
+Numkey1 = ttk.Button(TAB1, text="1.", width=1.5)
+Numkey1.place(x=20, y=20)
+SingleRecordScanButton = ttk.Button(TAB1, text="Single Record Scan", command=lambda:singleRecordScan(), width=20)
+SingleRecordScanButton.place(x=50, y=20)
+Numkey2 = ttk.Button(TAB1, text="2.", width=1.5)
+Numkey2.place(x=20, y=60)
+VerboseRecordScanButton = ttk.Button(TAB1, text="Full Record Scan", command=lambda:scanAllRecordsVerbose(), width=20)
+VerboseRecordScanButton.place(x=50, y=60)
+Numkey3 = ttk.Button(TAB1, text="3.", width=1.5)
+Numkey3.place(x=20, y=100)
+PrintSingleRecordButton = ttk.Button(TAB1, text="Display Record Type", command=lambda:printSingleRecord(), width=20)
+PrintSingleRecordButton.place(x=50, y=100)
+Numkey4 = ttk.Button(TAB1, text="4.", width=1.5)
+Numkey4.place(x=20, y=140)
+OfficeRegionZoneFieldButton = ttk.Button(TAB1, text="Office-Region-Zone", command=lambda:fixOfficeRegionZoneFields(), width=20)
+OfficeRegionZoneFieldButton.place(x=50, y=140)
+Numkey5 = ttk.Button(TAB1, text="5.", width=1.5)
+Numkey5.place(x=20, y=180)
+MissingMeterButton = ttk.Button(TAB1, text="Missing Meters", command=lambda:missingMeters(), width=20)
+MissingMeterButton.place(x=50, y=180)
+Numkey6 = ttk.Button(TAB1, text="6.", width=1.5)
+Numkey6.place(x=20, y=220)
+PrintReadTypeButton = ttk.Button(TAB1, text="Display Read Type", command=lambda:printMeterType(), width=20)
+PrintReadTypeButton.place(x=50, y=220)
+Numkey7 = ttk.Button(TAB1, text="7.", width=1.5)
+Numkey7.place(x=20, y=260)
+MalformedLatLongButton = ttk.Button(TAB1, text="Malformed Lat/Long", command=lambda:checkMalformedLatLong(), width=20)
+MalformedLatLongButton.place(x=50, y=260)
 
 currentlabel = ttk.Label(TAB1, text="Current file: ")
 currentlabel.place(x=220, y=20)
@@ -336,34 +329,34 @@ textBox.insert(2.0, "\n")
 textBox.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 textBox.insert(3.0, "\n")
 
-# Tab 3
-TAB3 = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(TAB3, text=" Import/Export ")
+# Tab 2
+tab2 = ttk.Frame(TAB_CONTROL)
+TAB_CONTROL.add(tab2, text=" Import/Export ")
 TAB_CONTROL.pack(expand=1, fill="both")
 
-#Tab 3 Widgets
-tab3label = ttk.Label(TAB3, text="Import data from download file:")
-tab3label.place(x=20, y=40)
-tab3label2 = ttk.Label(TAB3, text="Export current console data:")
-tab3label2.place(x=20, y=115)
+#Tab 2 Widgets
+tab2label = ttk.Label(tab2, text="Import data from download file:")
+tab2label.place(x=20, y=40)
+tab2label2 = ttk.Label(tab2, text="Export current console data:")
+tab2label2.place(x=20, y=115)
 
-tab3importinput = tk.Text(TAB3, width=60, height=1)
-tab3importinput.place(x=20, y=65)
-tab3importinput.insert(1.0, "C:\\Users\\Alex\\Desktop\\download.dat")
-tab3importbutton = ttk.Button(TAB3, text="Import...", command=lambda:openFile())
-tab3importbutton.place(x=515, y=60)
+tab2importinput = tk.Text(tab2, width=60, height=1)
+tab2importinput.place(x=20, y=65)
+tab2importinput.insert(1.0, "C:\\Users\\Alex\\Desktop\\download.dat")
+tab2importbutton = ttk.Button(tab2, text="Import...", command=lambda:openFile())
+tab2importbutton.place(x=515, y=60)
 
-tab3exportinput= tk.Text(TAB3, width=60, height=1)
-tab3exportinput.place(x=20, y=140)
-tab3exportinput.insert(1.0, os.getcwd())
-tab3exportbutton = ttk.Button(TAB3, text="Export... ", command=lambda:save())
-tab3exportbutton.place(x=515, y=135)
+tab2exportinput= tk.Text(tab2, width=60, height=1)
+tab2exportinput.place(x=20, y=140)
+tab2exportinput.insert(1.0, os.getcwd())
+tab2exportbutton = ttk.Button(tab2, text="Export... ", command=lambda:save())
+tab2exportbutton.place(x=515, y=135)
 
-tab3enforcebutton = ttk.Checkbutton(TAB3, text="Enforce file integrity (recommended)")
-tab3enforcebutton.place(x=20, y=280)
-tab3enforcebutton.state(['selected'])
+tab2enforcebutton = ttk.Checkbutton(tab2, text="Enforce file integrity (recommended)")
+tab2enforcebutton.place(x=20, y=280)
+tab2enforcebutton.state(['selected'])
 
-# menu
+# Menu
 menubar = tk.Menu(window)
 
 filemenu = tk.Menu(menubar, tearoff=0)
@@ -388,5 +381,6 @@ helpmenu = tk.Menu(menubar, tearoff=0)
 helpmenu.add_command(label="About This Tool", accelerator='F1', command=lambda:aboutDialog())
 menubar.add_cascade(label="Help", menu=helpmenu)
 
+# Main Window
 window.config(menu=menubar)
 window.mainloop()
