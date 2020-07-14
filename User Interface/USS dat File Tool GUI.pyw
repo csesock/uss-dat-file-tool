@@ -1,7 +1,3 @@
-# USS dat File Tool with GUI
-# Authored by Chris Sesock
-#
-
 import tkinter as tk
 from tkinter import ttk
 from tkinter import simpledialog
@@ -12,7 +8,6 @@ from tkinter.filedialog import asksaveasfile
 from tkinter import messagebox
 from collections import deque
 
-# Regular expression patterns
 record_pattern = re.compile('[a-z][0-9]*\s*')
 empty_pattern = re.compile('[^\S\n\t]+')
 empty2_pattern = re.compile('[^\S\r\n]{2,}')
@@ -21,22 +16,23 @@ lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
 missing_meter_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + '.txt'
 download_filename = 'download.dat'
 
-# Initial window setup
 window = tk.Tk()
 s = ttk.Style()
 s.theme_use('clam')
 window.title("USS dat File Tool v1.0.1")
-resizable = False
-window.resizable(resizable, resizable)
+window.resizable(False, False)
 
 height = window.winfo_screenheight()/4
 width = window.winfo_screenwidth()/4
 window.geometry('700x370+300+250')
 window.geometry('700x370+%d+%d' %(width, height))
 
-dirp = os.path.dirname(__file__)
-photo = PhotoImage(file="assets\\IconSmall.png")
-window.iconphoto(False, photo)
+try:
+    dirp = os.path.dirname(__file__)
+    photo = PhotoImage(file="assets\\IconSmall.png")
+    window.iconphoto(False, photo)
+except:
+    pass
 
 #keypress binds
 window.bind('1', lambda event: singleRecordScan())
@@ -54,12 +50,8 @@ window.bind('<Control-c>', lambda event: textBox.delete(1.0, "end"))
 window.bind('<F1>', lambda event: aboutDialog())
 window.bind('<F10>', lambda event: resetWindow())
 
-
-# Program functions
-
 def singleRecordScan(event=None):
-    answer = simpledialog.askstring("Enter Record", "Enter the record type to search:",
-                                parent=window)
+    answer = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
     if answer == None:
         return
     answer = answer.upper()
@@ -71,15 +63,12 @@ def singleRecordScan(event=None):
                     counter+=1
     except FileNotFoundError:
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
-
     textBox.delete(1.0, "end")
     textBox.insert("end", f"{counter:,d} " + answer + " records found")
     textBox.insert("end", "\n")
 
-
 def printSingleRecord(event=None):
-    record_type = simpledialog.askstring("Enter Record", "Enter the record type to search:",
-                                parent=window)
+    record_type = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
     if record_type == None:
         return
     record_type = record_type.upper()
@@ -93,18 +82,6 @@ def printSingleRecord(event=None):
                     counter+=1
     except FileNotFoundError:
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
-
-
-def printAllRecords(event=None):
-    try:
-        with open(download_filename, 'r') as openfile:
-            counter = 1
-            for line in openfile:
-                textBox.insert(float(counter), line)
-                counter+=1
-    except FileNotFoundError:
-        textBox.insert("end", "ERROR: FILE NOT FOUND.")
-
         
 def fixOfficeRegionZoneFields(event=None):
     counter = 1.0
@@ -130,7 +107,6 @@ def fixOfficeRegionZoneFields(event=None):
                     break
     except FileNotFoundError:
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
-
         
 def scanAllRecordsVerbose(event=None):
     all_records = {}
@@ -157,40 +133,6 @@ def scanAllRecordsVerbose(event=None):
             textBox.insert(counter, "--------------------------")
     except FileNotFoundError:
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
-
-
-def exportMissingMeters(event=None):
-    counter=0
-    try:
-        with open(download_filename, 'r') as openfile:
-            try:
-                with open(missing_meter_filename, 'x') as builtfile:
-                    previous_line = ''
-                    textBox.delete(1.0, "end")
-                    textBox.insert(1.0, "Attempting to export missing meters...")
-                    textBox.insert("end", "\n")
-                    for line in openfile:
-                        if line.startswith('MTR'):
-                            meter_record = line[45:57]
-                            if empty_pattern.match(meter_record):
-                                builtfile.write(previous_line)
-                                counter+=1
-                        previous_line=line
-                    if counter == 0:
-                        builtfile.close()
-                        os.remove(missing_meter_filename)
-                        textBox.insert("end", "\n")
-                        textBox.insert("end", "No missing meters found.")
-                        return
-            except FileExistsError:
-                textBox.insert("end", "ERROR: FILE ALREADY EXISTS")
-                return
-    except FileNotFoundError:
-        textBox.insert("end", "ERROR: FILE NOT FOUND.")
-        return
-    textBox.delete(1.0, "end")
-    textBox.insert(1.0, "The operation was successful.")
-    textBox.insert(2.0, "\n")
 
 def missingMeters(event=None):
     counter = 0
@@ -229,7 +171,7 @@ def printMeterType(event=None):
             textBox.delete(1.0, "end")
             for line in openfile:
                 if line.startswith('RDG'):
-                    meter_code = line[76:78] #range 77-78
+                    meter_code = line[76:78]
                     if int(meter_code) == int(user_meter_code):
                         for record in current_record:
                             if record.startswith('CUS'):
@@ -238,10 +180,11 @@ def printMeterType(event=None):
                 current_record.append(line)
             if counter == 0:
                 textBox.insert("end", "No meters of that type found.")
+            elif counter != 0:
+                textBox.insert("end", counter)
     except FileNotFoundError:
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
         return
-
 
 def checkMalformedLatLong(event=None):
     malformed_data = False
@@ -252,20 +195,26 @@ def checkMalformedLatLong(event=None):
                 if line.startswith('MTX'):
                     lat_data = line[23:40].rstrip()
                     long_data = line[40:57].rstrip()
-                    if not lat_long_pattern.match(lat_data):
-                        malformed_data = True 
-                        textBox.insert(1.0, "Malformed lat data at line:" + counter + "Value:" + lat_data)
-                    elif not lat_long_pattern.match(long_data):
+                    if not lat_long_pattern.match(lat_data) and not lat_long_pattern.match(long_data):
                         malformed_data = True
-                        textBox.insert("end", "Malformed long data at line:" + counter + "Value:" + long_data)
+                        textBox.delete(1.0, "end")
+                        textBox.insert(1.0, "Malformed lat/long data at line: " + str(counter))
+                        return
+##                    elif not lat_long_pattern.match(long_data):
+##                        malformed_data = True
+##                        textBox.delete(1.0, "end")
+##                        textBox.insert(1.0, "Malformed long data at line: " + str(counter) + "\tValue: " + long_data)
+##                        return
                 counter+=1
-            if malformed_data == True:
-                textBox.insert("end", "The above data is malformed in some way.")
-            else:
-                if checkLatLongSigns(float(lat_data), float(long_data)) == False:
-                    textBox.insert("end", "The data is not malformed.")
-                else:
-                    textBox.insert("end", "The data has malformed sign values.")
+            textBox.insert("end", "\n")
+            textBox.insert("end", "Lat/Long data is not malformed.")
+##            if malformed_data == True:
+##                textBox.insert("end", "The above data is malformed in some way.")
+##            else:
+##                if checkLatLongSigns(float(lat_data), float(long_data)) == False:
+##                    textBox.insert("end", "The data is not malformed.")
+##                else:
+##                    textBox.insert("end", "The data has malformed sign values.")
     except FileNotFoundError:
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
 
@@ -274,10 +223,6 @@ def checkLatLongSigns(lat_data, long_data):
         return True
     else:
         return False
-
-########################
-### Helper Functions ###
-########################
 
 def getCustomerRecordLength():
     try:
@@ -293,15 +238,6 @@ def getCustomerRecordLength():
                     return length
     except FileNotFoundError:
         textBox.insert("end", "ERROR: FILE NOT FOUND")        
-
-def drawCanvas():
-    canvas.create_rectangle(20, 140, 120, 180, fill="red")
-    canvas.create_text(70, 130, text="Projects--20%")
-    canvas.create_rectangle(140, 160, 240, 180, fill="blue")
-    canvas.create_text(190, 150, text="Quizzes--10%")
-    canvas.create_rectangle(260, 120, 360, 180, fill="green")
-    canvas.create_text(310, 110, text="Midterm--30%")
-    canvas.create_line(0, 180, 500, 180)
 
 def clearText():
     textBox.delete(1.0, "end")
@@ -324,9 +260,6 @@ def saveAs():
         text = textBox.get('1.0', 'end')
         openfile.write(text)
     messagebox.showinfo("Save As", "Data successfully Saved!")
-  
-##    btn = ttk.Button(window, text = 'Save', command = lambda : save()) 
-##    btn.pack(side = TOP, pady = 20) 
 
 def openFile():
     filename = tk.filedialog.askopenfilename(title="Import File")
@@ -360,8 +293,6 @@ def aboutDialog():
     dialog = """ Author: Chris Sesock \n Version: 1.0 \n Commit: aebb993a87843e0ffc8b5fc2f32813638cc9be90 \n Date: 2020-07-10:12:00:00 \n Python: 3.9.1 \n OS: Windows_NT x64 10.0.10363
             """
     messagebox.showinfo("About", dialog)
-
-################################################
 
 #Create Tab Control
 TAB_CONTROL = ttk.Notebook(window)
@@ -408,8 +339,6 @@ b7 = ttk.Button(TAB1, text="Malformed Lat/Long", command=lambda:checkMalformedLa
 b7.place(x=50, y=260)
 
 
-##consolelabel = ttk.Label(TAB1, text="Console")
-##consolelabel.place(x=220, y=0)
 currentlabel = ttk.Label(TAB1, text="Current file: ")
 currentlabel.place(x=220, y=20)
 
@@ -417,7 +346,6 @@ text = tk.StringVar()
 text.set(download_filename)
 label = ttk.Label(TAB1, textvariable=text)
 label.place(x=290, y=20)
-
 
 consoleclearbutton = ttk.Button(TAB1, text="clear", width=4.25, command=lambda:clearText())
 consoleclearbutton.place(x=622, y=6)
@@ -429,47 +357,7 @@ textBox.insert(2.0, "\n")
 textBox.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 textBox.insert(3.0, "\n")
 
-##scrollbar = tk.Scrollbar(window)
-###scrollbar = tk.Scrollbar(textBox)
-##scrollbar.pack(side=RIGHT, fill=Y)
-##textBox.config(yscrollcommand=scrollbar.set)
-##scrollbar.config(command=textBox.yview)
-
-# Tab 2
-##############
-##TAB2 = ttk.Frame(TAB_CONTROL)
-##TAB_CONTROL.add(TAB2, text=' Visualizations ')
-##TAB_CONTROL.pack(expand=1, fill="both")
-##
-###Tab 2 Widgets
-##tab2label = ttk.Label(TAB2, text="Data Visualization")
-##tab2label.place(x=20, y=20)
-##tab2label2 = ttk.Label(TAB2, text="Select Data to Display:")
-##tab2label2.place(x=20, y=50)
-##
-##tab2check1 = ttk.Checkbutton(TAB2, text="Customer")
-##tab2check1.place(x=30, y=80)
-##tab2check2 = ttk.Checkbutton(TAB2, text="Route")
-##tab2check2.place(x=30, y=100)
-##tab2check3 = ttk.Checkbutton(TAB2, text="Meter")
-##tab2check3.place(x=30, y=120)
-##tab2check4 = ttk.Checkbutton(TAB2, text="Radio Reads")
-##tab2check4.place(x=30, y=140)
-##tab2check4 = ttk.Checkbutton(TAB2, text="Placeholder")
-##tab2check4.place(x=30, y=160)
-##tab2check4 = ttk.Checkbutton(TAB2, text="Placeholder2")
-##tab2check4.place(x=30, y=180)
-##tab2check4 = ttk.Checkbutton(TAB2, text="Placeholder3")
-##tab2check4.place(x=30, y=200)
-##
-##redrawbutton = ttk.Button(TAB2, text="Render", command=lambda:drawCanvas())
-##redrawbutton.place(x=30, y=230)
-##
-##canvas = tk.Canvas(TAB2, width=440, height=250)
-##canvas.place(x= 210, y=30)
-
 # Tab 3
-##############
 TAB3 = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(TAB3, text=" Import/Export ")
 TAB_CONTROL.pack(expand=1, fill="both")
@@ -495,9 +383,6 @@ tab3exportbutton.place(x=515, y=135)
 tab3enforcebutton = ttk.Checkbutton(TAB3, text="Enforce file integrity (recommended)")
 tab3enforcebutton.place(x=20, y=280)
 tab3enforcebutton.state(['selected'])
-#tab3cleardatabutton = ttk.Checkbutton(TAB3, text="Clear data")
-#tab3cleardatabutton.place(x=20, y=170)
-
 
 # menu
 menubar = tk.Menu(window)
@@ -510,14 +395,8 @@ filemenu.add_separator()
 filemenu.add_command(label="Exit", accelerator='Alt+F4', command=lambda:window.destroy())
 menubar.add_cascade(label="File", menu=filemenu)
 
-# create more pulldown menus
 editmenu = tk.Menu(menubar, tearoff=0)
-#editmenu.add_command(label="Cut")
 editmenu.add_command(label="Clear Console", underline=1, accelerator="Ctrl+C", command=lambda:clearText())
-#editmenu.add_command(label="Paste")
-#editmenu.add_separator()
-#editmenu.add_command(label="Undo", accelerator="Ctrl+U")
-#editmenu.add_command(label="Redo", accelerator="Ctrl+R")
 menubar.add_cascade(label="Edit", menu=editmenu)
 
 windowmenu = tk.Menu(menubar, tearoff=0)
@@ -531,9 +410,5 @@ helpmenu = tk.Menu(menubar, tearoff=0)
 helpmenu.add_command(label="About This Tool", accelerator='F1', command=lambda:aboutDialog())
 menubar.add_cascade(label="Help", menu=helpmenu)
 
-
 window.config(menu=menubar)
 window.mainloop()
-
-
-
