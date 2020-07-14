@@ -1,12 +1,11 @@
 import tkinter as tk
-from tkinter import ttk
-from tkinter import simpledialog
 from tkinter import *
-import sys, os, re, time
-from datetime import datetime
+from tkinter import messagebox, simpledialog, ttk
 from tkinter.filedialog import asksaveasfile
-from tkinter import messagebox
+
 from collections import deque
+from datetime import datetime
+import sys, os, re, time
 
 record_pattern = re.compile('[a-z][0-9]*\s*')
 empty_pattern = re.compile('[^\S\n\t]+')
