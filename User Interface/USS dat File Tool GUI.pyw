@@ -43,7 +43,7 @@ window.bind('2', lambda event: scanAllRecordsVerbose())
 window.bind('3', lambda event: printSingleRecord())
 window.bind('4', lambda event: fixOfficeRegionZoneFields())
 window.bind('5', lambda event: missingMeters())
-window.bind('6', lambda event: printMeterType())
+window.bind('6', lambda event: printReadType())
 window.bind('7', lambda event: checkMalformedLatLong())
 
 window.bind('<Control-o>', lambda event: openFile())
@@ -57,7 +57,7 @@ window.bind('<Alt-t>', lambda event: decreaseFontSize())
 
 def singleRecordScan(event=None):
     answer = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
-    if answer == None:
+    if answer is None or answer == "":
         return
     answer = answer.upper()
     counter = 0
@@ -67,14 +67,14 @@ def singleRecordScan(event=None):
                 if line.startswith(answer):
                     counter+=1
     except FileNotFoundError:
-        textBox.insert("end", "ERROR: FILE NOT FOUND.")
+        fileNotFoundError()
     textBox.delete(1.0, "end")
     textBox.insert("end", f"{counter:,d} " + answer + " records found")
     textBox.insert("end", "\n")
 
 def printSingleRecord(event=None):
     record_type = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
-    if record_type == None:
+    if record_type is None:
         return
     record_type = record_type.upper()
     counter = 1.0
@@ -86,7 +86,7 @@ def printSingleRecord(event=None):
                     textBox.insert(counter, line + "\n")
                     counter+=1
     except FileNotFoundError:
-        textBox.insert("end", "ERROR: FILE NOT FOUND.")
+        fileNotFoundError()
         
 def fixOfficeRegionZoneFields(event=None):
     try:
@@ -110,7 +110,7 @@ def fixOfficeRegionZoneFields(event=None):
                     textBox.insert(3.0, "Zone . . . . . : \t" + str(zone))
                     break
     except FileNotFoundError:
-        textBox.insert("end", "ERROR: FILE NOT FOUND.")
+        fileNotFoundError()
         
 def scanAllRecordsVerbose(event=None):
     all_records = {}
@@ -136,7 +136,7 @@ def scanAllRecordsVerbose(event=None):
                 textBox.insert(counter, "\n")
             textBox.insert(counter, "--------------------------")
     except FileNotFoundError:
-        textBox.insert("end", "ERROR: FILE NOT FOUND.")
+        fileNotFoundError()
 
 def missingMeters(event=None):
     counter = 0
@@ -157,11 +157,11 @@ def missingMeters(event=None):
                 textBox.insert(1.0, "No missing meters found in ["+os.path.basename(download_filename)+"]")
                 return
     except FileNotFoundError:
-        textBox.insert("end", "ERROR: FILE NOT FOUND.")
+        fileNotFoundError()
 
-def printMeterType(event=None):
+def printReadType(event=None):
     user_meter_code = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
-    if user_meter_code == None:
+    if user_meter_code is None:
         return
     user_meter_code = user_meter_code.upper()
     counter = 0
@@ -183,7 +183,7 @@ def printMeterType(event=None):
             elif counter != 0:
                 textBox.insert("end", counter)
     except FileNotFoundError:
-        textBox.insert("end", "ERROR: FILE NOT FOUND.")
+        fileNotFoundError()
 
 def checkMalformedLatLong(event=None):
     malformed_data = False
@@ -215,7 +215,7 @@ def checkMalformedLatLong(event=None):
 ##                else:
 ##                    textBox.insert("end", "The data has malformed sign values.")
     except FileNotFoundError:
-        textBox.insert("end", "ERROR: FILE NOT FOUND.")
+        fileNotFoundError()
 
 def checkLatLongSigns(lat_data, long_data):
     if lat_data < 0 or long_data > 0:
@@ -236,7 +236,7 @@ def getCustomerRecordLength():
                     length = (end_line-start_line)+1
                     return length
     except FileNotFoundError:
-        textBox.insert("end", "ERROR: FILE NOT FOUND")        
+        fileNotFoundError()       
 
 def clearText():
     textBox.delete(1.0, "end")
@@ -287,6 +287,11 @@ def decreaseFontSize():
     DEFAULT_FONT_SIZE-=1
     textBoxFont.configure(size=DEFAULT_FONT_SIZE)
 
+def fileNotFoundError():
+    textBox.delete(1.0, "end")
+    textBox.insert(1.0, "ERROR: File Not Found")
+
+
 def aboutDialog():
     dialog = """ Author: Chris Sesock \n Version: 1.0 \n Commit: aebb993a87843e0ffc8b5fc2f32813638cc9be90 \n Date: 2020-07-10:12:00:00 \n Python: 3.9.1 \n OS: Windows_NT x64 10.0.10363
             """
@@ -322,7 +327,7 @@ MissingMeterButton = ttk.Button(TAB1, text="Missing Meters", command=lambda:miss
 MissingMeterButton.place(x=50, y=180)
 Numkey6 = ttk.Button(TAB1, text="6.", width=1.5)
 Numkey6.place(x=20, y=220)
-PrintReadTypeButton = ttk.Button(TAB1, text="Display Read Type", command=lambda:printMeterType(), width=20)
+PrintReadTypeButton = ttk.Button(TAB1, text="Display Read Type", command=lambda:printReadType(), width=20)
 PrintReadTypeButton.place(x=50, y=220)
 Numkey7 = ttk.Button(TAB1, text="7.", width=1.5)
 Numkey7.place(x=20, y=260)
