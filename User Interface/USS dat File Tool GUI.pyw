@@ -7,6 +7,8 @@ from collections import deque
 from datetime import datetime
 import sys, os, re, time
 
+from tkinter.font import Font
+
 record_pattern = re.compile('[a-z][0-9]*\s*')
 empty_pattern = re.compile('[^\S\n\t]+')
 empty2_pattern = re.compile('[^\S\r\n]{2,}')
@@ -18,7 +20,12 @@ download_filename = 'download.dat'
 window = tk.Tk()
 s = ttk.Style()
 s.theme_use('clam')
-window.title("USS dat File Tool v1.0.2")
+DEFAULT_FONT_SIZE = 10
+WIDTH = 63
+HEIGHT = 16
+textBoxFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
+
+window.title("USS dat File Tool v1.0.3")
 window.resizable(False, False)
 
 height = window.winfo_screenheight()/3
@@ -42,9 +49,12 @@ window.bind('7', lambda event: checkMalformedLatLong())
 
 window.bind('<Control-o>', lambda event: openFile())
 window.bind('<Control-s>', lambda event: save())
+window.bind('<Control-Alt-s>', lambda event: saveAs())
 window.bind('<Control-c>', lambda event: textBox.delete(1.0, "end"))
 window.bind('<F1>', lambda event: aboutDialog())
 window.bind('<F10>', lambda event: resetWindow())
+window.bind('<Alt-r>', lambda event: increaseFontSize())
+window.bind('<Alt-t>', lambda event: decreaseFontSize())
 
 def singleRecordScan(event=None):
     answer = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
@@ -240,21 +250,22 @@ def save():
         text = textBox.get('1.0', 'end')
         openfile.write(text)
     messagebox.showinfo("Export", "Data successfully exported!")
-
-def saveAs(): 
-    files = [('All Files', '*.*'),  
-             ('Python Files', '*.py'), 
-             ('Text Document', '*.txt')] 
-    file = asksaveasfile(filetypes = files, defaultextension = files)
-    with open(file, 'w') as openfile:
-        text = textBox.get('1.0', 'end')
-        openfile.write(text)
-    messagebox.showinfo("Save As", "Data successfully Saved!")
+ 
+def saveAs():
+    files = [('All Files', '*.*'),
+             ('Python Files', '*.py'),
+             ('Text Files', '*.txt')]
+    f = asksaveasfile(mode='w', defaultextension='.txt', filetypes=files)
+    if f is None:
+        return
+    text2save = str(textBox.get(1.0, "end"))
+    f.write(text2save)
+    f.close()
 
 def openFile():
     filename = tk.filedialog.askopenfilename(title="Import File")
     if tab2enforcebutton.instate(['selected']):
-        if not filename.lower().endswith(('.dat', '.DAT', '.hdl')):
+        if not filename.lower().endswith(('.dat', '.DAT', '.hdl', '.HDL')):
             messagebox.showinfo("ERROR", "An error occured. Please select another file.")
             return
     global download_filename
@@ -267,7 +278,17 @@ def resizeWindow():
     window.geometry('%dx%d+0+0' %(width, height))
 
 def resetWindow():
-    window.geometry('700x370+300+250')
+    window.geometry('700x370+%d+%d' %(width, height))
+
+def increaseFontSize():
+    global DEFAULT_FONT_SIZE
+    DEFAULT_FONT_SIZE+=1
+    textBoxFont.configure(size=DEFAULT_FONT_SIZE)
+
+def decreaseFontSize():
+    global DEFAULT_FONT_SIZE
+    DEFAULT_FONT_SIZE-=1
+    textBoxFont.configure(size=DEFAULT_FONT_SIZE)
 
 def aboutDialog():
     dialog = """ Author: Chris Sesock \n Version: 1.0 \n Commit: aebb993a87843e0ffc8b5fc2f32813638cc9be90 \n Date: 2020-07-10:12:00:00 \n Python: 3.9.1 \n OS: Windows_NT x64 10.0.10363
@@ -322,8 +343,12 @@ label.place(x=290, y=20)
 consoleclearbutton = ttk.Button(TAB1, text="clear", width=4.25, command=lambda:clearText())
 consoleclearbutton.place(x=622, y=6)
 
-textBox = tk.Text(TAB1, height=16, width=55, background='black', foreground='lawn green')
+## Figure out font scaling here
+#textBox = tk.Text(TAB1, height=16, width=63, background='black', foreground='lawn green')
+textBox = tk.Text(TAB1, height=HEIGHT, width=WIDTH, background='black', foreground='lawn green')
+
 textBox.place(x=220, y=40)
+textBox.configure(font=textBoxFont)
 textBox.insert(1.0, "United Systems dat File Tool")
 textBox.insert(2.0, "\n")
 textBox.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
@@ -342,7 +367,7 @@ tab2label2.place(x=20, y=115)
 
 tab2importinput = tk.Text(tab2, width=60, height=1)
 tab2importinput.place(x=20, y=65)
-tab2importinput.insert(1.0, "C:\\Users\\Alex\\Desktop\\download.dat")
+tab2importinput.insert(1.0, os.getcwd())
 tab2importbutton = ttk.Button(tab2, text="Import...", command=lambda:openFile())
 tab2importbutton.place(x=515, y=60)
 
@@ -362,14 +387,20 @@ menubar = tk.Menu(window)
 filemenu = tk.Menu(menubar, tearoff=0)
 filemenu.add_command(label="Open...", accelerator='Ctrl+O', command=lambda:openFile())
 filemenu.add_command(label="Save", accelerator='Ctrl+S', command=lambda:save())
-#filemenu.add_command(label="Save As...", underline=0, accelerator='Ctrl+Shift+S', command=lambda:saveAs())
+filemenu.add_command(label="Save As...", accelerator='Ctrl+Alt+S', command=lambda:saveAs())
 filemenu.add_separator()
 filemenu.add_command(label="Exit", accelerator='Alt+F4', command=lambda:window.destroy())
 menubar.add_cascade(label="File", menu=filemenu)
 
 editmenu = tk.Menu(menubar, tearoff=0)
-editmenu.add_command(label="Clear Console", underline=1, accelerator="Ctrl+C", command=lambda:clearText())
+editmenu.add_command(label="Clear Console", accelerator="Ctrl+C", command=lambda:clearText())
 menubar.add_cascade(label="Edit", menu=editmenu)
+
+formatmenu = tk.Menu(menubar, tearoff=0)
+formatmenu.add_command(label="Increase Font Size", accelerator="Alt+R", command=lambda:increaseFontSize())
+formatmenu.add_command(label="Decrease Font Size", accelerator="Alt+T", command=lambda:decreaseFontSize())
+formatmenu.add_separator()
+menubar.add_cascade(label="Format", menu=formatmenu)
 
 windowmenu = tk.Menu(menubar, tearoff=0)
 windowmenu.add_command(label="Full Screen", accelerator="F11", command=lambda:resizeWindow())
