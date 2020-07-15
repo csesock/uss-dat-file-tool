@@ -14,7 +14,6 @@ empty_pattern = re.compile('[^\S\n\t]+')
 empty2_pattern = re.compile('[^\S\r\n]{2,}')
 lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
 
-missing_meter_filename = 'MissingMeters ' + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + '.txt'
 download_filename = 'download.dat'
 
 window = tk.Tk()
@@ -25,7 +24,7 @@ WIDTH = 63
 HEIGHT = 16
 textBoxFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
 
-window.title("USS dat File Tool v1.0.3")
+window.title("USS dat File Tool v1.0.4")
 window.resizable(False, False)
 
 height = window.winfo_screenheight()/3
@@ -145,8 +144,6 @@ def missingMeters(event=None):
         with open(download_filename, 'r') as openfile:
             previous_line = ''
             textBox.delete(1.0, "end")
-            textBox.insert(1.0, "Attempting to find missing meters...")
-            textBox.insert(2.0, "\n")
             for line in openfile:
                         if line.startswith('MTR'):
                             meter_record = line[45:57]
@@ -156,8 +153,8 @@ def missingMeters(event=None):
                                 counter+=1
                         previous_line=line
             if counter == 0:
-                textBox.insert("end", "\n")
-                textBox.insert("end", "No missing meters found.")
+                textBox.delete(1.0, "end")
+                textBox.insert(1.0, "No missing meters found in ["+os.path.basename(download_filename)+"]")
                 return
     except FileNotFoundError:
         textBox.insert("end", "ERROR: FILE NOT FOUND.")
@@ -245,7 +242,7 @@ def clearText():
     textBox.delete(1.0, "end")
 
 def save():
-    export_filename = "Export " + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + ".txt"
+    export_filename = "DatFileToolExport " + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + ".txt"
     with open(export_filename, 'w') as openfile:
         text = textBox.get('1.0', 'end')
         openfile.write(text)
@@ -416,6 +413,6 @@ helpmenu = tk.Menu(menubar, tearoff=0)
 helpmenu.add_command(label="About This Tool", accelerator='F1', command=lambda:aboutDialog())
 menubar.add_cascade(label="Help", menu=helpmenu)
 
-# Main Window
-window.config(menu=menubar)
-window.mainloop()
+if __name__ == "__main__":
+    window.config(menu=menubar)
+    window.mainloop()
