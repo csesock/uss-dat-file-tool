@@ -336,7 +336,11 @@ currentlabel = ttk.Label(TAB1, text="Current file: ")
 currentlabel.place(x=220, y=20)
 
 text = tk.StringVar()
-text.set(download_filename)
+if os.path.isfile('download.dat'):
+    text.set('download.dat')
+else:
+    text.set('No File')
+#text.set(download_filename)
 label = ttk.Label(TAB1, textvariable=text)
 label.place(x=290, y=20)
 
