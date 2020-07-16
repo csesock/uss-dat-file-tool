@@ -205,11 +205,36 @@ def checkMalformedLatLong(event=None):
     except FileNotFoundError:
         fileNotFoundError()
 
-def checkLatLongSigns(lat_data, long_data):
-    if lat_data < 0 or long_data > 0:
-        return True
-    else:
-        return False
+def checkLatLongSigns(event=None):
+    try:
+        with open(download_filename, 'r') as openfile:
+            for line in openfile:
+                if line.startswith('MTX'):
+                    lat_data = float(line[23:40].rstrip())
+                    long_data = float(line[40:57].rstrip())
+                    if lat_data < 0 or long_data > 0:
+                        textBox2.delete(1.0, "end")
+                        textBox2.insert(1.0, "The lat/long signs are malformed.")
+                        return
+                    else:
+                        textBox2.delete(1.0, "end")
+                        textBox2.insert(1.0, "The lat/long signs are correct.")
+                        return
+    except FileNotFoundError:
+        fileNotFoundError()
+
+def checkLatLongExists(event=None):
+    try:
+        with open(download_filename, 'r') as openfile:
+            for line in openfile:
+                if line.startswith('MTX'):
+                    textBox2.delete(1.0, "end")
+                    textBox2.insert(1.0, line[23:40])
+                    textBox.insert(2.0, line[40:57])
+                    return
+    except FileNotFoundError:
+        fileNotFoundError()
+
 
 def getCustomerRecordLength():
     try:
@@ -349,6 +374,11 @@ textBox.insert(2.0, "\n")
 textBox.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 textBox.insert(3.0, "\n")
 
+# Tab 3
+tab3 = ttk.Frame(TAB_CONTROL)
+TAB_CONTROL.add(tab3, text="Lat/Long Operations")
+TAB_CONTROL.pack(expand=1, fill="both")
+
 # Tab 2
 tab2 = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tab2, text="Import/Export")
@@ -377,15 +407,12 @@ tab2exportbutton = ttk.Button(tab2, text="Export... ", command=lambda:save())
 tab2exportbutton.place(x=515, y=135)
 
 tab2enforcebutton = ttk.Checkbutton(tab2, text="Enforce file integrity (recommended)")
-tab2enforcebutton.place(x=20, y=280)
+tab2enforcebutton.place(x=20, y=270)
 tab2enforcebutton.state(['selected'])
 
 
 
-# Tab 3
-tab3 = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tab3, text="Lat/Long Data")
-TAB_CONTROL.pack(expand=1, fill="both")
+
 
 
 # Tab 3 Widgets
@@ -401,7 +428,32 @@ else:
 label2 = ttk.Label(tab3, textvariable=text2)
 label2.place(x=290, y=20)
 
+Numkey31 = ttk.Button(tab3, text="1.", width=1.5)
+Numkey31.place(x=20, y=50)
+tab3existsbutton = ttk.Button(tab3, text="Check Lat/Long Exist", width=22)
+tab3existsbutton.place(x=50, y=50)
 
+Numkey32 = ttk.Button(tab3, text="2.", width=1.5)
+Numkey32.place(x=20, y=90)
+tab3checksignbutton = ttk.Button(tab3, text="Check Lat/Long Signs", width=22, command=lambda:checkLatLongSigns())
+tab3checksignbutton.place(x=50, y=90)
+
+Numkey33 = ttk.Button(tab3, text="3.", width=1.5)
+Numkey33.place(x=20, y=130)
+tab3malformedbutton = ttk.Button(tab3, text="Check for Malformation", width=22)
+tab3malformedbutton.place(x=50, y=130)
+
+textBox2 = tk.Text(tab3, height=HEIGHT, width=WIDTH, background='black', foreground='lawn green')
+
+textBox2.place(x=220, y=40)
+textBox2.configure(font=textBoxFont)
+textBox2.insert(1.0, "United Systems dat File Tool")
+textBox2.insert(2.0, "\n")
+textBox2.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
+textBox2.insert(3.0, "\n")
+
+consoleclearbutton2 = ttk.Button(tab3, text="clear", width=4.25, command=lambda:clearText())
+consoleclearbutton2.place(x=720, y=6)
 
 # Menu
 menubar = tk.Menu(window)
