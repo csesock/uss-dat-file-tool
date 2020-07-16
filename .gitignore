@@ -1,7 +1,7 @@
-MANIFEST
+
 *.dat
 *.DAT
 *.csv
+*.CSV
 
-Dependencies/
-No Dependencies/
+/Dependencies/

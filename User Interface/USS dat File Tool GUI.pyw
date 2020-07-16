@@ -19,9 +19,9 @@ download_filename = 'download.dat'
 window = tk.Tk()
 s = ttk.Style()
 s.theme_use('clam')
-DEFAULT_FONT_SIZE = 10
-WIDTH = 63
-HEIGHT = 16
+DEFAULT_FONT_SIZE = 9
+WIDTH = 77
+HEIGHT = 16.5
 textBoxFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
 
 window.title("USS dat File Tool v1.0.4")
@@ -29,7 +29,7 @@ window.resizable(False, False)
 
 height = window.winfo_screenheight()/3
 width = window.winfo_screenwidth()/3
-window.geometry('700x370+%d+%d' %(width, height))
+window.geometry('780x350+%d+%d' %(width, height))
 
 try:
     dirp = os.path.dirname(__file__)
@@ -256,6 +256,7 @@ def openFile():
     global download_filename
     download_filename = filename
     text.set(os.path.basename(download_filename))
+    text2.set(os.path.basename(download_filename))
        
 def resizeWindow():
     width = window.winfo_screenwidth()
@@ -263,7 +264,7 @@ def resizeWindow():
     window.geometry('%dx%d+0+0' %(width, height))
 
 def resetWindow():
-    window.geometry('700x370+%d+%d' %(width, height))
+    window.geometry('800x370+%d+%d' %(width, height))
 
 def increaseFontSize():
     global DEFAULT_FONT_SIZE
@@ -281,7 +282,7 @@ def fileNotFoundError():
 
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.0 \n Commit: aebb993a87843e0ffc8b5fc2f32813638cc9be90 \n Date: 2020-07-10:12:00:00 \n Python: 3.9.1 \n OS: Windows_NT x64 10.0.10363
+    dialog = """ Author: Chris Sesock \n Version: 1.0.5 \n Commit: aebb993a87843e0ffc8b5fc2f32813638cc9be90 \n Date: 2020-07-16:2:00:00 \n Python: 3.9.1 \n OS: Windows_NT x64 10.0.10363
             """
     messagebox.showinfo("About", dialog)
 
@@ -290,37 +291,37 @@ TAB_CONTROL = ttk.Notebook(window)
 
 # Tab 1
 TAB1 = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(TAB1, text=' Basic Operations Center ')
+TAB_CONTROL.add(TAB1, text='Basic Operations Center')
 
 # Tab 1 Widgets
 Numkey1 = ttk.Button(TAB1, text="1.", width=1.5)
-Numkey1.place(x=20, y=20)
-SingleRecordScanButton = ttk.Button(TAB1, text="Single Record Scan", command=lambda:singleRecordScan(), width=20)
-SingleRecordScanButton.place(x=50, y=20)
+Numkey1.place(x=20, y=40)
+SingleRecordScanButton = ttk.Button(TAB1, text="Single Record Scan", command=lambda:singleRecordScan(), width=22)
+SingleRecordScanButton.place(x=50, y=40)
 Numkey2 = ttk.Button(TAB1, text="2.", width=1.5)
-Numkey2.place(x=20, y=60)
-VerboseRecordScanButton = ttk.Button(TAB1, text="Full Record Scan", command=lambda:scanAllRecordsVerbose(), width=20)
-VerboseRecordScanButton.place(x=50, y=60)
+Numkey2.place(x=20, y=80)
+VerboseRecordScanButton = ttk.Button(TAB1, text="Full Record Scan", command=lambda:scanAllRecordsVerbose(), width=22)
+VerboseRecordScanButton.place(x=50, y=80)
 Numkey3 = ttk.Button(TAB1, text="3.", width=1.5)
-Numkey3.place(x=20, y=100)
-PrintSingleRecordButton = ttk.Button(TAB1, text="Display Record Type", command=lambda:printSingleRecord(), width=20)
-PrintSingleRecordButton.place(x=50, y=100)
+Numkey3.place(x=20, y=120)
+PrintSingleRecordButton = ttk.Button(TAB1, text="Display Record Type", command=lambda:printSingleRecord(), width=22)
+PrintSingleRecordButton.place(x=50, y=120)
 Numkey4 = ttk.Button(TAB1, text="4.", width=1.5)
-Numkey4.place(x=20, y=140)
-OfficeRegionZoneFieldButton = ttk.Button(TAB1, text="Office-Region-Zone", command=lambda:fixOfficeRegionZoneFields(), width=20)
-OfficeRegionZoneFieldButton.place(x=50, y=140)
+Numkey4.place(x=20, y=160)
+OfficeRegionZoneFieldButton = ttk.Button(TAB1, text="Office-Region-Zone", command=lambda:fixOfficeRegionZoneFields(), width=22)
+OfficeRegionZoneFieldButton.place(x=50, y=160)
 Numkey5 = ttk.Button(TAB1, text="5.", width=1.5)
-Numkey5.place(x=20, y=180)
-MissingMeterButton = ttk.Button(TAB1, text="Missing Meters", command=lambda:missingMeters(), width=20)
-MissingMeterButton.place(x=50, y=180)
+Numkey5.place(x=20, y=200)
+MissingMeterButton = ttk.Button(TAB1, text="Missing Meters", command=lambda:missingMeters(), width=22)
+MissingMeterButton.place(x=50, y=200)
 Numkey6 = ttk.Button(TAB1, text="6.", width=1.5)
-Numkey6.place(x=20, y=220)
-PrintReadTypeButton = ttk.Button(TAB1, text="Display Read Type", command=lambda:printMeterType(), width=20)
-PrintReadTypeButton.place(x=50, y=220)
-Numkey7 = ttk.Button(TAB1, text="7.", width=1.5)
-Numkey7.place(x=20, y=260)
-MalformedLatLongButton = ttk.Button(TAB1, text="Malformed Lat/Long", command=lambda:checkMalformedLatLong(), width=20)
-MalformedLatLongButton.place(x=50, y=260)
+Numkey6.place(x=20, y=240)
+PrintReadTypeButton = ttk.Button(TAB1, text="Display Read Type", command=lambda:printMeterType(), width=22)
+PrintReadTypeButton.place(x=50, y=240)
+##Numkey7 = ttk.Button(TAB1, text="7.", width=1.5)
+##Numkey7.place(x=20, y=260)
+##MalformedLatLongButton = ttk.Button(TAB1, text="Malformed Lat/Long", command=lambda:checkMalformedLatLong(), width=20)
+##MalformedLatLongButton.place(x=50, y=260)
 
 currentlabel = ttk.Label(TAB1, text="Current file: ")
 currentlabel.place(x=220, y=20)
@@ -335,7 +336,7 @@ label = ttk.Label(TAB1, textvariable=text)
 label.place(x=290, y=20)
 
 consoleclearbutton = ttk.Button(TAB1, text="clear", width=4.25, command=lambda:clearText())
-consoleclearbutton.place(x=622, y=6)
+consoleclearbutton.place(x=720, y=6)
 
 ## Figure out font scaling here
 #textBox = tk.Text(TAB1, height=16, width=63, background='black', foreground='lawn green')
@@ -350,7 +351,7 @@ textBox.insert(3.0, "\n")
 
 # Tab 2
 tab2 = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tab2, text=" Import/Export ")
+TAB_CONTROL.add(tab2, text="Import/Export")
 TAB_CONTROL.pack(expand=1, fill="both")
 
 #Tab 2 Widgets
@@ -368,12 +369,39 @@ tab2importbutton.place(x=515, y=60)
 tab2exportinput= tk.Text(tab2, width=60, height=1)
 tab2exportinput.place(x=20, y=140)
 tab2exportinput.insert(1.0, os.getcwd())
+
+##photo = PhotoImage(file=r"assets/document.png")
+##photoimage = photo.subsample(3, 3)
+
 tab2exportbutton = ttk.Button(tab2, text="Export... ", command=lambda:save())
 tab2exportbutton.place(x=515, y=135)
 
 tab2enforcebutton = ttk.Checkbutton(tab2, text="Enforce file integrity (recommended)")
 tab2enforcebutton.place(x=20, y=280)
 tab2enforcebutton.state(['selected'])
+
+
+
+# Tab 3
+tab3 = ttk.Frame(TAB_CONTROL)
+TAB_CONTROL.add(tab3, text="Lat/Long Data")
+TAB_CONTROL.pack(expand=1, fill="both")
+
+
+# Tab 3 Widgets
+currentlabel2 = ttk.Label(tab3, text="Current file: ")
+currentlabel2.place(x=220, y=20)
+
+text2 = tk.StringVar()
+if os.path.isfile('download.dat'):
+    text2.set('download.dat')
+else:
+    text2.set('No File')
+#text.set(download_filename)
+label2 = ttk.Label(tab3, textvariable=text2)
+label2.place(x=290, y=20)
+
+
 
 # Menu
 menubar = tk.Menu(window)
@@ -390,11 +418,11 @@ editmenu = tk.Menu(menubar, tearoff=0)
 editmenu.add_command(label="Clear Console", accelerator="Ctrl+C", command=lambda:clearText())
 menubar.add_cascade(label="Edit", menu=editmenu)
 
-formatmenu = tk.Menu(menubar, tearoff=0)
-formatmenu.add_command(label="Increase Font Size", accelerator="Alt+R", command=lambda:increaseFontSize())
-formatmenu.add_command(label="Decrease Font Size", accelerator="Alt+T", command=lambda:decreaseFontSize())
-formatmenu.add_separator()
-menubar.add_cascade(label="Format", menu=formatmenu)
+##formatmenu = tk.Menu(menubar, tearoff=0)
+##formatmenu.add_command(label="Increase Font Size", accelerator="Alt+R", command=lambda:increaseFontSize())
+##formatmenu.add_command(label="Decrease Font Size", accelerator="Alt+T", command=lambda:decreaseFontSize())
+##formatmenu.add_separator()
+##menubar.add_cascade(label="Format", menu=formatmenu)
 
 windowmenu = tk.Menu(menubar, tearoff=0)
 windowmenu.add_command(label="Full Screen", accelerator="F11", command=lambda:resizeWindow())
