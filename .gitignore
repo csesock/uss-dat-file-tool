@@ -3,4 +3,5 @@ MANIFEST
 *.DAT
 *.csv
 
-/Dependencies/*
+Dependencies/
+No Dependencies/
