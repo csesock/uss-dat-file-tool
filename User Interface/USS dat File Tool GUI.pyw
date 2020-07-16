@@ -24,7 +24,7 @@ WIDTH = 77
 HEIGHT = 16.5
 textBoxFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
 
-window.title("USS dat File Tool v1.0.4")
+window.title("USS dat File Tool v1.1.0")
 window.resizable(False, False)
 
 height = window.winfo_screenheight()/3
@@ -172,7 +172,9 @@ def printMeterType(event=None):
             for line in openfile:
                 if line.startswith('RDG'):
                     meter_code = line[76:78]
-                    if int(meter_code) == int(user_meter_code):
+                    #print(meter_code)
+                    
+                    if meter_code == user_meter_code:
                         for record in current_record:
                             if record.startswith('CUS'):
                                 textBox.insert("end", "{0} {1}".format(counter, record))
@@ -251,6 +253,10 @@ def getCustomerRecordLength():
     except FileNotFoundError:
         fileNotFoundError()       
 
+def parseCsv():
+    print("HERE")
+    pass
+
 def clearText():
     textBox.delete(1.0, "end")
 
@@ -264,10 +270,13 @@ def save():
 def saveAs():
     files = [('All Files', '*.*'),
              ('Python Files', '*.py'),
-             ('Text Files', '*.txt')]
+             ('Text Files', '*.txt'),
+             ('CSV Files', '*.csv')]
     f = asksaveasfile(mode='w', defaultextension='.txt', filetypes=files)
     if f is None:
         return
+    if f.name.endswith('.csv'):
+        parseCsv()
     text2save = str(textBox.get(1.0, "end"))
     f.write(text2save)
     f.close()
@@ -307,7 +316,7 @@ def fileNotFoundError():
 
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.0.5 \n Commit: aebb993a87843e0ffc8b5fc2f32813638cc9be90 \n Date: 2020-07-16:2:00:00 \n Python: 3.9.1 \n OS: Windows_NT x64 10.0.10363
+    dialog = """ Author: Chris Sesock \n Version: 1.1.0 \n Commit: aebb993a87843e0ffc8b5fc2f32813638cc9be90 \n Date: 2020-07-16:2:00:00 \n Python: 3.9.1 \n OS: Windows_NT x64 10.0.10363
             """
     messagebox.showinfo("About", dialog)
 
@@ -452,7 +461,7 @@ textBox2.insert(2.0, "\n")
 textBox2.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 textBox2.insert(3.0, "\n")
 
-consoleclearbutton2 = ttk.Button(tab3, text="clear", width=4.25, command=lambda:clearText())
+consoleclearbutton2 = ttk.Button(tab3, text="clear", width=4.25, command=textBox2.delete(1.0, "end"))
 consoleclearbutton2.place(x=720, y=6)
 
 # Menu
