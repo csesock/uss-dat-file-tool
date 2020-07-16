@@ -43,7 +43,7 @@ window.bind('2', lambda event: scanAllRecordsVerbose())
 window.bind('3', lambda event: printSingleRecord())
 window.bind('4', lambda event: fixOfficeRegionZoneFields())
 window.bind('5', lambda event: missingMeters())
-window.bind('6', lambda event: printReadType())
+window.bind('6', lambda event: printMeterType())
 window.bind('7', lambda event: checkMalformedLatLong())
 
 window.bind('<Control-o>', lambda event: openFile())
@@ -159,7 +159,7 @@ def missingMeters(event=None):
     except FileNotFoundError:
         fileNotFoundError()
 
-def printReadType(event=None):
+def printMeterType(event=None):
     user_meter_code = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
     if user_meter_code is None:
         return
@@ -199,21 +199,9 @@ def checkMalformedLatLong(event=None):
                         textBox.delete(1.0, "end")
                         textBox.insert(1.0, "Malformed lat/long data at line: " + str(counter))
                         return
-##                    elif not lat_long_pattern.match(long_data):
-##                        malformed_data = True
-##                        textBox.delete(1.0, "end")
-##                        textBox.insert(1.0, "Malformed long data at line: " + str(counter) + "\tValue: " + long_data)
-##                        return
                 counter+=1
-            textBox.insert("end", "\n")
-            textBox.insert("end", "Lat/Long data is not malformed.")
-##            if malformed_data == True:
-##                textBox.insert("end", "The above data is malformed in some way.")
-##            else:
-##                if checkLatLongSigns(float(lat_data), float(long_data)) == False:
-##                    textBox.insert("end", "The data is not malformed.")
-##                else:
-##                    textBox.insert("end", "The data has malformed sign values.")
+            textBox.delete(1.0, "end")
+            textBox.insert(1.0, "No malformation within lat/long data detected.")
     except FileNotFoundError:
         fileNotFoundError()
 
@@ -327,7 +315,7 @@ MissingMeterButton = ttk.Button(TAB1, text="Missing Meters", command=lambda:miss
 MissingMeterButton.place(x=50, y=180)
 Numkey6 = ttk.Button(TAB1, text="6.", width=1.5)
 Numkey6.place(x=20, y=220)
-PrintReadTypeButton = ttk.Button(TAB1, text="Display Read Type", command=lambda:printReadType(), width=20)
+PrintReadTypeButton = ttk.Button(TAB1, text="Display Read Type", command=lambda:printMeterType(), width=20)
 PrintReadTypeButton.place(x=50, y=220)
 Numkey7 = ttk.Button(TAB1, text="7.", width=1.5)
 Numkey7.place(x=20, y=260)

@@ -2,3 +2,5 @@ MANIFEST
 *.dat
 *.DAT
 *.csv
+
+/Dependencies/*
