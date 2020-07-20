@@ -25,7 +25,7 @@ s.theme_use('clam')
 DEFAULT_FONT_SIZE = 9
 WIDTH = 77
 HEIGHT = 16.5
-textBoxFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
+consoleFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
 
 window.title("USS dat File Tool v1.1.0")
 window.resizable(False, False)
@@ -52,7 +52,7 @@ window.bind('7', lambda event: checkMalformedLatLong())
 window.bind('<Control-o>', lambda event: openFile())
 window.bind('<Control-s>', lambda event: save())
 window.bind('<Control-Alt-s>', lambda event: saveAs())
-window.bind('<Control-c>', lambda event: textBox.delete(1.0, "end"))
+window.bind('<Control-c>', lambda event: bocConsole.delete(1.0, "end"))
 window.bind('<F1>', lambda event: aboutDialog())
 window.bind('<F10>', lambda event: resetWindow())
 window.bind('<Alt-r>', lambda event: increaseFontSize())
@@ -71,9 +71,9 @@ def singleRecordScan(event=None):
                     counter+=1
     except FileNotFoundError:
         fileNotFoundError()
-    textBox.delete(1.0, "end")
-    textBox.insert("end", f"{counter:,d} " + answer + " records found")
-    textBox.insert("end", "\n")
+    bocConsole.delete(1.0, "end")
+    bocConsole.insert("end", f"{counter:,d} " + answer + " records found")
+    bocConsole.insert("end", "\n")
 
 def printSingleRecord(event=None):
     record_type = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
@@ -83,10 +83,10 @@ def printSingleRecord(event=None):
     counter = 1.0
     try:
         with open(download_filename, 'r') as openfile:
-            textBox.delete(1.0, "end")
+            bocConsole.delete(1.0, "end")
             for line in openfile:
                 if line.startswith(record_type):
-                    textBox.insert(counter, line + "\n")
+                    bocConsole.insert(counter, line + "\n")
                     counter+=1
     except FileNotFoundError:
         fileNotFoundError()
@@ -105,12 +105,12 @@ def fixOfficeRegionZoneFields(event=None):
                     zone = line[75:77]
                     if zone == "  ":
                         zone = "BLANK"
-                    textBox.delete(1.0, "end")
-                    textBox.insert(1.0, "Office . . . . : \t" + str(office))
-                    textBox.insert(2.0, "\n")
-                    textBox.insert(2.0, "Region . . . . : \t" + str(region))
-                    textBox.insert(3.0, "\n")
-                    textBox.insert(3.0, "Zone . . . . . : \t" + str(zone))
+                    bocConsole.delete(1.0, "end")
+                    bocConsole.insert(1.0, "Office . . . . : \t" + str(office))
+                    bocConsole.insert(2.0, "\n")
+                    bocConsole.insert(2.0, "Region . . . . : \t" + str(region))
+                    bocConsole.insert(3.0, "\n")
+                    bocConsole.insert(3.0, "Zone . . . . . : \t" + str(zone))
                     break
     except FileNotFoundError:
         fileNotFoundError()
@@ -126,18 +126,18 @@ def scanAllRecordsVerbose(event=None):
                     all_records[x] = 1
                 else:
                     all_records[x]+=1
-            textBox.delete(counter, "end")
-            textBox.insert(counter, "File scan successful")
+            bocConsole.delete(counter, "end")
+            bocConsole.insert(counter, "File scan successful")
             counter+=1
-            textBox.insert(counter, "\n")
-            textBox.insert(counter, "--------------------------")
+            bocConsole.insert(counter, "\n")
+            bocConsole.insert(counter, "--------------------------")
             counter+=1
-            textBox.insert(counter, "\n")
+            bocConsole.insert(counter, "\n")
             for record in all_records:
-                textBox.insert(counter, str(record) + ". . . :\t" + f"{all_records[record]:,d} " + "\t\t |")
+                bocConsole.insert(counter, str(record) + ". . . :\t" + f"{all_records[record]:,d} " + "\t\t |")
                 counter+=1
-                textBox.insert(counter, "\n")
-            textBox.insert(counter, "--------------------------")
+                bocConsole.insert(counter, "\n")
+            bocConsole.insert(counter, "--------------------------")
     except FileNotFoundError:
         fileNotFoundError()
 
@@ -146,18 +146,18 @@ def missingMeters(event=None):
     try:
         with open(download_filename, 'r') as openfile:
             previous_line = ''
-            textBox.delete(1.0, "end")
+            bocConsole.delete(1.0, "end")
             for line in openfile:
                         if line.startswith('MTR'):
                             meter_record = line[45:57]
                             if empty_pattern.match(meter_record):
-                                textBox.insert("end", previous_line)
-                                textBox.insert("end", "\n")
+                                bocConsole.insert("end", previous_line)
+                                bocConsole.insert("end", "\n")
                                 counter+=1
                         previous_line=line
             if counter == 0:
-                textBox.delete(1.0, "end")
-                textBox.insert(1.0, "No missing meters found in ["+os.path.basename(download_filename)+"]")
+                bocConsole.delete(1.0, "end")
+                bocConsole.insert(1.0, "No missing meters found in ["+os.path.basename(download_filename)+"]")
                 return
     except FileNotFoundError:
         fileNotFoundError()
@@ -171,20 +171,20 @@ def printReadType(event=None):
     current_record = deque(maxlen=getCustomerRecordLength()+1)
     try:
         with open(download_filename, 'r') as openfile:
-            textBox.delete(1.0, "end")
+            bocConsole.delete(1.0, "end")
             for line in openfile:
                 if line.startswith('RDG'):
                     meter_code = line[76:78]
                     if meter_code == user_meter_code:
                         for record in current_record:
                             if record.startswith('CUS'):
-                                textBox.insert("end", "{0} {1}".format(counter, record))
+                                bocConsole.insert("end", "{0} {1}".format(counter, record))
                                 counter+=1
                 current_record.append(line)
             if counter == 0:
-                textBox.insert("end", "No meters of that type found.")
+                bocConsole.insert("end", "No meters of that type found.")
             elif counter != 0:
-                textBox.insert("end", counter)
+                bocConsole.insert("end", counter)
     except FileNotFoundError:
         fileNotFoundError()
 
@@ -200,18 +200,18 @@ def printReadTypeVerbose(event=None):
                         all_reads[x] = 1
                     else:
                         all_reads[x]+=1
-            textBox.delete(counter, "end")
-            textBox.insert(counter, "File scan successful")
+            bocConsole.delete(counter, "end")
+            bocConsole.insert(counter, "File scan successful")
             counter+=1
-            textBox.insert(counter, "\n")
-            textBox.insert(counter, "--------------------------")
+            bocConsole.insert(counter, "\n")
+            bocConsole.insert(counter, "--------------------------")
             counter+=1
-            textBox.insert(counter, "\n")
+            bocConsole.insert(counter, "\n")
             for record in all_reads:
-                textBox.insert(counter, str(record) + ". . . :\t" + f"{all_reads[record]:,d} " + "\t\t |")
+                bocConsole.insert(counter, str(record) + ". . . :\t" + f"{all_reads[record]:,d} " + "\t\t |")
                 counter+=1
-                textBox.insert(counter, "\n")
-            textBox.insert(counter, "--------------------------")
+                bocConsole.insert(counter, "\n")
+            bocConsole.insert(counter, "--------------------------")
     except FileNotFoundError:
         fileNotFoundError()
 
@@ -226,12 +226,12 @@ def checkMalformedLatLong(event=None):
                     long_data = line[40:57].rstrip()
                     if not lat_long_pattern.match(lat_data) and not lat_long_pattern.match(long_data):
                         malformed_data = True
-                        textBox2.delete(1.0, "end")
-                        textBox2.insert(1.0, "Malformed lat/long data at line: " + str(counter))
+                        latLongConsole.delete(1.0, "end")
+                        latLongConsole.insert(1.0, "Malformed lat/long data at line: " + str(counter))
                         return
                 counter+=1
-            textBox2.delete(1.0, "end")
-            textBox2.insert(1.0, "No malformation within lat/long data detected.")
+            latLongConsole.delete(1.0, "end")
+            latLongConsole.insert(1.0, "No malformation within lat/long data detected.")
     except FileNotFoundError:
         fileNotFoundError2()
 
@@ -243,28 +243,28 @@ def checkLatLongSigns(event=None):
                     lat_data = float(line[23:40].rstrip())
                     long_data = float(line[40:57].rstrip())
                     if lat_data < 0 or long_data > 0:
-                        textBox2.delete(1.0, "end")
-                        textBox2.insert(1.0, "The lat/long signs are malformed.")
+                        latLongConsole.delete(1.0, "end")
+                        latLongConsole.insert(1.0, "The lat/long signs are malformed.")
                         return
                     else:
-                        textBox2.delete(1.0, "end")
-                        textBox2.insert(1.0, "The lat/long signs are correct.")
+                        latLongConsole.delete(1.0, "end")
+                        latLongConsole.insert(1.0, "The lat/long signs are correct.")
                         return
-            textBox2.delete(1.0, "end")
-            textBox2.insert(1.0, "No lat/long data detected.")
+            latLongConsole.delete(1.0, "end")
+            latLongConsole.insert(1.0, "No lat/long data detected.")
     except FileNotFoundError:
         fileNotFoundError2()
 
 def checkLatLongExists(event=None):
-    textBox2.delete(1.0, "end")
+    latLongConsole.delete(1.0, "end")
     try:
         with open(download_filename, 'r') as openfile:
             for line in openfile:
                 if line.startswith('MTX'):
-                    textBox2.insert(1.0, line[23:40])
-                    textBox2.insert(2.0, line[40:57])
+                    latLongConsole.insert(1.0, line[23:40])
+                    latLongConsole.insert(2.0, line[40:57])
                     return
-            textBox2.insert(1.0, "No lat/long data detected.")
+            latLongConsole.insert(1.0, "No lat/long data detected.")
     except FileNotFoundError:
         fileNotFoundError2()
 
@@ -297,16 +297,16 @@ def parseCsv():
 ##        print("no")
     pass
 
-def clearText():
-    textBox.delete(1.0, "end")
+def clearBOCConsole():
+    bocConsole.delete(1.0, "end")
 
-def clearText2():
-    textBox2.delete(1.0, "end")
+def clearLatLongConsole():
+    latLongConsole.delete(1.0, "end")
 
 def save():
     export_filename = "DatFileToolExport " + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + ".txt"
     with open(export_filename, 'w') as openfile:
-        text = textBox.get('1.0', 'end')
+        text = bocConsole.get('1.0', 'end')
         openfile.write(text)
     messagebox.showinfo("Export", "Data successfully exported!")
  
@@ -320,7 +320,7 @@ def saveAs():
         return
     if f.name.endswith('.csv'):
         parseCsv()
-    text2save = str(textBox.get(1.0, "end"))
+    text2save = str(bocConsole.get(1.0, "end"))
     f.write(text2save)
     f.close()
 
@@ -346,20 +346,20 @@ def resetWindow():
 def increaseFontSize():
     global DEFAULT_FONT_SIZE
     DEFAULT_FONT_SIZE+=1
-    textBoxFont.configure(size=DEFAULT_FONT_SIZE)
+    consoleFont.configure(size=DEFAULT_FONT_SIZE)
 
 def decreaseFontSize():
     global DEFAULT_FONT_SIZE
     DEFAULT_FONT_SIZE-=1
-    textBoxFont.configure(size=DEFAULT_FONT_SIZE)
+    consoleFont.configure(size=DEFAULT_FONT_SIZE)
 
 def fileNotFoundError():
-    textBox.delete(1.0, "end")
-    textBox.insert(1.0, "ERROR: File Not Found")
+    bocConsole.delete(1.0, "end")
+    bocConsole.insert(1.0, "ERROR: File Not Found")
 
 def fileNotFoundError2():
-    textBox2.delete(1.0, "end")
-    textBox2.insert(1.0, "ERROR: FILE NOT FOUND")
+    latLongConsole.delete(1.0, "end")
+    latLongConsole.insert(1.0, "ERROR: FILE NOT FOUND")
 
 def aboutDialog():
     dialog = """ Author: Chris Sesock \n Version: 1.1.0 \n Commit: aebb993a87843e0ffc8b5fc2f32813638cc9be90 \n Date: 2020-07-16:2:00:00 \n Python: 3.9.1 \n OS: Windows_NT x64 10.0.10363
@@ -410,17 +410,17 @@ else:
 label = ttk.Label(TAB1, textvariable=text)
 label.place(x=290, y=20)
 
-consoleclearbutton = ttk.Button(TAB1, text="clear", width=4.25, command=lambda:clearText())
+consoleclearbutton = ttk.Button(TAB1, text="clear", width=4.25, command=lambda:clearBOCConsole())
 consoleclearbutton.place(x=720, y=6)
 
-textBox = tk.Text(TAB1, height=HEIGHT, width=WIDTH, background='black', foreground='lawn green')
+bocConsole = tk.Text(TAB1, height=HEIGHT, width=WIDTH, background='black', foreground='lawn green')
 
-textBox.place(x=220, y=40)
-textBox.configure(font=textBoxFont)
-textBox.insert(1.0, "United Systems dat File Tool")
-textBox.insert(2.0, "\n")
-textBox.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
-textBox.insert(3.0, "\n")
+bocConsole.place(x=220, y=40)
+bocConsole.configure(font=consoleFont)
+bocConsole.insert(1.0, "United Systems dat File Tool")
+bocConsole.insert(2.0, "\n")
+bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
+bocConsole.insert(3.0, "\n")
 
 # Tab 3
 tab3 = ttk.Frame(TAB_CONTROL)
@@ -468,31 +468,31 @@ else:
 label2 = ttk.Label(tab3, textvariable=text2)
 label2.place(x=290, y=20)
 
-Numkey31 = ttk.Button(tab3, text="1.", width=1.5)
-Numkey31.place(x=20, y=50)
+NumkeyLatLong1 = ttk.Button(tab3, text="1.", width=1.5)
+NumkeyLatLong1.place(x=20, y=50)
 tab3existsbutton = ttk.Button(tab3, text="Check Lat/Long Exist", width=22, command=lambda:checkLatLongExists())
 tab3existsbutton.place(x=50, y=50)
 
-Numkey32 = ttk.Button(tab3, text="2.", width=1.5)
-Numkey32.place(x=20, y=90)
+NumkeyLatLong2 = ttk.Button(tab3, text="2.", width=1.5)
+NumkeyLatLong2.place(x=20, y=90)
 tab3checksignbutton = ttk.Button(tab3, text="Check Lat/Long Signs", width=22, command=lambda:checkLatLongSigns())
 tab3checksignbutton.place(x=50, y=90)
 
-Numkey33 = ttk.Button(tab3, text="3.", width=1.5)
-Numkey33.place(x=20, y=130)
+NumkeyLatLong3 = ttk.Button(tab3, text="3.", width=1.5)
+NumkeyLatLong3.place(x=20, y=130)
 tab3malformedbutton = ttk.Button(tab3, text="Check for Malformation", width=22, command=lambda:checkMalformedLatLong())
 tab3malformedbutton.place(x=50, y=130)
 
-textBox2 = tk.Text(tab3, height=HEIGHT, width=WIDTH, background='black', foreground='lawn green')
+latLongConsole = tk.Text(tab3, height=HEIGHT, width=WIDTH, background='black', foreground='lawn green')
 
-textBox2.place(x=220, y=40)
-textBox2.configure(font=textBoxFont)
-textBox2.insert(1.0, "United Systems dat File Tool")
-textBox2.insert(2.0, "\n")
-textBox2.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
-textBox2.insert(3.0, "\n")
+latLongConsole.place(x=220, y=40)
+latLongConsole.configure(font=consoleFont)
+latLongConsole.insert(1.0, "United Systems dat File Tool")
+latLongConsole.insert(2.0, "\n")
+latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
+latLongConsole.insert(3.0, "\n")
 
-consoleclearbutton2 = ttk.Button(tab3, text="clear", width=4.25, command=lambda:clearText2())
+consoleclearbutton2 = ttk.Button(tab3, text="clear", width=4.25, command=lambda:clearLatLongConsole())
 consoleclearbutton2.place(x=720, y=6)
 
 # Menu
@@ -507,7 +507,7 @@ filemenu.add_command(label="Exit", accelerator='Alt+F4', command=lambda:window.d
 menubar.add_cascade(label="File", menu=filemenu)
 
 editmenu = tk.Menu(menubar, tearoff=0)
-editmenu.add_command(label="Clear Console", accelerator="Ctrl+C", command=lambda:clearText())
+editmenu.add_command(label="Clear Console", accelerator="Ctrl+C", command=lambda:clearBOCConsole())
 menubar.add_cascade(label="Edit", menu=editmenu)
 
 ##formatmenu = tk.Menu(menubar, tearoff=0)
