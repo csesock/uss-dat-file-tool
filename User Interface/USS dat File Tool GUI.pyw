@@ -1,13 +1,15 @@
-import tkinter as tk
-from tkinter import *
-from tkinter import messagebox, simpledialog, ttk
-from tkinter.filedialog import asksaveasfile
+try:
+    import tkinter as tk
+    from tkinter import *
+    from tkinter import messagebox, simpledialog, ttk
+    from tkinter.filedialog import asksaveasfile
+    from tkinter.font import Font
 
-from collections import deque
-from datetime import datetime
-import sys, os, re, time
-
-from tkinter.font import Font
+    from collections import deque
+    from datetime import datetime
+    import sys, os, re, time
+except ImportError:
+    print("An unexpected error occured. Python installation is corrupted.")
 
 record_pattern = re.compile('[a-z][0-9]*\s*')
 empty_pattern = re.compile('[^\S\n\t]+')
@@ -19,6 +21,7 @@ download_filename = 'download.dat'
 window = tk.Tk()
 s = ttk.Style()
 s.theme_use('clam')
+
 DEFAULT_FONT_SIZE = 9
 WIDTH = 77
 HEIGHT = 16.5
@@ -43,7 +46,7 @@ window.bind('2', lambda event: scanAllRecordsVerbose())
 window.bind('3', lambda event: printSingleRecord())
 window.bind('4', lambda event: fixOfficeRegionZoneFields())
 window.bind('5', lambda event: missingMeters())
-window.bind('6', lambda event: printMeterType())
+window.bind('6', lambda event: printReadType())
 window.bind('7', lambda event: checkMalformedLatLong())
 
 window.bind('<Control-o>', lambda event: openFile())
@@ -159,7 +162,7 @@ def missingMeters(event=None):
     except FileNotFoundError:
         fileNotFoundError()
 
-def printMeterType(event=None):
+def printReadType(event=None):
     user_meter_code = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
     if user_meter_code is None:
         return
@@ -172,8 +175,6 @@ def printMeterType(event=None):
             for line in openfile:
                 if line.startswith('RDG'):
                     meter_code = line[76:78]
-                    #print(meter_code)
-                    
                     if meter_code == user_meter_code:
                         for record in current_record:
                             if record.startswith('CUS'):
@@ -184,6 +185,33 @@ def printMeterType(event=None):
                 textBox.insert("end", "No meters of that type found.")
             elif counter != 0:
                 textBox.insert("end", counter)
+    except FileNotFoundError:
+        fileNotFoundError()
+
+def printReadTypeVerbose(event=None):
+    all_reads = {}
+    counter = 1.0
+    try:
+        with open(download_filename, 'r') as openfile:
+            for line in openfile:
+                if line.startswith('RDG'):
+                    x = line[76:78]
+                    if x not in all_reads:
+                        all_reads[x] = 1
+                    else:
+                        all_reads[x]+=1
+            textBox.delete(counter, "end")
+            textBox.insert(counter, "File scan successful")
+            counter+=1
+            textBox.insert(counter, "\n")
+            textBox.insert(counter, "--------------------------")
+            counter+=1
+            textBox.insert(counter, "\n")
+            for record in all_reads:
+                textBox.insert(counter, str(record) + ". . . :\t" + f"{all_reads[record]:,d} " + "\t\t |")
+                counter+=1
+                textBox.insert(counter, "\n")
+            textBox.insert(counter, "--------------------------")
     except FileNotFoundError:
         fileNotFoundError()
 
@@ -254,7 +282,16 @@ def getCustomerRecordLength():
         fileNotFoundError()       
 
 def parseCsv():
-    print("HERE")
+##    #function to normalize files to be written to .csv
+##    lines = []
+##    try:
+##        with open(download_filename, 'r') as openfile:
+##            with open('test.txt', 'w') as builtfile:
+##                for line in openfile:
+##                    lines.append(re.sub(" ", ",", empty_pattern))
+##                builtfile.write(lines)
+##    except FileNotFoundError:
+##        print("no")
     pass
 
 def clearText():
@@ -350,12 +387,8 @@ MissingMeterButton = ttk.Button(TAB1, text="Missing Meters", command=lambda:miss
 MissingMeterButton.place(x=50, y=200)
 Numkey6 = ttk.Button(TAB1, text="6.", width=1.5)
 Numkey6.place(x=20, y=240)
-PrintReadTypeButton = ttk.Button(TAB1, text="Display Read Type", command=lambda:printMeterType(), width=22)
+PrintReadTypeButton = ttk.Button(TAB1, text="Full Read Type Scan", command=lambda:printReadTypeVerbose(), width=22)
 PrintReadTypeButton.place(x=50, y=240)
-##Numkey7 = ttk.Button(TAB1, text="7.", width=1.5)
-##Numkey7.place(x=20, y=260)
-##MalformedLatLongButton = ttk.Button(TAB1, text="Malformed Lat/Long", command=lambda:checkMalformedLatLong(), width=20)
-##MalformedLatLongButton.place(x=50, y=260)
 
 currentlabel = ttk.Label(TAB1, text="Current file: ")
 currentlabel.place(x=220, y=20)
@@ -365,15 +398,12 @@ if os.path.isfile('download.dat'):
     text.set('download.dat')
 else:
     text.set('No File')
-#text.set(download_filename)
 label = ttk.Label(TAB1, textvariable=text)
 label.place(x=290, y=20)
 
 consoleclearbutton = ttk.Button(TAB1, text="clear", width=4.25, command=lambda:clearText())
 consoleclearbutton.place(x=720, y=6)
 
-## Figure out font scaling here
-#textBox = tk.Text(TAB1, height=16, width=63, background='black', foreground='lawn green')
 textBox = tk.Text(TAB1, height=HEIGHT, width=WIDTH, background='black', foreground='lawn green')
 
 textBox.place(x=220, y=40)
@@ -409,20 +439,12 @@ tab2exportinput= tk.Text(tab2, width=60, height=1)
 tab2exportinput.place(x=20, y=140)
 tab2exportinput.insert(1.0, os.getcwd())
 
-##photo = PhotoImage(file=r"assets/document.png")
-##photoimage = photo.subsample(3, 3)
-
 tab2exportbutton = ttk.Button(tab2, text="Export... ", command=lambda:save())
 tab2exportbutton.place(x=515, y=135)
 
 tab2enforcebutton = ttk.Checkbutton(tab2, text="Enforce file integrity (recommended)")
 tab2enforcebutton.place(x=20, y=270)
 tab2enforcebutton.state(['selected'])
-
-
-
-
-
 
 # Tab 3 Widgets
 currentlabel2 = ttk.Label(tab3, text="Current file: ")
@@ -433,7 +455,7 @@ if os.path.isfile('download.dat'):
     text2.set('download.dat')
 else:
     text2.set('No File')
-#text.set(download_filename)
+
 label2 = ttk.Label(tab3, textvariable=text2)
 label2.place(x=290, y=20)
 
