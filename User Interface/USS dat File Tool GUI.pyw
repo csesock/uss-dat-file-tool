@@ -23,8 +23,10 @@ s = ttk.Style()
 s.theme_use('clam')
 
 DEFAULT_FONT_SIZE = 9
-WIDTH = 77
-HEIGHT = 16.5
+CONSOLE_WIDTH = 77
+CONSOLE_HEIGHT = 16.5
+BUTTON_WIDTH = 22
+
 consoleFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
 
 window.title("USS dat File Tool v1.1.0")
@@ -366,37 +368,53 @@ def aboutDialog():
             """
     messagebox.showinfo("About", dialog)
 
+
 # Create Tab Control
 TAB_CONTROL = ttk.Notebook(window)
-
 # Tab 1
 TAB1 = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(TAB1, text='Basic Operations Center')
+# Tab 3
+tab3 = ttk.Frame(TAB_CONTROL)
+TAB_CONTROL.add(tab3, text="Lat/Long Operations")
+TAB_CONTROL.pack(expand=1, fill="both")
+# Tab 2
+tab2 = ttk.Frame(TAB_CONTROL)
+TAB_CONTROL.add(tab2, text="Import/Export")
+TAB_CONTROL.pack(expand=1, fill="both")
 
-# Tab 1 Widgets
+#################
+##Tab 1 Widgets##
+#################
+
 Numkey1 = ttk.Button(TAB1, text="1.", width=1.5)
 Numkey1.place(x=20, y=40)
-SingleRecordScanButton = ttk.Button(TAB1, text="Single Record Scan", command=lambda:singleRecordScan(), width=22)
+SingleRecordScanButton = ttk.Button(TAB1, text="Single Record Scan", command=lambda:singleRecordScan(), width=BUTTON_WIDTH)
 SingleRecordScanButton.place(x=50, y=40)
+
 Numkey2 = ttk.Button(TAB1, text="2.", width=1.5)
 Numkey2.place(x=20, y=80)
-VerboseRecordScanButton = ttk.Button(TAB1, text="Full Record Scan", command=lambda:scanAllRecordsVerbose(), width=22)
+VerboseRecordScanButton = ttk.Button(TAB1, text="Full Record Scan", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH)
 VerboseRecordScanButton.place(x=50, y=80)
+
 Numkey3 = ttk.Button(TAB1, text="3.", width=1.5)
 Numkey3.place(x=20, y=120)
-PrintSingleRecordButton = ttk.Button(TAB1, text="Display Record Type", command=lambda:printSingleRecord(), width=22)
+PrintSingleRecordButton = ttk.Button(TAB1, text="Display Record Type", command=lambda:printSingleRecord(), width=BUTTON_WIDTH)
 PrintSingleRecordButton.place(x=50, y=120)
+
 Numkey4 = ttk.Button(TAB1, text="4.", width=1.5)
 Numkey4.place(x=20, y=160)
-OfficeRegionZoneFieldButton = ttk.Button(TAB1, text="Office-Region-Zone", command=lambda:fixOfficeRegionZoneFields(), width=22)
+OfficeRegionZoneFieldButton = ttk.Button(TAB1, text="Office-Region-Zone", command=lambda:fixOfficeRegionZoneFields(), width=BUTTON_WIDTH)
 OfficeRegionZoneFieldButton.place(x=50, y=160)
+
 Numkey5 = ttk.Button(TAB1, text="5.", width=1.5)
 Numkey5.place(x=20, y=200)
-MissingMeterButton = ttk.Button(TAB1, text="Missing Meters", command=lambda:missingMeters(), width=22)
+MissingMeterButton = ttk.Button(TAB1, text="Missing Meters", command=lambda:missingMeters(), width=BUTTON_WIDTH)
 MissingMeterButton.place(x=50, y=200)
+
 Numkey6 = ttk.Button(TAB1, text="6.", width=1.5)
 Numkey6.place(x=20, y=240)
-PrintReadTypeButton = ttk.Button(TAB1, text="Full Read Type Scan", command=lambda:printReadTypeVerbose(), width=22)
+PrintReadTypeButton = ttk.Button(TAB1, text="Full Read Type Scan", command=lambda:printReadTypeVerbose(), width=BUTTON_WIDTH)
 PrintReadTypeButton.place(x=50, y=240)
 
 currentlabel = ttk.Label(TAB1, text="Current file: ")
@@ -413,7 +431,7 @@ label.place(x=290, y=20)
 consoleclearbutton = ttk.Button(TAB1, text="clear", width=4.25, command=lambda:clearBOCConsole())
 consoleclearbutton.place(x=720, y=6)
 
-bocConsole = tk.Text(TAB1, height=HEIGHT, width=WIDTH, background='black', foreground='lawn green')
+bocConsole = tk.Text(TAB1, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
 
 bocConsole.place(x=220, y=40)
 bocConsole.configure(font=consoleFont)
@@ -422,17 +440,10 @@ bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
 
-# Tab 3
-tab3 = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tab3, text="Lat/Long Operations")
-TAB_CONTROL.pack(expand=1, fill="both")
+#################
+##Tab 2 Widgets##
+#################
 
-# Tab 2
-tab2 = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tab2, text="Import/Export")
-TAB_CONTROL.pack(expand=1, fill="both")
-
-#Tab 2 Widgets
 tab2label = ttk.Label(tab2, text="Import data from download file:")
 tab2label.place(x=20, y=40)
 tab2label2 = ttk.Label(tab2, text="Export current console data:")
@@ -455,7 +466,10 @@ tab2enforcebutton = ttk.Checkbutton(tab2, text="Enforce file integrity (recommen
 tab2enforcebutton.place(x=20, y=270)
 tab2enforcebutton.state(['selected'])
 
-# Tab 3 Widgets
+#################
+##Tab 3 Widgets##
+#################
+
 currentlabel2 = ttk.Label(tab3, text="Current file: ")
 currentlabel2.place(x=220, y=20)
 
@@ -470,20 +484,20 @@ label2.place(x=290, y=20)
 
 NumkeyLatLong1 = ttk.Button(tab3, text="1.", width=1.5)
 NumkeyLatLong1.place(x=20, y=50)
-tab3existsbutton = ttk.Button(tab3, text="Check Lat/Long Exist", width=22, command=lambda:checkLatLongExists())
+tab3existsbutton = ttk.Button(tab3, text="Check Lat/Long Exist", width=BUTTON_WIDTH, command=lambda:checkLatLongExists())
 tab3existsbutton.place(x=50, y=50)
 
 NumkeyLatLong2 = ttk.Button(tab3, text="2.", width=1.5)
 NumkeyLatLong2.place(x=20, y=90)
-tab3checksignbutton = ttk.Button(tab3, text="Check Lat/Long Signs", width=22, command=lambda:checkLatLongSigns())
+tab3checksignbutton = ttk.Button(tab3, text="Check Lat/Long Signs", width=BUTTON_WIDTH, command=lambda:checkLatLongSigns())
 tab3checksignbutton.place(x=50, y=90)
 
 NumkeyLatLong3 = ttk.Button(tab3, text="3.", width=1.5)
 NumkeyLatLong3.place(x=20, y=130)
-tab3malformedbutton = ttk.Button(tab3, text="Check for Malformation", width=22, command=lambda:checkMalformedLatLong())
+tab3malformedbutton = ttk.Button(tab3, text="Check for Malformation", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong())
 tab3malformedbutton.place(x=50, y=130)
 
-latLongConsole = tk.Text(tab3, height=HEIGHT, width=WIDTH, background='black', foreground='lawn green')
+latLongConsole = tk.Text(tab3, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
 
 latLongConsole.place(x=220, y=40)
 latLongConsole.configure(font=consoleFont)
@@ -495,7 +509,10 @@ latLongConsole.insert(3.0, "\n")
 consoleclearbutton2 = ttk.Button(tab3, text="clear", width=4.25, command=lambda:clearLatLongConsole())
 consoleclearbutton2.place(x=720, y=6)
 
-# Menu
+########
+##Menu##
+########
+
 menubar = tk.Menu(window)
 
 filemenu = tk.Menu(menubar, tearoff=0)
