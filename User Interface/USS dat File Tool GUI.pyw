@@ -335,7 +335,7 @@ def resizeWindow():
     window.geometry('%dx%d+0+0' %(width, height))
 
 def resetWindow():
-    window.geometry('800x370+%d+%d' %(width, height))
+    window.geometry('780x350+%d+%d' %(width, height))
 
 def increaseFontSize():
     global DEFAULT_FONT_SIZE
