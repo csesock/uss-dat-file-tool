@@ -226,14 +226,14 @@ def checkMalformedLatLong(event=None):
                     long_data = line[40:57].rstrip()
                     if not lat_long_pattern.match(lat_data) and not lat_long_pattern.match(long_data):
                         malformed_data = True
-                        textBox.delete(1.0, "end")
-                        textBox.insert(1.0, "Malformed lat/long data at line: " + str(counter))
+                        textBox2.delete(1.0, "end")
+                        textBox2.insert(1.0, "Malformed lat/long data at line: " + str(counter))
                         return
                 counter+=1
-            textBox.delete(1.0, "end")
-            textBox.insert(1.0, "No malformation within lat/long data detected.")
+            textBox2.delete(1.0, "end")
+            textBox2.insert(1.0, "No malformation within lat/long data detected.")
     except FileNotFoundError:
-        fileNotFoundError()
+        fileNotFoundError2()
 
 def checkLatLongSigns(event=None):
     try:
@@ -250,20 +250,23 @@ def checkLatLongSigns(event=None):
                         textBox2.delete(1.0, "end")
                         textBox2.insert(1.0, "The lat/long signs are correct.")
                         return
+            textBox2.delete(1.0, "end")
+            textBox2.insert(1.0, "No lat/long data detected.")
     except FileNotFoundError:
-        fileNotFoundError()
+        fileNotFoundError2()
 
 def checkLatLongExists(event=None):
+    textBox2.delete(1.0, "end")
     try:
         with open(download_filename, 'r') as openfile:
             for line in openfile:
                 if line.startswith('MTX'):
-                    textBox2.delete(1.0, "end")
                     textBox2.insert(1.0, line[23:40])
-                    textBox.insert(2.0, line[40:57])
+                    textBox2.insert(2.0, line[40:57])
                     return
+            textBox2.insert(1.0, "No lat/long data detected.")
     except FileNotFoundError:
-        fileNotFoundError()
+        fileNotFoundError2()
 
 
 def getCustomerRecordLength():
@@ -296,6 +299,9 @@ def parseCsv():
 
 def clearText():
     textBox.delete(1.0, "end")
+
+def clearText2():
+    textBox2.delete(1.0, "end")
 
 def save():
     export_filename = "DatFileToolExport " + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + ".txt"
@@ -351,6 +357,9 @@ def fileNotFoundError():
     textBox.delete(1.0, "end")
     textBox.insert(1.0, "ERROR: File Not Found")
 
+def fileNotFoundError2():
+    textBox2.delete(1.0, "end")
+    textBox2.insert(1.0, "ERROR: FILE NOT FOUND")
 
 def aboutDialog():
     dialog = """ Author: Chris Sesock \n Version: 1.1.0 \n Commit: aebb993a87843e0ffc8b5fc2f32813638cc9be90 \n Date: 2020-07-16:2:00:00 \n Python: 3.9.1 \n OS: Windows_NT x64 10.0.10363
@@ -461,7 +470,7 @@ label2.place(x=290, y=20)
 
 Numkey31 = ttk.Button(tab3, text="1.", width=1.5)
 Numkey31.place(x=20, y=50)
-tab3existsbutton = ttk.Button(tab3, text="Check Lat/Long Exist", width=22)
+tab3existsbutton = ttk.Button(tab3, text="Check Lat/Long Exist", width=22, command=lambda:checkLatLongExists())
 tab3existsbutton.place(x=50, y=50)
 
 Numkey32 = ttk.Button(tab3, text="2.", width=1.5)
@@ -471,7 +480,7 @@ tab3checksignbutton.place(x=50, y=90)
 
 Numkey33 = ttk.Button(tab3, text="3.", width=1.5)
 Numkey33.place(x=20, y=130)
-tab3malformedbutton = ttk.Button(tab3, text="Check for Malformation", width=22)
+tab3malformedbutton = ttk.Button(tab3, text="Check for Malformation", width=22, command=lambda:checkMalformedLatLong())
 tab3malformedbutton.place(x=50, y=130)
 
 textBox2 = tk.Text(tab3, height=HEIGHT, width=WIDTH, background='black', foreground='lawn green')
@@ -483,7 +492,7 @@ textBox2.insert(2.0, "\n")
 textBox2.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 textBox2.insert(3.0, "\n")
 
-consoleclearbutton2 = ttk.Button(tab3, text="clear", width=4.25, command=textBox2.delete(1.0, "end"))
+consoleclearbutton2 = ttk.Button(tab3, text="clear", width=4.25, command=lambda:clearText2())
 consoleclearbutton2.place(x=720, y=6)
 
 # Menu
