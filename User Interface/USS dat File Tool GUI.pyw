@@ -9,7 +9,7 @@ from datetime import datetime
 import sys, os, re, time
 
 record_pattern = re.compile('[a-z][0-9]*\s*')
-empty_pattern = re.compile('[^\S\n\t]{11,}')
+empty_pattern = re.compile('[^\S\n\t]{11}') #for missing meters
 empty2_pattern = re.compile('[^\S\r\n]{2,}')
 lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
 
@@ -68,11 +68,12 @@ def singleRecordScan(event=None):
             for line in openfile:
                 if line.startswith(answer):
                     counter+=1
+            bocConsole.delete(1.0, "end")
+            bocConsole.insert("end", f"{counter:,d} " + answer + " records found")
+            bocConsole.insert("end", "\n")
     except FileNotFoundError:
         fileNotFoundError()
-    bocConsole.delete(1.0, "end")
-    bocConsole.insert("end", f"{counter:,d} " + answer + " records found")
-    bocConsole.insert("end", "\n")
+
 
 def printSingleRecord(event=None):
     record_type = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
@@ -149,18 +150,20 @@ def scanAllRecordsVerbose(event=None):
 
 def missingMeters(event=None):
     counter = 0
+    line_number = 1
     try:
         with open(download_filename, 'r') as openfile:
             previous_line = ''
             bocConsole.delete(1.0, "end")
             for line in openfile:
                         if line.startswith('MTR'):
-                            meter_record = line[45:57]
+                            meter_record = line[45:57] #46-57
                             if empty_pattern.match(meter_record):
-                                bocConsole.insert("end", previous_line)
+                                bocConsole.insert("end", str(line_number) + " " + previous_line)
                                 bocConsole.insert("end", "\n")
                                 counter+=1
                         previous_line=line
+                        line_number +=1
             if counter == 0:
                 bocConsole.delete(1.0, "end")
                 bocConsole.insert(1.0, "No missing meters found in ["+os.path.basename(download_filename)+"]")
@@ -373,14 +376,14 @@ def aboutDialog():
 TAB_CONTROL = ttk.Notebook(window)
 # Tab 1
 TAB1 = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(TAB1, text='Basic Operations Center')
+TAB_CONTROL.add(TAB1, text='Basic Operations')
 # Tab 3
 tab3 = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tab3, text="Lat/Long Operations")
 TAB_CONTROL.pack(expand=1, fill="both")
 # Tab 2
 tab2 = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tab2, text="Configure Settings")
+TAB_CONTROL.add(tab2, text="Settings")
 TAB_CONTROL.pack(expand=1, fill="both")
 
 #################
@@ -389,7 +392,7 @@ TAB_CONTROL.pack(expand=1, fill="both")
 
 Numkey1 = ttk.Button(TAB1, text="1.", width=1.5)
 Numkey1.place(x=20, y=40)
-SingleRecordScanButton = ttk.Button(TAB1, text="Single Record Scan", command=lambda:singleRecordScan(), width=BUTTON_WIDTH)
+SingleRecordScanButton = ttk.Button(TAB1, text="Record Count", command=lambda:singleRecordScan(), width=BUTTON_WIDTH)
 SingleRecordScanButton.place(x=50, y=40)
 
 Numkey2 = ttk.Button(TAB1, text="2.", width=1.5)
@@ -444,24 +447,6 @@ bocConsole.insert(3.0, "\n")
 ##Tab 2 Widgets##
 #################
 
-# tab2label = ttk.Label(tab2, text="Import data from download file:")
-# tab2label.place(x=20, y=40)
-# tab2label2 = ttk.Label(tab2, text="Export current console data:")
-# tab2label2.place(x=20, y=115)
-
-# tab2importinput = tk.Text(tab2, width=60, height=1)
-# tab2importinput.place(x=20, y=65)
-# tab2importinput.insert(1.0, os.getcwd())
-# tab2importbutton = ttk.Button(tab2, text="Import...", command=lambda:openFile())
-# tab2importbutton.place(x=515, y=60)
-
-# tab2exportinput= tk.Text(tab2, width=60, height=1)
-# tab2exportinput.place(x=20, y=140)
-# tab2exportinput.insert(1.0, os.getcwd())
-
-# tab2exportbutton = ttk.Button(tab2, text="Export... ", command=lambda:save())
-# tab2exportbutton.place(x=515, y=135)
-
 regionslabel = ttk.Label(tab2, text="State for Lat/Long Data:")
 regionslabel.place(x=20, y=30)
 
@@ -470,16 +455,7 @@ variable.set("Central United States")
 regions = ttk.OptionMenu(tab2, variable, "Alabama", "Arkansas", "Georgia", "Indiana", "Kentucky")
 regions.place(x=20,y=50)
 
-themelabel = ttk.Label(tab2, text="Current Theme:")
-themelabel.place(x=200, y=30)
-
-variable2 = StringVar(tab2)
-variable2.set("clam")
-#themes = ["clam", "winnative", "alt", "default", "classic", "vista", "xpnative"]
-regions = ttk.OptionMenu(tab2, variable2, "clam", "winnative", "alt", "default", "classic", "vista", "xpnative")
-regions.place(x=200,y=50)
-
-tab2enforcebutton = ttk.Checkbutton(tab2, text="Enforce file integrity (recommended)")
+tab2enforcebutton = ttk.Checkbutton(tab2, text="Enforce filetype imports (recommended)")
 tab2enforcebutton.place(x=20, y=270)
 tab2enforcebutton.state(['selected'])
 
@@ -543,8 +519,6 @@ menubar.add_cascade(label="File", menu=filemenu)
 editmenu = tk.Menu(menubar, tearoff=0)
 editmenu.add_command(label="Clear Console", accelerator="Ctrl+C", command=lambda:clearBOCConsole())
 
-#themes = ["clam", "winnative", "alt", "default", "classic", "vista", "xpnative"]
-
 submenu = Menu(editmenu)
 
 submenu.add_command(label="clam", command=lambda:changeTheme('clam'))
@@ -557,15 +531,6 @@ submenu.add_command(label="vista", command=lambda:changeTheme('vista'))
 
 editmenu.add_cascade(label="Theme", menu=submenu)
 menubar.add_cascade(label="Edit", menu=editmenu)
-
-
-
-##formatmenu = tk.Menu(menubar, tearoff=0)
-##formatmenu.add_command(label="Increase Font Size", accelerator="Alt+R", command=lambda:increaseFontSize())
-##formatmenu.add_command(label="Decrease Font Size", accelerator="Alt+T", command=lambda:decreaseFontSize())
-##formatmenu.add_separator()
-##menubar.add_cascade(label="Format", menu=formatmenu)
-
 
 
 windowmenu = tk.Menu(menubar, tearoff=0)
