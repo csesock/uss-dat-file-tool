@@ -10,7 +10,7 @@ from datetime import datetime
 
 # regular expression patterns
 record_pattern = re.compile('[a-z][0-9]*\s*')
-empty_pattern = re.compile('[^\S\n\t]+')
+empty_pattern = re.compile('[^\S\n\t]{10,}')
 empty2_pattern = re.compile('[^\S\r\n]{2,}')
 lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
 

@@ -12,9 +12,11 @@ except ImportError:
     print("An unexpected error occured. Python installation is corrupted.")
 
 record_pattern = re.compile('[a-z][0-9]*\s*')
-empty_pattern = re.compile('[^\S\n\t]+')
+empty_pattern = re.compile('[^\S\n\t]{11,}')
 empty2_pattern = re.compile('[^\S\r\n]{2,}')
 lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
+
+better = re.compile(r"[^\S\n\t]{11,}")
 
 download_filename = 'download.dat'
 
@@ -299,12 +301,6 @@ def getCustomerRecordLength():
     except FileNotFoundError:
         fileNotFoundError()       
 
-def callback(name1, name2, name3):
-    print("here")
-    print("name1", name1)
-    print("name2", name2)
-    print("name3", name3)
-
 def clearBOCConsole():
     bocConsole.delete(1.0, "end")
 
@@ -360,6 +356,12 @@ def decreaseFontSize():
     global DEFAULT_FONT_SIZE
     DEFAULT_FONT_SIZE-=1
     consoleFont.configure(size=DEFAULT_FONT_SIZE)
+
+def changeTheme(theme):
+    print("!!!", theme)
+    window = tk.Tk()
+    s = ttk.Style()
+    s.theme_use(theme)
 
 def fileNotFoundError():
     bocConsole.delete(1.0, "end")
@@ -479,13 +481,11 @@ regions.place(x=20,y=50)
 themelabel = ttk.Label(tab2, text="Current Theme:")
 themelabel.place(x=200, y=30)
 
-##variable2 = StringVar()
-##variable2.trace("w", callback)
-##themes = ["clam", "winnative", "alt", "default", "classic", "vista", "xpnative"]
-##regions = ttk.OptionMenu(tab2, variable2)
-##regions.set(themes[0])
-##w = apply(OptionMenu, (window, variable) + tuple(themes))
-##regions.place(x=200,y=50)
+variable2 = StringVar(tab2)
+variable2.set("clam")
+#themes = ["clam", "winnative", "alt", "default", "classic", "vista", "xpnative"]
+regions = ttk.OptionMenu(tab2, variable2, "clam", "winnative", "alt", "default", "classic", "vista", "xpnative")
+regions.place(x=200,y=50)
 
 tab2enforcebutton = ttk.Checkbutton(tab2, text="Enforce file integrity (recommended)")
 tab2enforcebutton.place(x=20, y=270)
@@ -550,13 +550,24 @@ menubar.add_cascade(label="File", menu=filemenu)
 
 editmenu = tk.Menu(menubar, tearoff=0)
 editmenu.add_command(label="Clear Console", accelerator="Ctrl+C", command=lambda:clearBOCConsole())
+
+submenu = Menu(editmenu)
+submenu.add_command(label="clam", command=lambda:changeTheme(label))
+submenu.add_command(label="winnative")
+submenu.add_command(label="alt")
+submenu.add_command(label="winnative")
+editmenu.add_cascade(label="Theme", menu=submenu)
 menubar.add_cascade(label="Edit", menu=editmenu)
+
+
 
 ##formatmenu = tk.Menu(menubar, tearoff=0)
 ##formatmenu.add_command(label="Increase Font Size", accelerator="Alt+R", command=lambda:increaseFontSize())
 ##formatmenu.add_command(label="Decrease Font Size", accelerator="Alt+T", command=lambda:decreaseFontSize())
 ##formatmenu.add_separator()
 ##menubar.add_cascade(label="Format", menu=formatmenu)
+
+
 
 windowmenu = tk.Menu(menubar, tearoff=0)
 windowmenu.add_command(label="Full Screen", accelerator="F11", command=lambda:resizeWindow())
