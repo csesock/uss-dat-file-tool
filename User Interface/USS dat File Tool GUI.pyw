@@ -1,22 +1,17 @@
-try:
-    import tkinter as tk
-    from tkinter import *
-    from tkinter import messagebox, simpledialog, ttk
-    from tkinter.filedialog import asksaveasfile
-    from tkinter.font import Font
+import tkinter as tk
+from tkinter import *
+from tkinter import messagebox, simpledialog, ttk
+from tkinter.filedialog import asksaveasfile
+from tkinter.font import Font
 
-    from collections import deque
-    from datetime import datetime
-    import sys, os, re, time
-except ImportError:
-    print("An unexpected error occured. Python installation is corrupted.")
+from collections import deque
+from datetime import datetime
+import sys, os, re, time
 
 record_pattern = re.compile('[a-z][0-9]*\s*')
 empty_pattern = re.compile('[^\S\n\t]{11,}')
 empty2_pattern = re.compile('[^\S\r\n]{2,}')
 lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
-
-better = re.compile(r"[^\S\n\t]{11,}")
 
 download_filename = 'download.dat'
 
@@ -31,7 +26,7 @@ BUTTON_WIDTH = 22
 
 consoleFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
 
-window.title("USS dat File Tool v1.2")
+window.title("USS dat File Tool v1.2.1")
 window.resizable(False, False)
 
 height = window.winfo_screenheight()/3
@@ -285,7 +280,6 @@ def checkLatLongExists(event=None):
     except FileNotFoundError:
         fileNotFoundError2()
 
-
 def getCustomerRecordLength():
     try:
         with open(download_filename, 'r') as openfile:
@@ -322,8 +316,6 @@ def saveAs():
     f = asksaveasfile(mode='w', defaultextension='.txt', filetypes=files)
     if f is None:
         return
-    if f.name.endswith('.csv'):
-        parseCsv()
     text2save = str(bocConsole.get(1.0, "end"))
     f.write(text2save)
     f.close()
@@ -358,8 +350,8 @@ def decreaseFontSize():
     consoleFont.configure(size=DEFAULT_FONT_SIZE)
 
 def changeTheme(theme):
-    print("!!!", theme)
-    window = tk.Tk()
+    #print("!!!", theme)
+    #window = tk.Tk()
     s = ttk.Style()
     s.theme_use(theme)
 
@@ -551,11 +543,18 @@ menubar.add_cascade(label="File", menu=filemenu)
 editmenu = tk.Menu(menubar, tearoff=0)
 editmenu.add_command(label="Clear Console", accelerator="Ctrl+C", command=lambda:clearBOCConsole())
 
+#themes = ["clam", "winnative", "alt", "default", "classic", "vista", "xpnative"]
+
 submenu = Menu(editmenu)
-submenu.add_command(label="clam", command=lambda:changeTheme(label))
-submenu.add_command(label="winnative")
-submenu.add_command(label="alt")
-submenu.add_command(label="winnative")
+
+submenu.add_command(label="clam", command=lambda:changeTheme('clam'))
+submenu.add_command(label="winnative", command=lambda:changeTheme('winnative'))
+submenu.add_command(label="alt", command=lambda:changeTheme('alt'))
+submenu.add_command(label="xpnative", command=lambda:changeTheme('xpnative'))
+submenu.add_command(label="default", command=lambda:changeTheme('default'))
+submenu.add_command(label="classic", command=lambda:changeTheme('classic'))
+submenu.add_command(label="vista", command=lambda:changeTheme('vista'))
+
 editmenu.add_cascade(label="Theme", menu=submenu)
 menubar.add_cascade(label="Edit", menu=editmenu)
 
