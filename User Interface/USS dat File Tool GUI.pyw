@@ -22,14 +22,14 @@ window = tk.Tk()
 s = ttk.Style()
 s.theme_use('clam')
 
-DEFAULT_FONT_SIZE = 9
-CONSOLE_WIDTH = 77
-CONSOLE_HEIGHT = 16.5
+DEFAULT_FONT_SIZE = 10
+CONSOLE_WIDTH = 76
+CONSOLE_HEIGHT = 15
 BUTTON_WIDTH = 22
 
 consoleFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
 
-window.title("USS dat File Tool v1.1.0")
+window.title("USS dat File Tool v1.2")
 window.resizable(False, False)
 
 height = window.winfo_screenheight()/3
@@ -108,12 +108,19 @@ def fixOfficeRegionZoneFields(event=None):
                     if zone == "  ":
                         zone = "BLANK"
                     bocConsole.delete(1.0, "end")
-                    bocConsole.insert(1.0, "Office . . . . : \t" + str(office))
+                    
+                    bocConsole.insert(1.0, "Office-Region-Zone Fields:")
                     bocConsole.insert(2.0, "\n")
-                    bocConsole.insert(2.0, "Region . . . . : \t" + str(region))
+                    bocConsole.insert(2.0, "--------------------------")
                     bocConsole.insert(3.0, "\n")
-                    bocConsole.insert(3.0, "Zone . . . . . : \t" + str(zone))
-                    break
+                    bocConsole.insert(3.0, "Office . . . . : \t" + str(office) + "\t |")
+                    bocConsole.insert(4.0, "\n")
+                    bocConsole.insert(4.0, "Region . . . . : \t" + str(region) + "\t |")
+                    bocConsole.insert(5.0, "\n")
+                    bocConsole.insert(5.0, "Zone . . . . . : \t" + str(zone) + "\t |")
+                    bocConsole.insert(6.0, "\n")
+                    bocConsole.insert(6.0, "--------------------------")
+                    return
     except FileNotFoundError:
         fileNotFoundError()
         
@@ -129,7 +136,7 @@ def scanAllRecordsVerbose(event=None):
                 else:
                     all_records[x]+=1
             bocConsole.delete(counter, "end")
-            bocConsole.insert(counter, "File scan successful")
+            bocConsole.insert(counter, "Detected Records:")
             counter+=1
             bocConsole.insert(counter, "\n")
             bocConsole.insert(counter, "--------------------------")
@@ -203,7 +210,7 @@ def printReadTypeVerbose(event=None):
                     else:
                         all_reads[x]+=1
             bocConsole.delete(counter, "end")
-            bocConsole.insert(counter, "File scan successful")
+            bocConsole.insert(counter, "Detected Read Type Codes:")
             counter+=1
             bocConsole.insert(counter, "\n")
             bocConsole.insert(counter, "--------------------------")
@@ -219,7 +226,7 @@ def printReadTypeVerbose(event=None):
 
 def checkMalformedLatLong(event=None):
     malformed_data = False
-    counter=1
+    counter = 1
     try:
         with open(download_filename, 'r') as openfile:
             for line in openfile:
@@ -230,6 +237,8 @@ def checkMalformedLatLong(event=None):
                         malformed_data = True
                         latLongConsole.delete(1.0, "end")
                         latLongConsole.insert(1.0, "Malformed lat/long data at line: " + str(counter))
+                        latLongConsole.insert(2.0, "\n")
+                        latLongConsole.insert(2.0, "Line: " + line)
                         return
                 counter+=1
             latLongConsole.delete(1.0, "end")
@@ -263,8 +272,12 @@ def checkLatLongExists(event=None):
         with open(download_filename, 'r') as openfile:
             for line in openfile:
                 if line.startswith('MTX'):
-                    latLongConsole.insert(1.0, line[23:40])
-                    latLongConsole.insert(2.0, line[40:57])
+                    latLongConsole.delete(1.0, "end")
+                    latLongConsole.insert(1.0, "Lat/Long Data:")
+                    latLongConsole.insert(2.0, "\n")
+                    latLongConsole.insert(2.0, "Lattitude: " + str(line[23:40]))
+                    latLongConsole.insert(3.0, "\n")
+                    latLongConsole.insert(3.0, "Longitude: " + str(line[40:57]))
                     return
             latLongConsole.insert(1.0, "No lat/long data detected.")
     except FileNotFoundError:
@@ -286,18 +299,11 @@ def getCustomerRecordLength():
     except FileNotFoundError:
         fileNotFoundError()       
 
-def parseCsv():
-##    #function to normalize files to be written to .csv
-##    lines = []
-##    try:
-##        with open(download_filename, 'r') as openfile:
-##            with open('test.txt', 'w') as builtfile:
-##                for line in openfile:
-##                    lines.append(re.sub(" ", ",", empty_pattern))
-##                builtfile.write(lines)
-##    except FileNotFoundError:
-##        print("no")
-    pass
+def callback(name1, name2, name3):
+    print("here")
+    print("name1", name1)
+    print("name2", name2)
+    print("name3", name3)
 
 def clearBOCConsole():
     bocConsole.delete(1.0, "end")
@@ -357,7 +363,7 @@ def decreaseFontSize():
 
 def fileNotFoundError():
     bocConsole.delete(1.0, "end")
-    bocConsole.insert(1.0, "ERROR: File Not Found")
+    bocConsole.insert(1.0, "ERROR: FILE NOT FOUND")
 
 def fileNotFoundError2():
     latLongConsole.delete(1.0, "end")
@@ -380,7 +386,7 @@ TAB_CONTROL.add(tab3, text="Lat/Long Operations")
 TAB_CONTROL.pack(expand=1, fill="both")
 # Tab 2
 tab2 = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tab2, text="Import/Export")
+TAB_CONTROL.add(tab2, text="Configure Settings")
 TAB_CONTROL.pack(expand=1, fill="both")
 
 #################
@@ -444,23 +450,42 @@ bocConsole.insert(3.0, "\n")
 ##Tab 2 Widgets##
 #################
 
-tab2label = ttk.Label(tab2, text="Import data from download file:")
-tab2label.place(x=20, y=40)
-tab2label2 = ttk.Label(tab2, text="Export current console data:")
-tab2label2.place(x=20, y=115)
+# tab2label = ttk.Label(tab2, text="Import data from download file:")
+# tab2label.place(x=20, y=40)
+# tab2label2 = ttk.Label(tab2, text="Export current console data:")
+# tab2label2.place(x=20, y=115)
 
-tab2importinput = tk.Text(tab2, width=60, height=1)
-tab2importinput.place(x=20, y=65)
-tab2importinput.insert(1.0, os.getcwd())
-tab2importbutton = ttk.Button(tab2, text="Import...", command=lambda:openFile())
-tab2importbutton.place(x=515, y=60)
+# tab2importinput = tk.Text(tab2, width=60, height=1)
+# tab2importinput.place(x=20, y=65)
+# tab2importinput.insert(1.0, os.getcwd())
+# tab2importbutton = ttk.Button(tab2, text="Import...", command=lambda:openFile())
+# tab2importbutton.place(x=515, y=60)
 
-tab2exportinput= tk.Text(tab2, width=60, height=1)
-tab2exportinput.place(x=20, y=140)
-tab2exportinput.insert(1.0, os.getcwd())
+# tab2exportinput= tk.Text(tab2, width=60, height=1)
+# tab2exportinput.place(x=20, y=140)
+# tab2exportinput.insert(1.0, os.getcwd())
 
-tab2exportbutton = ttk.Button(tab2, text="Export... ", command=lambda:save())
-tab2exportbutton.place(x=515, y=135)
+# tab2exportbutton = ttk.Button(tab2, text="Export... ", command=lambda:save())
+# tab2exportbutton.place(x=515, y=135)
+
+regionslabel = ttk.Label(tab2, text="State for Lat/Long Data:")
+regionslabel.place(x=20, y=30)
+
+variable = StringVar(tab2)
+variable.set("Central United States")
+regions = ttk.OptionMenu(tab2, variable, "Alabama", "Arkansas", "Georgia", "Indiana", "Kentucky")
+regions.place(x=20,y=50)
+
+themelabel = ttk.Label(tab2, text="Current Theme:")
+themelabel.place(x=200, y=30)
+
+##variable2 = StringVar()
+##variable2.trace("w", callback)
+##themes = ["clam", "winnative", "alt", "default", "classic", "vista", "xpnative"]
+##regions = ttk.OptionMenu(tab2, variable2)
+##regions.set(themes[0])
+##w = apply(OptionMenu, (window, variable) + tuple(themes))
+##regions.place(x=200,y=50)
 
 tab2enforcebutton = ttk.Checkbutton(tab2, text="Enforce file integrity (recommended)")
 tab2enforcebutton.place(x=20, y=270)
@@ -482,17 +507,17 @@ else:
 label2 = ttk.Label(tab3, textvariable=text2)
 label2.place(x=290, y=20)
 
-NumkeyLatLong1 = ttk.Button(tab3, text="1.", width=1.5)
+NumkeyLatLong1 = ttk.Button(tab3, text="1.", width=1.5, command=lambda:checkLatLongExists())
 NumkeyLatLong1.place(x=20, y=50)
 tab3existsbutton = ttk.Button(tab3, text="Check Lat/Long Exist", width=BUTTON_WIDTH, command=lambda:checkLatLongExists())
 tab3existsbutton.place(x=50, y=50)
 
-NumkeyLatLong2 = ttk.Button(tab3, text="2.", width=1.5)
+NumkeyLatLong2 = ttk.Button(tab3, text="2.", width=1.5, command=lambda:checkLatLongSigns())
 NumkeyLatLong2.place(x=20, y=90)
 tab3checksignbutton = ttk.Button(tab3, text="Check Lat/Long Signs", width=BUTTON_WIDTH, command=lambda:checkLatLongSigns())
 tab3checksignbutton.place(x=50, y=90)
 
-NumkeyLatLong3 = ttk.Button(tab3, text="3.", width=1.5)
+NumkeyLatLong3 = ttk.Button(tab3, text="3.", width=1.5, command=lambda:checkMalformedLatLong())
 NumkeyLatLong3.place(x=20, y=130)
 tab3malformedbutton = ttk.Button(tab3, text="Check for Malformation", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong())
 tab3malformedbutton.place(x=50, y=130)
