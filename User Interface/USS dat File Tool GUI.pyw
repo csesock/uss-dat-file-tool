@@ -26,7 +26,7 @@ BUTTON_WIDTH = 22
 
 consoleFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
 
-window.title("USS dat File Tool v1.2.1")
+window.title("USS dat File Tool v1.3.0")
 window.resizable(False, False)
 
 height = window.winfo_screenheight()/3
@@ -111,11 +111,11 @@ def fixOfficeRegionZoneFields(event=None):
                     bocConsole.insert(2.0, "\n")
                     bocConsole.insert(2.0, "--------------------------")
                     bocConsole.insert(3.0, "\n")
-                    bocConsole.insert(3.0, "Office . . . . : \t" + str(office) + "\t |")
+                    bocConsole.insert(3.0, "Office . . . . : \t" + str(office))
                     bocConsole.insert(4.0, "\n")
-                    bocConsole.insert(4.0, "Region . . . . : \t" + str(region) + "\t |")
+                    bocConsole.insert(4.0, "Region . . . . : \t" + str(region))
                     bocConsole.insert(5.0, "\n")
-                    bocConsole.insert(5.0, "Zone . . . . . : \t" + str(zone) + "\t |")
+                    bocConsole.insert(5.0, "Zone . . . . . : \t" + str(zone))
                     bocConsole.insert(6.0, "\n")
                     bocConsole.insert(6.0, "--------------------------")
                     return
@@ -141,7 +141,7 @@ def scanAllRecordsVerbose(event=None):
             counter+=1
             bocConsole.insert(counter, "\n")
             for record in all_records:
-                bocConsole.insert(counter, str(record) + ". . . :\t" + f"{all_records[record]:,d} " + "\t\t |")
+                bocConsole.insert(counter, str(record) + ". . . :\t" + f"{all_records[record]:,d} ")
                 counter+=1
                 bocConsole.insert(counter, "\n")
             bocConsole.insert(counter, "--------------------------")
@@ -217,7 +217,7 @@ def printReadTypeVerbose(event=None):
             counter+=1
             bocConsole.insert(counter, "\n")
             for record in all_reads:
-                bocConsole.insert(counter, str(record) + ". . . :\t" + f"{all_reads[record]:,d} " + "\t\t |")
+                bocConsole.insert(counter, str(record) + ". . . :\t" + f"{all_reads[record]:,d} ")
                 counter+=1
                 bocConsole.insert(counter, "\n")
             bocConsole.insert(counter, "--------------------------")
@@ -259,7 +259,11 @@ def checkLatLongSigns(event=None):
                         return
                     else:
                         latLongConsole.delete(1.0, "end")
-                        latLongConsole.insert(1.0, "The lat/long signs are correct.")
+                        latLongConsole.insert(1.0, "The lat/long signs are correct:")
+                        latLongConsole.insert(2.0, "\n")
+                        latLongConsole.insert(2.0, "Longitude Sign: Positive")
+                        latLongConsole.insert(3.0, "\n")
+                        latLongConsole.insert(3.0, "Latitude Sign: Negative")
                         return
             latLongConsole.delete(1.0, "end")
             latLongConsole.insert(1.0, "No lat/long data detected.")
@@ -312,9 +316,9 @@ def save():
     messagebox.showinfo("Export", "Data successfully exported!")
  
 def saveAs():
-    files = [('All Files', '*.*'),
+    files = [('Text Files', '*.txt'),
+             ('All Files', '*.*'),
              ('Python Files', '*.py'),
-             ('Text Files', '*.txt'),
              ('CSV Files', '*.csv')]
     f = asksaveasfile(mode='w', defaultextension='.txt', filetypes=files)
     if f is None:
@@ -340,22 +344,14 @@ def resizeWindow():
     window.geometry('%dx%d+0+0' %(width, height))
 
 def resetWindow():
+    height = window.winfo_screenheight()/3
+    width = window.winfo_screenwidth()/3
     window.geometry('780x350+%d+%d' %(width, height))
     bocConsole.delete(1.0, "end")
     bocConsole.insert(1.0, "United Systems dat File Tool")
     bocConsole.insert(2.0, "\n")
     bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
     bocConsole.insert(3.0, "\n")
-
-def increaseFontSize():
-    global DEFAULT_FONT_SIZE
-    DEFAULT_FONT_SIZE+=1
-    consoleFont.configure(size=DEFAULT_FONT_SIZE)
-
-def decreaseFontSize():
-    global DEFAULT_FONT_SIZE
-    DEFAULT_FONT_SIZE-=1
-    consoleFont.configure(size=DEFAULT_FONT_SIZE)
 
 def changeTheme(theme):
     s = ttk.Style()
@@ -370,8 +366,8 @@ def fileNotFoundError2():
     latLongConsole.insert(1.0, "ERROR: FILE NOT FOUND")
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.2 \n Commit: aebb993a87843e0ffc8b5fc2f32813638cc9be90 \n Date: 2020-07-16:2:00:00 \n Python: 3.9.1 \n OS: Windows_NT x64 10.0.10363
-            """
+    dialog = """ Author: Chris Sesock \n Version: 1.3.0 \n Commit: aebb993a87843e0ffc8b5fc2f32813638cc9be90 \n Date: 2020-07-16:2:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
+             """
     messagebox.showinfo("About", dialog)
 
 
@@ -394,29 +390,29 @@ TAB_CONTROL.pack(expand=1, fill="both")
 #################
 
 Numkey1 = ttk.Button(TAB1, text="1.", width=1.5, command=lambda:singleRecordScan())
-Numkey1.place(x=20, y=40)
+Numkey1.place(x=20, y=35)
 SingleRecordScanButton = ttk.Button(TAB1, text="Record Count Search", command=lambda:singleRecordScan(), width=BUTTON_WIDTH)
-SingleRecordScanButton.place(x=50, y=40)
+SingleRecordScanButton.place(x=50, y=35)
 
 Numkey2 = ttk.Button(TAB1, text="2.", width=1.5, command=lambda:scanAllRecordsVerbose())
-Numkey2.place(x=20, y=80)
+Numkey2.place(x=20, y=76)
 VerboseRecordScanButton = ttk.Button(TAB1, text="Record Type Count", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH)
-VerboseRecordScanButton.place(x=50, y=80)
+VerboseRecordScanButton.place(x=50, y=76)
 
 Numkey3 = ttk.Button(TAB1, text="3.", width=1.5, command=lambda:printSingleRecord())
-Numkey3.place(x=20, y=120)
+Numkey3.place(x=20, y=117)
 PrintSingleRecordButton = ttk.Button(TAB1, text="Record Type Search", command=lambda:printSingleRecord(), width=BUTTON_WIDTH)
-PrintSingleRecordButton.place(x=50, y=120)
+PrintSingleRecordButton.place(x=50, y=117)
 
 Numkey4 = ttk.Button(TAB1, text="4.", width=1.5, command=lambda:fixOfficeRegionZoneFields())
-Numkey4.place(x=20, y=160)
+Numkey4.place(x=20, y=158)
 OfficeRegionZoneFieldButton = ttk.Button(TAB1, text="Office-Region-Zone", command=lambda:fixOfficeRegionZoneFields(), width=BUTTON_WIDTH)
-OfficeRegionZoneFieldButton.place(x=50, y=160)
+OfficeRegionZoneFieldButton.place(x=50, y=158)
 
 Numkey5 = ttk.Button(TAB1, text="5.", width=1.5, command=lambda:missingMeters())
-Numkey5.place(x=20, y=200)
+Numkey5.place(x=20, y=199)
 MissingMeterButton = ttk.Button(TAB1, text="Blank Meter Numbers", command=lambda:missingMeters(), width=BUTTON_WIDTH)
-MissingMeterButton.place(x=50, y=200)
+MissingMeterButton.place(x=50, y=199)
 
 Numkey6 = ttk.Button(TAB1, text="6.", width=1.5, command=lambda:printReadTypeVerbose())
 Numkey6.place(x=20, y=240)
@@ -430,12 +426,12 @@ text = tk.StringVar()
 if os.path.isfile('download.dat'):
     text.set('download.dat')
 else:
-    text.set('No File')
+    text.set('None')
 label = ttk.Label(TAB1, textvariable=text)
 label.place(x=290, y=20)
 
 consoleclearbutton = ttk.Button(TAB1, text="clear", width=4.25, command=lambda:clearBOCConsole())
-consoleclearbutton.place(x=720, y=6)
+consoleclearbutton.place(x=715, y=6)
 
 bocConsole = tk.Text(TAB1, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
 
@@ -450,16 +446,16 @@ bocConsole.insert(3.0, "\n")
 ##Tab 2 Widgets##
 #################
 
-regionslabel = ttk.Label(tab2, text="State for Lat/Long Data:")
-regionslabel.place(x=20, y=30)
-
-variable = StringVar(tab2)
-variable.set("Central United States")
-regions = ttk.OptionMenu(tab2, variable, "Alabama", "Arkansas", "Georgia", "Indiana", "Kentucky")
-regions.place(x=20,y=50)
+##regionslabel = ttk.Label(tab2, text="State for Lat/Long Data:")
+##regionslabel.place(x=20, y=30)
+##
+##variable = StringVar(tab2)
+##variable.set("Central United States")
+##regions = ttk.OptionMenu(tab2, variable, "Alabama", "Arkansas", "Georgia", "Indiana", "Kentucky")
+##regions.place(x=20,y=50)
 
 tab2enforcebutton = ttk.Checkbutton(tab2, text="Enforce filetype imports (recommended)")
-tab2enforcebutton.place(x=20, y=270)
+tab2enforcebutton.place(x=20, y=260)
 tab2enforcebutton.state(['selected'])
 
 #################
@@ -473,20 +469,20 @@ text2 = tk.StringVar()
 if os.path.isfile('download.dat'):
     text2.set('download.dat')
 else:
-    text2.set('No File')
+    text2.set('None')
 
 label2 = ttk.Label(tab3, textvariable=text2)
 label2.place(x=290, y=20)
 
 NumkeyLatLong1 = ttk.Button(tab3, text="1.", width=1.5, command=lambda:checkLatLongExists())
-NumkeyLatLong1.place(x=20, y=50)
+NumkeyLatLong1.place(x=20, y=40)
 tab3existsbutton = ttk.Button(tab3, text="Find First Lat/Long", width=BUTTON_WIDTH, command=lambda:checkLatLongExists())
-tab3existsbutton.place(x=50, y=50)
+tab3existsbutton.place(x=50, y=40)
 
 NumkeyLatLong2 = ttk.Button(tab3, text="2.", width=1.5, command=lambda:checkLatLongSigns())
-NumkeyLatLong2.place(x=20, y=90)
+NumkeyLatLong2.place(x=20, y=85)
 tab3checksignbutton = ttk.Button(tab3, text="Lat/Long Signs", width=BUTTON_WIDTH, command=lambda:checkLatLongSigns())
-tab3checksignbutton.place(x=50, y=90)
+tab3checksignbutton.place(x=50, y=85)
 
 NumkeyLatLong3 = ttk.Button(tab3, text="3.", width=1.5, command=lambda:checkMalformedLatLong())
 NumkeyLatLong3.place(x=20, y=130)
@@ -503,7 +499,7 @@ latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
 
 consoleclearbutton2 = ttk.Button(tab3, text="clear", width=4.25, command=lambda:clearLatLongConsole())
-consoleclearbutton2.place(x=720, y=6)
+consoleclearbutton2.place(x=715, y=6)
 
 ########
 ##Menu##
