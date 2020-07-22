@@ -30,12 +30,12 @@ There are two included versions of the tool in the repo, one with third-party li
 Think of them as a beta and release build. 
 
 ## Installation and Usage
-To use the tool, simply install the most recent version of Python (3.X) and ensure that Python exists in the PATH. 
+To use the tool, simply install the most recent version of Python (3.X) from https://www.python.org/downloads/ and ensure that Python exists in the PATH. 
 
-By default, this tool only uses the download file in the current working directory. A future update will add the option to switch to upload files or change file name/paths from the command line. 
+The command line version of this tool only reads the download file titled 'download.dat' in the same directory as the tool. 
 
 This problem can also be solved by using the UI, which will read the default 'download.dat' file in the same directory, or can alternatively open any .dat or .hdl file. 
 
 ## 
 
-For feature requests/comments email christophers@united-systems.com
+For feature requests/comments email: christophers@united-systems.com
