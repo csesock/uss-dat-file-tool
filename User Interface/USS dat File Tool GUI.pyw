@@ -335,8 +335,11 @@ def clearLatLongConsole():
 def save():
     export_filename = "DatFileToolExport " + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + ".txt"
     with open(export_filename, 'w') as openfile:
-        text = bocConsole.get('1.0', 'end')
-        openfile.write(text)
+        if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
+            text2save = str(bocConsole.get(1.0, "end"))
+        else:
+            text2save = str(latLongConsole.get(1.0, "end"))
+        openfile.write(text2save)
     messagebox.showinfo("Export", "Data successfully exported!")
  
 def saveAs():
@@ -400,6 +403,14 @@ def aboutDialog():
 def enableDev():
     global developer
     developer=True
+
+def createLogFile():
+    try:
+        f = open(os.getcwd() + "\\logs\\Logfile" + datetime.today().strftime('%Y-%m-%d') + ".txt", 'w')
+        f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Logfile successfully created.")
+        f.close()
+    except FileExistsError:
+        pass
 
 # Create Tab Control
 TAB_CONTROL = ttk.Notebook(window)
@@ -601,11 +612,13 @@ menubar.add_cascade(label="Window", menu=windowmenu)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
 helpmenu.add_command(label="About This Tool", accelerator='F1', command=lambda:aboutDialog())
-helpmenu.add_command(label="Enable Developer Mode", command=lambda:enableDev())
+#helpmenu.add_command(label="Enable Developer Mode", command=lambda:enableDev())
+helpmenu.add_command(label="View Log File", command=lambda:viewLog())
 menubar.add_cascade(label="Help", menu=helpmenu)
 
 
 
 if __name__ == "__main__":
+    createLogFile()
     window.config(menu=menubar)
     window.mainloop()
