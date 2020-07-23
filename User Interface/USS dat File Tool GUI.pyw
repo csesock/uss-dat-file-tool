@@ -339,15 +339,18 @@ def save():
         openfile.write(text)
     messagebox.showinfo("Export", "Data successfully exported!")
  
-def saveAs(default_file_extension):
+def saveAs():
     files = [('Text Files', '*.txt'),
              ('All Files', '*.*'),
              ('Python Files', '*.py'),
              ('CSV Files', '*.csv')]
-    f = asksaveasfile(mode='w', defaultextension=default_file_extension, filetypes=files)
+    f = asksaveasfile(mode='w', defaultextension='.txt', filetypes=files)
     if f is None:
         return
-    text2save = str(bocConsole.get(1.0, "end"))
+    if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
+        text2save = str(bocConsole.get(1.0, "end"))
+    else:
+        text2save = str(latLongConsole.get(1.0, "end"))
     f.write(text2save)
     f.close()
 
