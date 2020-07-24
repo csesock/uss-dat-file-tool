@@ -8,7 +8,7 @@ from collections import deque
 from datetime import datetime
 import sys, os, re, time
 
-developer = True
+developer = False
 
 record_pattern = re.compile('[a-z][0-9]*\s*')   
 empty_pattern = re.compile('[^\S\n\t]{11}')     #missing meters
@@ -435,6 +435,8 @@ def enableDev():
 def createLogFile():
     try:
         f = open(log_filename, 'w')
+        if developer == True:
+            f.write("DEVELOPER MODE ON \n")
         f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Program successfully started \n")
         f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Logfile successfully created")
         f.close()
