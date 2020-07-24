@@ -170,6 +170,7 @@ def missingMeters(event=None):
                 bocConsole.delete(1.0, "end")
                 bocConsole.insert(1.0, "No missing meters found in ["+os.path.basename(download_filename)+"]")
                 return
+        writeToLogs('missing meters called.')
     except FileNotFoundError:
         fileNotFoundError()
 
@@ -404,13 +405,30 @@ def enableDev():
     global developer
     developer=True
 
+#################
+##Log Functions##
+#################
+
 def createLogFile():
     try:
-        f = open(os.getcwd() + "\\logs\\Logfile" + datetime.today().strftime('%Y-%m-%d') + ".txt", 'w')
-        f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Logfile successfully created.")
+        f = open(os.getcwd() + "\\logs\\Logfile " + datetime.today().strftime('%Y-%m-%d_%H-%M') + ".txt", 'w')
+        f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Program successfully started \n")
+        f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Logfile successfully created")
         f.close()
     except FileExistsError:
         pass
+
+def writeToLogs(message):
+    try:
+        f = open(os.getcwd() + "\\logs\\Logfile " + datetime.today().strftime('%Y-%m-%d_%H-%M') + ".txt", 'a')
+        f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + message)
+        f.close()
+    except:
+        pass
+
+def openLogFile():
+    pass
+
 
 # Create Tab Control
 TAB_CONTROL = ttk.Notebook(window)
