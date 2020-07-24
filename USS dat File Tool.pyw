@@ -353,6 +353,7 @@ def clearLatLongConsole():
     latLongConsole.delete(1.0, "end")
 
 def save():
+    writeToLogs('Start Function Call - save()')
     export_filename = "DatFileToolExport " + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + ".txt"
     with open(export_filename, 'w') as openfile:
         if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
@@ -363,6 +364,7 @@ def save():
     messagebox.showinfo("Export", "Data successfully exported!")
  
 def saveAs():
+    writeToLogs('Start Function Call - saveAs()')
     files = [('Text Files', '*.txt'),
              ('All Files', '*.*'),
              ('Python Files', '*.py'),
@@ -378,6 +380,7 @@ def saveAs():
     f.close()
 
 def openFile():
+    writeToLogs('Start Function Call - openFile()')
     filename = tk.filedialog.askopenfilename(title="Import File")
     if tab2enforcebutton.instate(['selected']):
         if not filename.lower().endswith(('.dat', '.DAT', '.hdl', '.HDL')):
