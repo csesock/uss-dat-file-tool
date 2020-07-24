@@ -16,6 +16,7 @@ empty2_pattern = re.compile('[^\S\r\n]{8}')
 lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
 
 download_filename = 'download.dat'
+log_filename = os.getcwd() + "\\logs\\Logfile " + datetime.today().strftime('%Y-%m-%d_%H-%M') + ".txt"
 
 window = tk.Tk()
 s = ttk.Style()
@@ -170,7 +171,7 @@ def missingMeters(event=None):
                 bocConsole.delete(1.0, "end")
                 bocConsole.insert(1.0, "No missing meters found in ["+os.path.basename(download_filename)+"]")
                 return
-        writeToLogs('missing meters called.')
+        writeToLogs('Called missing meters function')
     except FileNotFoundError:
         fileNotFoundError()
 
@@ -368,6 +369,7 @@ def openFile():
     download_filename = filename
     text.set(os.path.basename(download_filename))
     text2.set(os.path.basename(download_filename))
+    writeToLogs('Opened new file: ' + str(filename))
        
 def resizeWindow():
     width = window.winfo_screenwidth()
@@ -411,7 +413,7 @@ def enableDev():
 
 def createLogFile():
     try:
-        f = open(os.getcwd() + "\\logs\\Logfile " + datetime.today().strftime('%Y-%m-%d_%H-%M') + ".txt", 'w')
+        f = open(log_filename, 'w')
         f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Program successfully started \n")
         f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Logfile successfully created")
         f.close()
@@ -420,8 +422,9 @@ def createLogFile():
 
 def writeToLogs(message):
     try:
-        f = open(os.getcwd() + "\\logs\\Logfile " + datetime.today().strftime('%Y-%m-%d_%H-%M') + ".txt", 'a')
-        f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + message)
+        f = open(log_filename, 'a')
+        f.write('\n')
+        f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " " + message)
         f.close()
     except:
         pass
