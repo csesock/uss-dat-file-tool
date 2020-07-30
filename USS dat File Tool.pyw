@@ -8,7 +8,7 @@ from collections import deque
 from datetime import datetime
 import sys, os, re, time
 
-developer = False
+developer = True #enable developer settings tab
 
 record_pattern = re.compile('[a-z][0-9]*\s*')   
 empty_pattern = re.compile('[^\S\n\t]{11}')     #missing meters
@@ -400,7 +400,7 @@ def resizeWindow():
 def resetWindow():
     height = window.winfo_screenheight()/3
     width = window.winfo_screenwidth()/3
-    window.geometry('780x350+%d+%d' %(width, height))
+    window.geometry('780x330+%d+%d' %(width, height)) #reset height must be height-20 to account for the menu being created at this point
     bocConsole.delete(1.0, "end")
     bocConsole.insert(1.0, "United Systems dat File Tool")
     bocConsole.insert(2.0, "\n")
@@ -424,7 +424,7 @@ def aboutDialog():
              """
     messagebox.showinfo("About", dialog)
 
-def enableDev():
+def changeDevStatus():
     global developer
     developer=not developer
 
@@ -580,6 +580,19 @@ if developer == True:
     label=ttk.Label(tab2, image=photo)
     label.image = photo
     label.place(x=650, y=180)
+
+    # log settings
+
+    loglabel = ttk.Label(tab2, text="Log settings:")
+    loglabel.place(x=450, y=20)
+
+    logdelete = ttk.Checkbutton(tab2, text="Delete old log files (recommended)")
+    logdelete.place(x=450, y=40)
+    logdelete.state(['selected'])
+
+    logverbose = ttk.Checkbutton(tab2, text="Log all function calls (verbose) (recommended)")
+    logverbose.place(x=450, y=60)
+    logverbose.state(['selected'])
 
 #################
 ##Tab 3 Widgets##
