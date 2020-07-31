@@ -18,7 +18,6 @@ empty2_pattern = re.compile('[^\S\r\n]{8}')
 lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
 
 download_filename = 'download.dat'
-log_filename = os.getcwd() + "\\logs\\Logfile " + datetime.today().strftime('%Y-%m-%d_%H-%M') + ".txt"
 
 window = tk.Tk()
 s = ttk.Style()
@@ -31,7 +30,7 @@ BUTTON_WIDTH = 22
 
 consoleFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
 
-window.title("USS dat File Tool v1.4.0")
+window.title("USS dat File Tool v1.4.1")
 window.resizable(False, False)
 
 height = window.winfo_screenheight()/3
@@ -357,13 +356,13 @@ def clearLatLongConsole():
 def save():
     Logging.writeToLogs('Start Function Call - save()')
     export_filename = "DatFileToolExport " + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + ".txt"
-    with open(export_filename, 'w') as openfile:
+    with open("exports\\"+export_filename, 'w') as openfile:
         if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
             text2save = str(bocConsole.get(1.0, "end"))
         else:
             text2save = str(latLongConsole.get(1.0, "end"))
         openfile.write(text2save)
-    messagebox.showinfo("Export", "Data successfully exported!")
+    messagebox.showinfo("Export", "Data successfully exported to the 'exports' folder!")
  
 def saveAs():
     Logging.writeToLogs('Start Function Call - saveAs()')
@@ -422,53 +421,13 @@ def fileNotFoundError2():
     latLongConsole.insert(1.0, "ERROR: FILE NOT FOUND")
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.4.0 \n Commit: aebb993a87843e0ffc8b5fc2f32813638cc9be90 \n Date: 2020-07-16:2:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
+    dialog = """ Author: Chris Sesock \n Version: 1.4.1 \n Commit: aebb993a87843e0ffc8b5fc2f32813638cc9be90 \n Date: 2020-07-16:2:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
              """
     messagebox.showinfo("About", dialog)
 
 def changeDevStatus():
     global developer
     developer=not developer
-
-#################
-##Log Functions##
-#################
-
-##def createLogFile():
-##    try:
-##        f = open(log_filename, 'w')
-##        if developer == True:
-##            f.write("DEVELOPER MODE ON \n")
-##        f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Program successfully started \n")
-##        f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Logfile successfully created")
-##        f.close()
-##    except FileExistsError:
-##        pass
-##
-##def Logging.writeToLogs(message):
-##    try:
-##        f = open(log_filename, 'a')
-##        f.write('\n')
-##        f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " " + message)
-##        f.close()
-##    except:
-##        pass
-##
-##def viewLog():
-##    counter = 1.0
-##    try:
-##        with open(log_filename, 'r') as openfile:
-##            if TAB_CONTROL.index(TAB_CONTROL.select()) == 0: #boc console
-##                bocConsole.delete(1.0, 'end')
-##                console = bocConsole
-##            else:
-##                latLongConsole.delete(1.0, 'end')
-##                console = latLongConsole
-##            for line in openfile:
-##                console.insert(counter, line)
-##                counter+=1
-##    except:
-##        print("An error occured")
 
 # Create Tab Control
 TAB_CONTROL = ttk.Notebook(window)
@@ -584,7 +543,6 @@ if developer == True:
     label.place(x=650, y=180)
 
     # log settings
-
     loglabel = ttk.Label(tab2, text="Log settings:")
     loglabel.place(x=450, y=20)
 
