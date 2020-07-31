@@ -8,6 +8,8 @@ from collections import deque
 from datetime import datetime
 import sys, os, re, time
 
+import Logging
+
 developer = True #enable developer settings tab
 
 record_pattern = re.compile('[a-z][0-9]*\s*')   
@@ -64,7 +66,7 @@ window.bind('<Alt-r>', lambda event: increaseFontSize())
 window.bind('<Alt-t>', lambda event: decreaseFontSize())
 
 def singleRecordScan(event=None):
-    writeToLogs('Start Function Call - singleRecordScan()')
+    Logging.writeToLogs('Start Function Call - singleRecordScan()')
     answer = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
     if answer is None or answer == "":
         return
@@ -78,12 +80,12 @@ def singleRecordScan(event=None):
             bocConsole.delete(1.0, "end")
             bocConsole.insert("end", f"{counter:,d} " + answer + " records found")
             bocConsole.insert("end", "\n")
-        writeToLogs('End Function Call - singleRecordScan()')
+        Logging.writeToLogs('End Function Call - singleRecordScan()')
     except FileNotFoundError:
         fileNotFoundError()
 
 def printSingleRecord(event=None):
-    writeToLogs('Start Function Call - printSingleRecord()')
+    Logging.writeToLogs('Start Function Call - printSingleRecord()')
     record_type = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
     if record_type is None:
         return
@@ -96,12 +98,12 @@ def printSingleRecord(event=None):
                 if line.startswith(record_type):
                     bocConsole.insert(counter, line + "\n")
                     counter+=1
-        writeToLogs('End Function Call - printSingleRecord()')
+        Logging.writeToLogs('End Function Call - printSingleRecord()')
     except FileNotFoundError:
         fileNotFoundError()
         
 def fixOfficeRegionZoneFields(event=None):
-    writeToLogs('Start Function Call - fixOfficeRegionZoneFields()')
+    Logging.writeToLogs('Start Function Call - fixOfficeRegionZoneFields()')
     try:
         with open(download_filename, 'r') as openfile:
             for line in openfile:
@@ -128,12 +130,12 @@ def fixOfficeRegionZoneFields(event=None):
                     bocConsole.insert(6.0, "\n")
                     bocConsole.insert(6.0, "------------------------")
                     return
-        writeToLogs('End Function Call - fixOfficeRegionZoneFields()')
+        Logging.writeToLogs('End Function Call - fixOfficeRegionZoneFields()')
     except FileNotFoundError:
         fileNotFoundError()
         
 def scanAllRecordsVerbose(event=None):
-    writeToLogs('Start Function Call - scanAllRecordsVerbose()')
+    Logging.writeToLogs('Start Function Call - scanAllRecordsVerbose()')
     all_records = {}
     counter = 1.0
     try:
@@ -156,12 +158,12 @@ def scanAllRecordsVerbose(event=None):
                 counter+=1
                 bocConsole.insert(counter, "\n")
             bocConsole.insert(counter, "----------------------")
-        writeToLogs('End Function Call - scanAllRecordsVerbose()')
+        Logging.writeToLogs('End Function Call - scanAllRecordsVerbose()')
     except FileNotFoundError:
         fileNotFoundError()
 
 def missingMeters(event=None):
-    writeToLogs('Start Function Call - missingMeters()')
+    Logging.writeToLogs('Start Function Call - missingMeters()')
     counter = 0
     line_number = 1
     try:
@@ -181,12 +183,12 @@ def missingMeters(event=None):
                 bocConsole.delete(1.0, "end")
                 bocConsole.insert(1.0, "No missing meters found in ["+os.path.basename(download_filename)+"]")
                 return
-        writeToLogs('End Function Call - missingMeters()')
+        Logging.writeToLogs('End Function Call - missingMeters()')
     except FileNotFoundError:
         fileNotFoundError()
 
 def printReadType(event=None):
-    writeToLogs('Start Function Call - printReadType()')
+    Logging.writeToLogs('Start Function Call - printReadType()')
     user_meter_code = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
     if user_meter_code is None:
         return
@@ -209,12 +211,12 @@ def printReadType(event=None):
                 bocConsole.insert("end", "No meters of that type found.")
             elif counter != 0:
                 bocConsole.insert("end", counter)
-        writeToLogs('End Function Call - printReadType()')
+        Logging.writeToLogs('End Function Call - printReadType()')
     except FileNotFoundError:
         fileNotFoundError()
 
 def printReadTypeVerbose(event=None):
-    writeToLogs("Start Function Call - printReadTypeVerbose()")
+    Logging.writeToLogs("Start Function Call - printReadTypeVerbose()")
     all_reads = {}
     counter = 1.0
     try:
@@ -238,12 +240,12 @@ def printReadTypeVerbose(event=None):
                 counter+=1
                 bocConsole.insert(counter, "\n")
             bocConsole.insert(counter, "----------------------")
-        writeToLogs("End Function Call - printReadTypeVerbose()")
+        Logging.writeToLogs("End Function Call - printReadTypeVerbose()")
     except FileNotFoundError:
         fileNotFoundError()
 
 def checkMalformedLatLong(event=None):
-    writeToLogs("Start Function Call - checkMalformedLatLong()")
+    Logging.writeToLogs("Start Function Call - checkMalformedLatLong()")
     line_number = 1
     try:
         with open(download_filename, 'r') as openfile:
@@ -264,12 +266,12 @@ def checkMalformedLatLong(event=None):
                 line_number+=1
             latLongConsole.delete(1.0, "end")
             latLongConsole.insert(1.0, "No malformation within lat/long data detected.")
-        writeToLogs("End Function Call - checkMalformedLatLong()")
+        Logging.writeToLogs("End Function Call - checkMalformedLatLong()")
     except FileNotFoundError:
         fileNotFoundError2()
 
 def checkLatLongSigns(event=None):
-    writeToLogs("Start Function Call - checkLatLongSigns()")
+    Logging.writeToLogs("Start Function Call - checkLatLongSigns()")
     try:
         with open(download_filename, 'r') as openfile:
             for line in openfile:
@@ -290,7 +292,7 @@ def checkLatLongSigns(event=None):
                         return
             latLongConsole.delete(1.0, "end")
             latLongConsole.insert(1.0, "No lat/long data detected.")
-        writeToLogs("End Function Call - checkLatLongSigns()")
+        Logging.writeToLogs("End Function Call - checkLatLongSigns()")
     except FileNotFoundError:
         fileNotFoundError2()
 
@@ -353,7 +355,7 @@ def clearLatLongConsole():
     latLongConsole.delete(1.0, "end")
 
 def save():
-    writeToLogs('Start Function Call - save()')
+    Logging.writeToLogs('Start Function Call - save()')
     export_filename = "DatFileToolExport " + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + ".txt"
     with open(export_filename, 'w') as openfile:
         if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
@@ -364,7 +366,7 @@ def save():
     messagebox.showinfo("Export", "Data successfully exported!")
  
 def saveAs():
-    writeToLogs('Start Function Call - saveAs()')
+    Logging.writeToLogs('Start Function Call - saveAs()')
     files = [('Text Files', '*.txt'),
              ('All Files', '*.*'),
              ('Python Files', '*.py'),
@@ -380,7 +382,7 @@ def saveAs():
     f.close()
 
 def openFile():
-    writeToLogs('Start Function Call - openFile()')
+    Logging.writeToLogs('Start Function Call - openFile()')
     filename = tk.filedialog.askopenfilename(title="Import File")
     if tab2enforcebutton.instate(['selected']):
         if not filename.lower().endswith(('.dat', '.DAT', '.hdl', '.HDL')):
@@ -390,7 +392,7 @@ def openFile():
     download_filename = filename
     text.set(os.path.basename(download_filename))
     text2.set(os.path.basename(download_filename))
-    writeToLogs('Opened new file: ' + str(filename))
+    Logging.writeToLogs('Opened new file: ' + str(filename))
        
 def resizeWindow():
     width = window.winfo_screenwidth()
@@ -432,41 +434,41 @@ def changeDevStatus():
 ##Log Functions##
 #################
 
-def createLogFile():
-    try:
-        f = open(log_filename, 'w')
-        if developer == True:
-            f.write("DEVELOPER MODE ON \n")
-        f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Program successfully started \n")
-        f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Logfile successfully created")
-        f.close()
-    except FileExistsError:
-        pass
-
-def writeToLogs(message):
-    try:
-        f = open(log_filename, 'a')
-        f.write('\n')
-        f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " " + message)
-        f.close()
-    except:
-        pass
-
-def viewLog():
-    counter = 1.0
-    try:
-        with open(log_filename, 'r') as openfile:
-            if TAB_CONTROL.index(TAB_CONTROL.select()) == 0: #boc console
-                bocConsole.delete(1.0, 'end')
-                console = bocConsole
-            else:
-                latLongConsole.delete(1.0, 'end')
-                console = latLongConsole
-            for line in openfile:
-                console.insert(counter, line)
-                counter+=1
-    except:
-        print("An error occured")
+##def createLogFile():
+##    try:
+##        f = open(log_filename, 'w')
+##        if developer == True:
+##            f.write("DEVELOPER MODE ON \n")
+##        f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Program successfully started \n")
+##        f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Logfile successfully created")
+##        f.close()
+##    except FileExistsError:
+##        pass
+##
+##def Logging.writeToLogs(message):
+##    try:
+##        f = open(log_filename, 'a')
+##        f.write('\n')
+##        f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " " + message)
+##        f.close()
+##    except:
+##        pass
+##
+##def viewLog():
+##    counter = 1.0
+##    try:
+##        with open(log_filename, 'r') as openfile:
+##            if TAB_CONTROL.index(TAB_CONTROL.select()) == 0: #boc console
+##                bocConsole.delete(1.0, 'end')
+##                console = bocConsole
+##            else:
+##                latLongConsole.delete(1.0, 'end')
+##                console = latLongConsole
+##            for line in openfile:
+##                console.insert(counter, line)
+##                counter+=1
+##    except:
+##        print("An error occured")
 
 # Create Tab Control
 TAB_CONTROL = ttk.Notebook(window)
@@ -686,6 +688,6 @@ helpmenu.add_command(label="View Log File", accelerator='F2', command=lambda:vie
 menubar.add_cascade(label="Help", menu=helpmenu)
 
 if __name__ == "__main__":
-    createLogFile()
+    Logging.createLogFile()
     window.config(menu=menubar)
     window.mainloop()

@@ -4,3 +4,4 @@
 *.CSV
 
 logs/*
+__pycache__/*
