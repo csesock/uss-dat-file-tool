@@ -7,8 +7,10 @@ from tkinter.font import Font
 from collections import deque
 from datetime import datetime
 import sys, os, re, time
-
-import Logging
+try:
+    import Logging
+except:
+    print("Logging.py not found -- please reinstall to enable logging")
 
 developer = True #enable developer settings tab
 
@@ -103,6 +105,7 @@ def printSingleRecord(event=None):
         
 def fixOfficeRegionZoneFields(event=None):
     Logging.writeToLogs('Start Function Call - fixOfficeRegionZoneFields()')
+    all_fields = {}
     try:
         with open(download_filename, 'r') as openfile:
             for line in openfile:
@@ -641,7 +644,6 @@ menubar.add_cascade(label="Window", menu=windowmenu)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
 helpmenu.add_command(label="About This Tool", accelerator='F1', command=lambda:aboutDialog())
-#helpmenu.add_command(label="Enable Developer Mode", command=lambda:enableDev())
 helpmenu.add_command(label="View Log File", accelerator='F2', command=lambda:viewLog())
 menubar.add_cascade(label="Help", menu=helpmenu)
 

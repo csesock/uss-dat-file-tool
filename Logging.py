@@ -1,10 +1,10 @@
+#Functions for the logging system
+#
 import os, sys
 from datetime import datetime
 
 developer = True
-
 log_filename = os.getcwd() + "\\logs\\Logfile " + datetime.today().strftime('%Y-%m-%d_%H-%M') + ".txt"
-
 
 def createLogFile():
     try:
