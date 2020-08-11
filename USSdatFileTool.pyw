@@ -24,6 +24,7 @@ download_filename = 'download.dat'
 window = tk.Tk()
 s = ttk.Style()
 s.theme_use('clam')
+#s.configure('TButton', foreground='dark slate gray')
 
 DEFAULT_FONT_SIZE = 10
 CONSOLE_WIDTH = 76
@@ -32,7 +33,7 @@ BUTTON_WIDTH = 22
 
 consoleFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
 
-window.title("USS dat File Parsing Tool")
+window.title("United System .dat File Tool")
 window.resizable(False, False)
 
 height = window.winfo_screenheight()/3
@@ -61,10 +62,10 @@ window.bind('<Control-s>', lambda event: save())
 window.bind('<Control-Alt-s>', lambda event: saveAs())
 window.bind('<Control-c>', lambda event: bocConsole.delete(1.0, "end"))
 window.bind('<F1>', lambda event: aboutDialog())
-window.bind('<F2>', lambda event: viewLog())
+window.bind('<F2>', lambda event: Logging.viewLog())
 window.bind('<F10>', lambda event: resetWindow())
-window.bind('<Alt-r>', lambda event: increaseFontSize())
-window.bind('<Alt-t>', lambda event: decreaseFontSize())
+#window.bind('<Alt-r>', lambda event: increaseFontSize())
+#window.bind('<Alt-t>', lambda event: decreaseFontSize())
 
 def singleRecordScan(event=None):
     Logging.writeToLogs('Start Function Call - singleRecordScan()')
@@ -498,7 +499,7 @@ consoleclearbutton.place(x=715, y=6)
 
 bocConsole = tk.Text(TAB1, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
 
-bocConsole.place(x=220, y=40)
+bocConsole.place(x=220, y=42)
 bocConsole.configure(font=consoleFont)
 bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.4.1]")
 bocConsole.insert(2.0, "\n")
@@ -581,7 +582,7 @@ tab3existsbutton.place(x=50, y=35)
 
 NumkeyLatLong2 = ttk.Button(tab3, text="2.", width=1.5, command=lambda:checkLatLongSigns())
 NumkeyLatLong2.place(x=20, y=76)
-tab3checksignbutton = ttk.Button(tab3, text="Lat/Long Signs", width=BUTTON_WIDTH, command=lambda:checkLatLongSigns())
+tab3checksignbutton = ttk.Button(tab3, text="Lat/Long Ranges", width=BUTTON_WIDTH, command=lambda:checkLatLongSigns())
 tab3checksignbutton.place(x=50, y=76)
 
 NumkeyLatLong3 = ttk.Button(tab3, text="3.", width=1.5, command=lambda:checkMalformedLatLong())
@@ -596,7 +597,7 @@ tab3allmalformedbutton.place(x=50, y=158)
 
 latLongConsole = tk.Text(tab3, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
 
-latLongConsole.place(x=220, y=40)
+latLongConsole.place(x=220, y=42)
 latLongConsole.configure(font=consoleFont)
 latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.4.1]")
 latLongConsole.insert(2.0, "\n")
@@ -645,7 +646,7 @@ menubar.add_cascade(label="Window", menu=windowmenu)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
 helpmenu.add_command(label="About This Tool", accelerator='F1', command=lambda:aboutDialog())
-helpmenu.add_command(label="View Log File", accelerator='F2', command=lambda:viewLog())
+#helpmenu.add_command(label="View Log File", accelerator='F2', command=lambda:Logging.viewLog())
 menubar.add_cascade(label="Help", menu=helpmenu)
 
 if __name__ == "__main__":
