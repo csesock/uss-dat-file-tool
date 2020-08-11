@@ -40,7 +40,7 @@ def viewLog():
                 console.insert(counter, line)
                 counter+=1
     except:
-        print("An error occured")
+        pass
 
 def deleteLog(filename):
     pass

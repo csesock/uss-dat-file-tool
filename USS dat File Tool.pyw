@@ -12,7 +12,7 @@ try:
 except:
     print("Logging.py not found -- please reinstall to enable logging")
 
-developer = True #enable developer settings tab
+developer = False
 
 record_pattern = re.compile('[a-z][0-9]*\s*')   
 empty_pattern = re.compile('[^\S\n\t]{11}')     #missing meters
@@ -32,7 +32,7 @@ BUTTON_WIDTH = 22
 
 consoleFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
 
-window.title("USS dat File Tool v1.4.1")
+window.title("USS dat File Parsing Tool")
 window.resizable(False, False)
 
 height = window.winfo_screenheight()/3
@@ -280,7 +280,8 @@ def checkLatLongSigns(event=None):
                 if line.startswith('MTX'):
                     lat_data = float(line[23:40].rstrip())
                     long_data = float(line[40:57].rstrip())
-                    if lat_data < 0 or long_data > 0:
+                    #if lat_data < 0 or long_data > 0: #range is too large
+                    if lat_data < 27 or lat_data > 50 or long_data < -100 or long_data > -70: #much closer range
                         latLongConsole.delete(1.0, "end")
                         latLongConsole.insert(1.0, "The lat/long signs are incorrect.")
                         return
@@ -288,9 +289,9 @@ def checkLatLongSigns(event=None):
                         latLongConsole.delete(1.0, "end")
                         latLongConsole.insert(1.0, "The lat/long signs are correct:")
                         latLongConsole.insert(2.0, "\n")
-                        latLongConsole.insert(2.0, "Longitude Sign: Positive")
+                        latLongConsole.insert(2.0, "Latitude Sign: Positive")
                         latLongConsole.insert(3.0, "\n")
-                        latLongConsole.insert(3.0, "Latitude Sign: Negative")
+                        latLongConsole.insert(3.0, "Longitude Sign: Negative")
                         return
             latLongConsole.delete(1.0, "end")
             latLongConsole.insert(1.0, "No lat/long data detected.")
@@ -386,10 +387,10 @@ def saveAs():
 def openFile():
     Logging.writeToLogs('Start Function Call - openFile()')
     filename = tk.filedialog.askopenfilename(title="Import File")
-    if tab2enforcebutton.instate(['selected']):
-        if not filename.lower().endswith(('.dat', '.DAT', '.hdl', '.HDL')):
-            messagebox.showinfo("ERROR", "An error occured. Please select another file.")
-            return
+    # if tab2enforcebutton.instate(['selected']):
+    #     if not filename.lower().endswith(('.dat', '.DAT', '.hdl', '.HDL')):
+    #         messagebox.showinfo("ERROR", "An error occured. Please select another file.")
+    #         return
     global download_filename
     download_filename = filename
     text.set(os.path.basename(download_filename))
@@ -406,7 +407,7 @@ def resetWindow():
     width = window.winfo_screenwidth()/3
     window.geometry('780x330+%d+%d' %(width, height)) #reset height must be height-20 to account for the menu being created at this point
     bocConsole.delete(1.0, "end")
-    bocConsole.insert(1.0, "United Systems dat File Tool")
+    bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.4.1]")
     bocConsole.insert(2.0, "\n")
     bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
     bocConsole.insert(3.0, "\n")
@@ -499,7 +500,7 @@ bocConsole = tk.Text(TAB1, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, backgroun
 
 bocConsole.place(x=220, y=40)
 bocConsole.configure(font=consoleFont)
-bocConsole.insert(1.0, "United Systems dat File Tool")
+bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.4.1]")
 bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
@@ -597,7 +598,7 @@ latLongConsole = tk.Text(tab3, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, backg
 
 latLongConsole.place(x=220, y=40)
 latLongConsole.configure(font=consoleFont)
-latLongConsole.insert(1.0, "United Systems dat File Tool")
+latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.4.1]")
 latLongConsole.insert(2.0, "\n")
 latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
