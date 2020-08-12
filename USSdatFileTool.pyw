@@ -10,37 +10,36 @@ import sys, os, re, time
 try:
     import Logging
 except:
-    print("Logging.py not found -- please reinstall to enable logging")
+    print("Logging system files not found -- to enable logging please place Logging.py in the same directory")
+    pass
 
-developer = False
+developer=True  #enables advanced options in UI
 
+#regular expressions for parsing
 record_pattern = re.compile('[a-z][0-9]*\s*')   
 empty_pattern = re.compile('[^\S\n\t]{11}')     #missing meters
 empty2_pattern = re.compile('[^\S\r\n]{8}')
 lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
 
+#file configurations
 download_filename = 'download.dat'
+defaut_file_extension = '.txt'
 
 window = tk.Tk()
 s = ttk.Style()
 s.theme_use('clam')
-#s.configure('TButton', foreground='dark slate gray')
 
+#default UI visual configuration
 DEFAULT_FONT_SIZE = 10
 CONSOLE_WIDTH = 76
 CONSOLE_HEIGHT = 15
 BUTTON_WIDTH = 22
-
 consoleFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
-
 window.title("United System .dat File Tool")
 window.resizable(False, False)
-
 height = window.winfo_screenheight()/3
 width = window.winfo_screenwidth()/3
 window.geometry('780x350+%d+%d' %(width, height))
-
-defaut_file_extension = '.txt'
 
 try:
     dirp = os.path.dirname(__file__)
@@ -52,7 +51,7 @@ except:
 window.bind('1', lambda event: singleRecordScan())
 window.bind('2', lambda event: scanAllRecordsVerbose())
 window.bind('3', lambda event: printSingleRecord())
-window.bind('4', lambda event: fixOfficeRegionZoneFields())
+window.bind('4', lambda event: officeRegionZone())
 window.bind('5', lambda event: missingMeters())
 window.bind('6', lambda event: printReadType())
 window.bind('7', lambda event: checkMalformedLatLong())
@@ -64,8 +63,7 @@ window.bind('<Control-c>', lambda event: bocConsole.delete(1.0, "end"))
 window.bind('<F1>', lambda event: aboutDialog())
 window.bind('<F2>', lambda event: Logging.viewLog())
 window.bind('<F10>', lambda event: resetWindow())
-#window.bind('<Alt-r>', lambda event: increaseFontSize())
-#window.bind('<Alt-t>', lambda event: decreaseFontSize())
+window.bind('<F11>', lambda event: resizeWindow())
 
 def singleRecordScan(event=None):
     Logging.writeToLogs('Start Function Call - singleRecordScan()')
@@ -104,8 +102,8 @@ def printSingleRecord(event=None):
     except FileNotFoundError:
         fileNotFoundError()
         
-def fixOfficeRegionZoneFields(event=None):
-    Logging.writeToLogs('Start Function Call - fixOfficeRegionZoneFields()')
+def officeRegionZone(event=None):
+    Logging.writeToLogs('Start Function Call - officeRegionZone()')
     all_fields = {}
     try:
         with open(download_filename, 'r') as openfile:
@@ -133,7 +131,7 @@ def fixOfficeRegionZoneFields(event=None):
                     bocConsole.insert(6.0, "\n")
                     bocConsole.insert(6.0, "------------------------")
                     return
-        Logging.writeToLogs('End Function Call - fixOfficeRegionZoneFields()')
+        Logging.writeToLogs('End Function Call - officeRegionZone()')
     except FileNotFoundError:
         fileNotFoundError()
         
@@ -257,10 +255,6 @@ def checkMalformedLatLong(event=None):
                     lat_data = line[23:40].rstrip()
                     long_data = line[40:57].rstrip()
                     if not lat_long_pattern.match(lat_data) and not lat_long_pattern.match(long_data):
-##                        if empty2_pattern.match(lat_data) and empty2_pattern.match(long_data):
-##                            #lat long data is blank
-##                            latLongConsole.delete(1.0, "end")
-##                            latLongConsole.insert(1.0, "Lat/long entry blank at line: " + str(line_number))
                         latLongConsole.delete(1.0, "end")
                         latLongConsole.insert(1.0, "Malformed lat/long data at line: " + str(line_number))
                         latLongConsole.insert(2.0, "\n")
@@ -281,8 +275,7 @@ def checkLatLongSigns(event=None):
                 if line.startswith('MTX'):
                     lat_data = float(line[23:40].rstrip())
                     long_data = float(line[40:57].rstrip())
-                    #if lat_data < 0 or long_data > 0: #range is too large
-                    if lat_data < 27 or lat_data > 50 or long_data < -100 or long_data > -70: #much closer range
+                    if lat_data < 27 or lat_data > 50 or long_data < -100 or long_data > -70:
                         latLongConsole.delete(1.0, "end")
                         latLongConsole.insert(1.0, "The lat/long signs are incorrect.")
                         return
@@ -446,7 +439,7 @@ TAB_CONTROL.pack(expand=1, fill="both")
 # Tab 2
 if developer == True:
     tab2 = ttk.Frame(TAB_CONTROL)
-    TAB_CONTROL.add(tab2, text="Settings")
+    TAB_CONTROL.add(tab2, text="Advanced Settings")
     TAB_CONTROL.pack(expand=1, fill="both")
 
 #################
@@ -468,9 +461,9 @@ Numkey3.place(x=20, y=117)
 PrintSingleRecordButton = ttk.Button(TAB1, text="Record Type Search", command=lambda:printSingleRecord(), width=BUTTON_WIDTH)
 PrintSingleRecordButton.place(x=50, y=117)
 
-Numkey4 = ttk.Button(TAB1, text="4.", width=1.5, command=lambda:fixOfficeRegionZoneFields())
+Numkey4 = ttk.Button(TAB1, text="4.", width=1.5, command=lambda:officeRegionZone())
 Numkey4.place(x=20, y=158)
-OfficeRegionZoneFieldButton = ttk.Button(TAB1, text="Office-Region-Zone", command=lambda:fixOfficeRegionZoneFields(), width=BUTTON_WIDTH)
+OfficeRegionZoneFieldButton = ttk.Button(TAB1, text="Office-Region-Zone", command=lambda:officeRegionZone(), width=BUTTON_WIDTH)
 OfficeRegionZoneFieldButton.place(x=50, y=158)
 
 Numkey5 = ttk.Button(TAB1, text="5.", width=1.5, command=lambda:missingMeters())
@@ -575,25 +568,25 @@ else:
 label2 = ttk.Label(tab3, textvariable=text2)
 label2.place(x=290, y=20)
 
-NumkeyLatLong1 = ttk.Button(tab3, text="1.", width=1.5, command=lambda:checkLatLongExists())
-NumkeyLatLong1.place(x=20, y=35)
-tab3existsbutton = ttk.Button(tab3, text="Find First Lat/Long", width=BUTTON_WIDTH, command=lambda:checkLatLongExists())
-tab3existsbutton.place(x=50, y=35)
+btnNumkeyLat1 = ttk.Button(tab3, text="1.", width=1.5, command=lambda:checkLatLongExists())
+btnNumkeyLat1.place(x=20, y=35)
+btnLatExists = ttk.Button(tab3, text="Find First Lat/Long", width=BUTTON_WIDTH, command=lambda:checkLatLongExists())
+btnLatExists.place(x=50, y=35)
 
-NumkeyLatLong2 = ttk.Button(tab3, text="2.", width=1.5, command=lambda:checkLatLongSigns())
-NumkeyLatLong2.place(x=20, y=76)
-tab3checksignbutton = ttk.Button(tab3, text="Lat/Long Ranges", width=BUTTON_WIDTH, command=lambda:checkLatLongSigns())
-tab3checksignbutton.place(x=50, y=76)
+btnNumkeyLat2 = ttk.Button(tab3, text="2.", width=1.5, command=lambda:checkLatLongSigns())
+btnNumkeyLat2.place(x=20, y=76)
+btnLatSigns = ttk.Button(tab3, text="Lat/Long Ranges", width=BUTTON_WIDTH, command=lambda:checkLatLongSigns())
+btnLatSigns.place(x=50, y=76)
 
-NumkeyLatLong3 = ttk.Button(tab3, text="3.", width=1.5, command=lambda:checkMalformedLatLong())
-NumkeyLatLong3.place(x=20, y=117)
-tab3malformedbutton = ttk.Button(tab3, text="Check for Malformation", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong())
-tab3malformedbutton.place(x=50, y=117)
+btnNumkeyLat3 = ttk.Button(tab3, text="3.", width=1.5, command=lambda:checkMalformedLatLong())
+btnNumkeyLat3.place(x=20, y=117)
+btnLatMalformed = ttk.Button(tab3, text="Check for Malformation", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong())
+btnLatMalformed.place(x=50, y=117)
 
-NumkeyLatLong4 = ttk.Button(tab3, text="4.", width=1.5, command=lambda:printAllLatLongData())
-NumkeyLatLong4.place(x=20, y=158)
-tab3allmalformedbutton = ttk.Button(tab3, text="All Lat/Long", width=BUTTON_WIDTH, command=lambda:printAllLatLongData())
-tab3allmalformedbutton.place(x=50, y=158)
+btnNumkeyLat4 = ttk.Button(tab3, text="4.", width=1.5, command=lambda:printAllLatLongData())
+btnNumkeyLat4.place(x=20, y=158)
+btnLatAllMalformed = ttk.Button(tab3, text="All Lat/Long", width=BUTTON_WIDTH, command=lambda:printAllLatLongData())
+btnLatAllMalformed.place(x=50, y=158)
 
 latLongConsole = tk.Text(tab3, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
 
@@ -637,7 +630,6 @@ submenu.add_command(label="vista", command=lambda:changeTheme('vista'))
 editmenu.add_cascade(label="Theme", menu=submenu)
 menubar.add_cascade(label="Edit", menu=editmenu)
 
-
 windowmenu = tk.Menu(menubar, tearoff=0)
 windowmenu.add_command(label="Full Screen", accelerator="F11", command=lambda:resizeWindow())
 windowmenu.add_separator()
@@ -646,7 +638,6 @@ menubar.add_cascade(label="Window", menu=windowmenu)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
 helpmenu.add_command(label="About This Tool", accelerator='F1', command=lambda:aboutDialog())
-#helpmenu.add_command(label="View Log File", accelerator='F2', command=lambda:Logging.viewLog())
 menubar.add_cascade(label="Help", menu=helpmenu)
 
 if __name__ == "__main__":
