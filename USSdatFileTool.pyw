@@ -405,6 +405,11 @@ def resetWindow():
     bocConsole.insert(2.0, "\n")
     bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
     bocConsole.insert(3.0, "\n")
+    latLongConsole.delete(1.0, "end")
+    latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.4.1]")
+    latLongConsole.insert(2.0, "\n")
+    latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
+    latLongConsole.insert(3.0, "\n")
 
 def changeTheme(theme):
     s = ttk.Style()
@@ -422,10 +427,6 @@ def aboutDialog():
     dialog = """ Author: Chris Sesock \n Version: 1.4.1 \n Commit: aebb993a87843e0ffc8b5fc2f32813638cc9be90 \n Date: 2020-07-16:2:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
              """
     messagebox.showinfo("About", dialog)
-
-def changeDevStatus():
-    global developer
-    developer=not developer
 
 # Create Tab Control
 TAB_CONTROL = ttk.Notebook(window)
@@ -472,11 +473,10 @@ if os.path.isfile('download.dat'):
     text.set('download.dat')
 else:
     text.set('None')
-label = ttk.Label(tabBasicOperations, textvariable=text)
-label.place(x=290, y=20)
+label = ttk.Label(tabBasicOperations, textvariable=text).place(x=290, y=20)
 
-consoleclearbutton = ttk.Button(tabBasicOperations, text="clear", width=4.25, command=lambda:clearBOCConsole())
-consoleclearbutton.place(x=715, y=6)
+btnConsoleClear = ttk.Button(tabBasicOperations, text="clear", width=4.25, command=lambda:clearBOCConsole()).place(x=670, y=6)
+btnConsoleReset = ttk.Button(tabBasicOperations, text="reset", width = 4.24, command=lambda:resetWindow()).place(x=715,y=6)
 
 bocConsole = tk.Text(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
 
@@ -493,10 +493,9 @@ bocConsole.insert(3.0, "\n")
 
 if developer == True:
     tab2headerlabel = ttk.Label(tab2, text="""The default settings below should be changed at your own risk. \nMay cause unexpected errors.""")
-    tab2headerlabel.place(x=20, y=20)
+    tab2headerlabel.place(x=220, y=20)
 
-    tab2defaultextensionlabel = ttk.Label(tab2, text="Default file extension:")
-    tab2defaultextensionlabel.place(x=20, y=70)
+    tab2defaultextensionlabel = ttk.Label(tab2, text="Default file extension:").place(x=20, y=70)
     tab2defaultinput = ttk.Entry(tab2, width=5)
     tab2defaultinput.insert(0, '.txt')
     tab2defaultinput.place(x=150, y=70)
@@ -530,14 +529,14 @@ if developer == True:
 
     # log settings
     loglabel = ttk.Label(tab2, text="Log settings:")
-    loglabel.place(x=450, y=20)
+    loglabel.place(x=370, y=160)
 
     logdelete = ttk.Checkbutton(tab2, text="Delete old log files (recommended)")
-    logdelete.place(x=450, y=40)
+    logdelete.place(x=370, y=180)
     logdelete.state(['selected'])
 
     logverbose = ttk.Checkbutton(tab2, text="Log all function calls (verbose) (recommended)")
-    logverbose.place(x=450, y=60)
+    logverbose.place(x=370, y=200)
     logverbose.state(['selected'])
 
 #################
@@ -577,8 +576,8 @@ latLongConsole.insert(2.0, "\n")
 latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
 
-consoleclearbutton2 = ttk.Button(tab3, text="clear", width=4.25, command=lambda:clearLatLongConsole())
-consoleclearbutton2.place(x=715, y=6)
+btnLatConsoleClear = ttk.Button(tab3, text="clear", width=4.25, command=lambda:clearLatLongConsole()).place(x=670, y=6)
+btnLatConsoleReset = ttk.Button(tab3, text="reset", width=4.25, command=lambda:resetWindow()).place(x=715, y=6)
 
 ########
 ##Menu##
