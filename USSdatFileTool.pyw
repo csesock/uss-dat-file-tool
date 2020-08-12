@@ -446,35 +446,23 @@ if developer == True:
 ##BOC Tab Widgets##
 ###################
 
-btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:singleRecordScan())
-btnNumkey1.place(x=20, y=35)
-SingleRecordScanButton = ttk.Button(tabBasicOperations, text="Record Count Search", command=lambda:singleRecordScan(), width=BUTTON_WIDTH)
-SingleRecordScanButton.place(x=50, y=35)
+btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:singleRecordScan()).place(x=20, y=35)
+btnSingleRecordScan = ttk.Button(tabBasicOperations, text="Record Count Search", command=lambda:singleRecordScan(), width=BUTTON_WIDTH).place(x=50, y=35)
 
-btnNumkey2 = ttk.Button(tabBasicOperations, text="2.", width=1.5, command=lambda:scanAllRecordsVerbose())
-btnNumkey2.place(x=20, y=76)
-VerboseRecordScanButton = ttk.Button(tabBasicOperations, text="Record Type Count", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH)
-VerboseRecordScanButton.place(x=50, y=76)
+btnNumkey2 = ttk.Button(tabBasicOperations, text="2.", width=1.5, command=lambda:scanAllRecordsVerbose()).place(x=20, y=76)
+btnVerboseRecordScan = ttk.Button(tabBasicOperations, text="Record Type Count", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH).place(x=50, y=76)
 
-btnNumkey3 = ttk.Button(tabBasicOperations, text="3.", width=1.5, command=lambda:printSingleRecord())
-btnNumkey3.place(x=20, y=117)
-PrintSingleRecordButton = ttk.Button(tabBasicOperations, text="Record Type Search", command=lambda:printSingleRecord(), width=BUTTON_WIDTH)
-PrintSingleRecordButton.place(x=50, y=117)
+btnNumkey3 = ttk.Button(tabBasicOperations, text="3.", width=1.5, command=lambda:printSingleRecord()).place(x=20, y=117)
+btnPrintSingleRecord = ttk.Button(tabBasicOperations, text="Record Type Search", command=lambda:printSingleRecord(), width=BUTTON_WIDTH).place(x=50, y=117)
 
-btnNumkey4 = ttk.Button(tabBasicOperations, text="4.", width=1.5, command=lambda:officeRegionZone())
-btnNumkey4.place(x=20, y=158)
-OfficeRegionZoneFieldButton = ttk.Button(tabBasicOperations, text="Office-Region-Zone", command=lambda:officeRegionZone(), width=BUTTON_WIDTH)
-OfficeRegionZoneFieldButton.place(x=50, y=158)
+btnNumkey4 = ttk.Button(tabBasicOperations, text="4.", width=1.5, command=lambda:officeRegionZone()).place(x=20, y=158)
+btnOfficeRegionZone = ttk.Button(tabBasicOperations, text="Office-Region-Zone", command=lambda:officeRegionZone(), width=BUTTON_WIDTH).place(x=50, y=158)
 
-btnNumkey5 = ttk.Button(tabBasicOperations, text="5.", width=1.5, command=lambda:missingMeters())
-btnNumkey5.place(x=20, y=199)
-MissingMeterButton = ttk.Button(tabBasicOperations, text="Blank Meter Numbers", command=lambda:missingMeters(), width=BUTTON_WIDTH)
-MissingMeterButton.place(x=50, y=199)
+btnNumkey5 = ttk.Button(tabBasicOperations, text="5.", width=1.5, command=lambda:missingMeters()).place(x=20, y=199)
+MissingMeterButton = ttk.Button(tabBasicOperations, text="Blank Meter Numbers", command=lambda:missingMeters(), width=BUTTON_WIDTH).place(x=50, y=199)
 
-btnNumkey6 = ttk.Button(tabBasicOperations, text="6.", width=1.5, command=lambda:printReadTypeVerbose())
-btnNumkey6.place(x=20, y=240)
-PrintReadTypeButton = ttk.Button(tabBasicOperations, text="Read Type Code Count", command=lambda:printReadTypeVerbose(), width=BUTTON_WIDTH)
-PrintReadTypeButton.place(x=50, y=240)
+btnNumkey6 = ttk.Button(tabBasicOperations, text="6.", width=1.5, command=lambda:printReadTypeVerbose()).place(x=20, y=240)
+PrintReadTypeButton = ttk.Button(tabBasicOperations, text="Read Type Code Count", command=lambda:printReadTypeVerbose(), width=BUTTON_WIDTH).place(x=50, y=240)
 
 currentlabel = ttk.Label(tabBasicOperations, text="Current file: ")
 currentlabel.place(x=220, y=20)
@@ -568,25 +556,17 @@ else:
 label2 = ttk.Label(tab3, textvariable=text2)
 label2.place(x=290, y=20)
 
-btnNumkeyLat1 = ttk.Button(tab3, text="1.", width=1.5, command=lambda:checkLatLongExists())
-btnNumkeyLat1.place(x=20, y=35)
-btnLatExists = ttk.Button(tab3, text="Find First Lat/Long", width=BUTTON_WIDTH, command=lambda:checkLatLongExists())
-btnLatExists.place(x=50, y=35)
+btnNumkeyLat1 = ttk.Button(tab3, text="1.", width=1.5, command=lambda:checkLatLongExists()).place(x=20, y=35)
+btnLatExists = ttk.Button(tab3, text="Find First Lat/Long", width=BUTTON_WIDTH, command=lambda:checkLatLongExists()).place(x=50, y=35)
 
-btnNumkeyLat2 = ttk.Button(tab3, text="2.", width=1.5, command=lambda:checkLatLongSigns())
-btnNumkeyLat2.place(x=20, y=76)
-btnLatSigns = ttk.Button(tab3, text="Lat/Long Ranges", width=BUTTON_WIDTH, command=lambda:checkLatLongSigns())
-btnLatSigns.place(x=50, y=76)
+btnNumkeyLat2 = ttk.Button(tab3, text="2.", width=1.5, command=lambda:checkLatLongSigns()).place(x=20, y=76)
+btnLatSigns = ttk.Button(tab3, text="Lat/Long Ranges", width=BUTTON_WIDTH, command=lambda:checkLatLongSigns()).place(x=50, y=76)
 
-btnNumkeyLat3 = ttk.Button(tab3, text="3.", width=1.5, command=lambda:checkMalformedLatLong())
-btnNumkeyLat3.place(x=20, y=117)
-btnLatMalformed = ttk.Button(tab3, text="Check for Malformation", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong())
-btnLatMalformed.place(x=50, y=117)
+btnNumkeyLat3 = ttk.Button(tab3, text="3.", width=1.5, command=lambda:checkMalformedLatLong()).place(x=20, y=117)
+btnLatMalformed = ttk.Button(tab3, text="Check for Malformation", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong()).place(x=50, y=117)
 
-btnNumkeyLat4 = ttk.Button(tab3, text="4.", width=1.5, command=lambda:printAllLatLongData())
-btnNumkeyLat4.place(x=20, y=158)
-btnLatAllMalformed = ttk.Button(tab3, text="All Lat/Long", width=BUTTON_WIDTH, command=lambda:printAllLatLongData())
-btnLatAllMalformed.place(x=50, y=158)
+btnNumkeyLat4 = ttk.Button(tab3, text="4.", width=1.5, command=lambda:printAllLatLongData()).place(x=20, y=158)
+btnLatAllMalformed = ttk.Button(tab3, text="All Lat/Long", width=BUTTON_WIDTH, command=lambda:printAllLatLongData()).place(x=50, y=158)
 
 latLongConsole = tk.Text(tab3, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
 
