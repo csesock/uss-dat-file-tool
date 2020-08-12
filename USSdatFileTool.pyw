@@ -430,8 +430,8 @@ def changeDevStatus():
 # Create Tab Control
 TAB_CONTROL = ttk.Notebook(window)
 # Tab 1
-TAB1 = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(TAB1, text='Basic Operations')
+tabBasicOperations = ttk.Frame(TAB_CONTROL)
+TAB_CONTROL.add(tabBasicOperations, text='Basic Operations')
 # Tab 3
 tab3 = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tab3, text="Lat/Long Operations")
@@ -442,41 +442,41 @@ if developer == True:
     TAB_CONTROL.add(tab2, text="Advanced Settings")
     TAB_CONTROL.pack(expand=1, fill="both")
 
-#################
-##Tab 1 Widgets##
-#################
+###################
+##BOC Tab Widgets##
+###################
 
-Numkey1 = ttk.Button(TAB1, text="1.", width=1.5, command=lambda:singleRecordScan())
-Numkey1.place(x=20, y=35)
-SingleRecordScanButton = ttk.Button(TAB1, text="Record Count Search", command=lambda:singleRecordScan(), width=BUTTON_WIDTH)
+btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:singleRecordScan())
+btnNumkey1.place(x=20, y=35)
+SingleRecordScanButton = ttk.Button(tabBasicOperations, text="Record Count Search", command=lambda:singleRecordScan(), width=BUTTON_WIDTH)
 SingleRecordScanButton.place(x=50, y=35)
 
-Numkey2 = ttk.Button(TAB1, text="2.", width=1.5, command=lambda:scanAllRecordsVerbose())
-Numkey2.place(x=20, y=76)
-VerboseRecordScanButton = ttk.Button(TAB1, text="Record Type Count", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH)
+btnNumkey2 = ttk.Button(tabBasicOperations, text="2.", width=1.5, command=lambda:scanAllRecordsVerbose())
+btnNumkey2.place(x=20, y=76)
+VerboseRecordScanButton = ttk.Button(tabBasicOperations, text="Record Type Count", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH)
 VerboseRecordScanButton.place(x=50, y=76)
 
-Numkey3 = ttk.Button(TAB1, text="3.", width=1.5, command=lambda:printSingleRecord())
-Numkey3.place(x=20, y=117)
-PrintSingleRecordButton = ttk.Button(TAB1, text="Record Type Search", command=lambda:printSingleRecord(), width=BUTTON_WIDTH)
+btnNumkey3 = ttk.Button(tabBasicOperations, text="3.", width=1.5, command=lambda:printSingleRecord())
+btnNumkey3.place(x=20, y=117)
+PrintSingleRecordButton = ttk.Button(tabBasicOperations, text="Record Type Search", command=lambda:printSingleRecord(), width=BUTTON_WIDTH)
 PrintSingleRecordButton.place(x=50, y=117)
 
-Numkey4 = ttk.Button(TAB1, text="4.", width=1.5, command=lambda:officeRegionZone())
-Numkey4.place(x=20, y=158)
-OfficeRegionZoneFieldButton = ttk.Button(TAB1, text="Office-Region-Zone", command=lambda:officeRegionZone(), width=BUTTON_WIDTH)
+btnNumkey4 = ttk.Button(tabBasicOperations, text="4.", width=1.5, command=lambda:officeRegionZone())
+btnNumkey4.place(x=20, y=158)
+OfficeRegionZoneFieldButton = ttk.Button(tabBasicOperations, text="Office-Region-Zone", command=lambda:officeRegionZone(), width=BUTTON_WIDTH)
 OfficeRegionZoneFieldButton.place(x=50, y=158)
 
-Numkey5 = ttk.Button(TAB1, text="5.", width=1.5, command=lambda:missingMeters())
-Numkey5.place(x=20, y=199)
-MissingMeterButton = ttk.Button(TAB1, text="Blank Meter Numbers", command=lambda:missingMeters(), width=BUTTON_WIDTH)
+btnNumkey5 = ttk.Button(tabBasicOperations, text="5.", width=1.5, command=lambda:missingMeters())
+btnNumkey5.place(x=20, y=199)
+MissingMeterButton = ttk.Button(tabBasicOperations, text="Blank Meter Numbers", command=lambda:missingMeters(), width=BUTTON_WIDTH)
 MissingMeterButton.place(x=50, y=199)
 
-Numkey6 = ttk.Button(TAB1, text="6.", width=1.5, command=lambda:printReadTypeVerbose())
-Numkey6.place(x=20, y=240)
-PrintReadTypeButton = ttk.Button(TAB1, text="Read Type Code Count", command=lambda:printReadTypeVerbose(), width=BUTTON_WIDTH)
+btnNumkey6 = ttk.Button(tabBasicOperations, text="6.", width=1.5, command=lambda:printReadTypeVerbose())
+btnNumkey6.place(x=20, y=240)
+PrintReadTypeButton = ttk.Button(tabBasicOperations, text="Read Type Code Count", command=lambda:printReadTypeVerbose(), width=BUTTON_WIDTH)
 PrintReadTypeButton.place(x=50, y=240)
 
-currentlabel = ttk.Label(TAB1, text="Current file: ")
+currentlabel = ttk.Label(tabBasicOperations, text="Current file: ")
 currentlabel.place(x=220, y=20)
 
 text = tk.StringVar()
@@ -484,13 +484,13 @@ if os.path.isfile('download.dat'):
     text.set('download.dat')
 else:
     text.set('None')
-label = ttk.Label(TAB1, textvariable=text)
+label = ttk.Label(tabBasicOperations, textvariable=text)
 label.place(x=290, y=20)
 
-consoleclearbutton = ttk.Button(TAB1, text="clear", width=4.25, command=lambda:clearBOCConsole())
+consoleclearbutton = ttk.Button(tabBasicOperations, text="clear", width=4.25, command=lambda:clearBOCConsole())
 consoleclearbutton.place(x=715, y=6)
 
-bocConsole = tk.Text(TAB1, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
+bocConsole = tk.Text(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
 
 bocConsole.place(x=220, y=42)
 bocConsole.configure(font=consoleFont)
