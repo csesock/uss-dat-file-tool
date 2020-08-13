@@ -22,7 +22,7 @@ Future improvements include:
 ## User Interface
 Currently, the main focus of development is an easy-to-use UI that requires no external libraries. Written in pure python in the tkinter library. 
 
-![GUI](https://imgur.com/eTnUivD.png)
+![GUI](https://imgur.com/LUKGuRb.png)
 
 ## Dependencies
 There are two included versions of the tool in the repo, one with third-party library dependencies and one without. The actively developed version is the one with dependencies, while the standalone version gets features added after they've been thoroughly tested.
