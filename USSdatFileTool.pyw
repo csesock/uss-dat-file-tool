@@ -65,6 +65,30 @@ window.bind('<F2>', lambda event: Logging.viewLog())
 window.bind('<F10>', lambda event: resetWindow())
 window.bind('<F11>', lambda event: resizeWindow())
 
+###################
+##File Functions###
+###################
+
+def disallowedCharacters(event=None):
+    Logging.writeToLogs('Start Function Call - disallowedCharacters()')
+    counter = 0
+    line_number = 1
+    index = 1.0
+    try:
+        with open(download_filename, 'r') as openfile:
+            bocConsole.delete(1.0, 'end')
+            for line in openfile:
+                if line.startswith('MTR'):
+                    meter_number = line[45:57] #46-57
+                    if '*' in meter_number or '/' in meter_number or '\\' in meter_number or ':' in meter_number or '<' in meter_number or '>' in meter_number:
+                        print(meter_number)
+                        bocConsole.insert(index, str(line_number) + " " + line + "\n")
+                        counter+=1
+                        index+=1
+                line_number+=1
+    except FileNotFoundError:
+        fileNotFoundError()
+
 def singleRecordScan(event=None):
     Logging.writeToLogs('Start Function Call - singleRecordScan()')
     answer = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
@@ -447,14 +471,15 @@ if developer == True:
 ##BOC Tab Widgets##
 ###################
 
-btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:singleRecordScan()).place(x=20, y=35)
-btnSingleRecordScan = ttk.Button(tabBasicOperations, text="Record Count Search", command=lambda:singleRecordScan(), width=BUTTON_WIDTH).place(x=50, y=35)
+btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:scanAllRecordsVerbose()).place(x=20, y=35)
+#btnSingleRecordScan = ttk.Button(tabBasicOperations, text="Record Count Search", command=lambda:singleRecordScan(), width=BUTTON_WIDTH).place(x=50, y=35)
+btnVerboseRecordScan = ttk.Button(tabBasicOperations, text="Print Record Counts", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH).place(x=50, y=35)
 
-btnNumkey2 = ttk.Button(tabBasicOperations, text="2.", width=1.5, command=lambda:scanAllRecordsVerbose()).place(x=20, y=76)
-btnVerboseRecordScan = ttk.Button(tabBasicOperations, text="Record Type Count", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH).place(x=50, y=76)
+btnNumkey2 = ttk.Button(tabBasicOperations, text="2.", width=1.5, command=lambda:printSingleRecord()).place(x=20, y=76)
+btnPrintSingleRecord = ttk.Button(tabBasicOperations, text="Print Record Type", command=lambda:printSingleRecord(), width=BUTTON_WIDTH).place(x=50, y=76)
 
-btnNumkey3 = ttk.Button(tabBasicOperations, text="3.", width=1.5, command=lambda:printSingleRecord()).place(x=20, y=117)
-btnPrintSingleRecord = ttk.Button(tabBasicOperations, text="Record Type Search", command=lambda:printSingleRecord(), width=BUTTON_WIDTH).place(x=50, y=117)
+btnNumkey3 = ttk.Button(tabBasicOperations, text="3.", width=1.5, command=lambda:disallowedCharacters()).place(x=20, y=117)
+btnSingleRecordScan = ttk.Button(tabBasicOperations, text="Meter Characters", command=lambda:disallowedCharacters(), width=BUTTON_WIDTH).place(x=50, y=117)
 
 btnNumkey4 = ttk.Button(tabBasicOperations, text="4.", width=1.5, command=lambda:officeRegionZone()).place(x=20, y=158)
 btnOfficeRegionZone = ttk.Button(tabBasicOperations, text="Office-Region-Zone", command=lambda:officeRegionZone(), width=BUTTON_WIDTH).place(x=50, y=158)
@@ -463,7 +488,7 @@ btnNumkey5 = ttk.Button(tabBasicOperations, text="5.", width=1.5, command=lambda
 MissingMeterButton = ttk.Button(tabBasicOperations, text="Blank Meter Numbers", command=lambda:missingMeters(), width=BUTTON_WIDTH).place(x=50, y=199)
 
 btnNumkey6 = ttk.Button(tabBasicOperations, text="6.", width=1.5, command=lambda:printReadTypeVerbose()).place(x=20, y=240)
-PrintReadTypeButton = ttk.Button(tabBasicOperations, text="Read Type Code Count", command=lambda:printReadTypeVerbose(), width=BUTTON_WIDTH).place(x=50, y=240)
+PrintReadTypeButton = ttk.Button(tabBasicOperations, text="Read Type Codes", command=lambda:printReadTypeVerbose(), width=BUTTON_WIDTH).place(x=50, y=240)
 
 currentlabel = ttk.Label(tabBasicOperations, text="Current file: ")
 currentlabel.place(x=220, y=20)
@@ -566,6 +591,10 @@ btnLatMalformed = ttk.Button(tab3, text="Check for Malformation", width=BUTTON_W
 
 btnNumkeyLat4 = ttk.Button(tab3, text="4.", width=1.5, command=lambda:printAllLatLongData()).place(x=20, y=158)
 btnLatAllMalformed = ttk.Button(tab3, text="All Lat/Long", width=BUTTON_WIDTH, command=lambda:printAllLatLongData()).place(x=50, y=158)
+
+labelRegion = ttk.Label(tab3, text="Region:").place(x=22, y=200)
+dropdownRegion = ttk.Combobox(tab3, width=26, values = ["Eastern US", "Westen US", "Canada"]).place(x=22, y=220)
+
 
 latLongConsole = tk.Text(tab3, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
 
