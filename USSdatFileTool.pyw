@@ -13,7 +13,8 @@ except:
     print("Logging system files not found -- to enable logging please place Logging.py in the same directory")
     pass
 
-developer=False  #enables advanced options in UI
+#enables advanced options in UI
+developer=True
 
 #regular expressions for parsing
 record_pattern = re.compile('[a-z][0-9]*\s*')   
@@ -61,7 +62,7 @@ window.bind('<Control-s>', lambda event: save())
 window.bind('<Control-Alt-s>', lambda event: saveAs())
 window.bind('<Control-c>', lambda event: bocConsole.delete(1.0, "end"))
 window.bind('<F1>', lambda event: aboutDialog())
-window.bind('<F2>', lambda event: Logging.viewLog())
+window.bind('<F2>', lambda event: Logging.deleteLog(5))
 window.bind('<F10>', lambda event: resetWindow())
 window.bind('<F11>', lambda event: resizeWindow())
 
@@ -457,17 +458,17 @@ def aboutDialog():
 
 # Create Tab Control
 TAB_CONTROL = ttk.Notebook(window)
-# Tab 1
+# Basic Operations tab
 tabBasicOperations = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tabBasicOperations, text='Basic Operations')
-# Tab 3
-tab3 = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tab3, text="Lat/Long Operations")
+# Lat/Long tab
+tabLatLong = ttk.Frame(TAB_CONTROL)
+TAB_CONTROL.add(tabLatLong, text="Lat/Long Operations")
 TAB_CONTROL.pack(expand=1, fill="both")
-# Tab 2
+# (Optional) Developer Settings tab
 if developer == True:
-    tab2 = ttk.Frame(TAB_CONTROL)
-    TAB_CONTROL.add(tab2, text="Advanced Settings")
+    tabDeveloper = ttk.Frame(TAB_CONTROL)
+    TAB_CONTROL.add(tabDeveloper, text="Settings")
     TAB_CONTROL.pack(expand=1, fill="both")
 
 ###################
@@ -520,87 +521,81 @@ bocConsole.insert(3.0, "\n")
 #################
 
 if developer == True:
-    tab2headerlabel = ttk.Label(tab2, text="""The default settings below should be changed at your own risk. \nMay cause unexpected errors.""")
-    tab2headerlabel.place(x=220, y=20)
+    tab2headerlabel = ttk.Label(tabDeveloper, text="""The settings below should be changed at your own risk. \nChanges may cause unexpected errors!""")
+    tab2headerlabel.place(x=20, y=20)
 
-    tab2defaultextensionlabel = ttk.Label(tab2, text="Default file extension:").place(x=20, y=70)
-    tab2defaultinput = ttk.Entry(tab2, width=5)
+    tab2defaultextensionlabel = ttk.Label(tabDeveloper, text="Default file extension:").place(x=20, y=75)
+    tab2defaultinput = ttk.Entry(tabDeveloper, width=5)
     tab2defaultinput.insert(0, '.txt')
-    tab2defaultinput.place(x=150, y=70)
+    tab2defaultinput.place(x=150, y=75)
 
-    tab2defaultsavelabel = ttk.Label(tab2, text="Default 'Save' location:")
+    tab2defaultsavelabel = ttk.Label(tabDeveloper, text="Default 'Save' location:")
     tab2defaultsavelabel.place(x=20, y=100)
-    tab2defaultsaveentry = ttk.Entry(tab2, width=5)
-    tab2defaultsaveentry.insert(0, '**')
+    tab2defaultsaveentry = ttk.Entry(tabDeveloper, width=5)
+    tab2defaultsaveentry.insert(0, '*')
     tab2defaultsaveentry.place(x=150, y=100)
-    tab2explainlabel = ttk.Label(tab2, text="(** for same directory)")
+    tab2explainlabel = ttk.Label(tabDeveloper, text="(* for same directory)")
     tab2explainlabel.place(x=190, y=100)
 
-    tab2resizablebutton = ttk.Checkbutton(tab2, text="Make window resizable (not recommended)")
+    tab2resizablebutton = ttk.Checkbutton(tabDeveloper, text="Make window resizable (not recommended)")
     tab2resizablebutton.place(x=20, y=140)
 
-    tab2enforcebutton = ttk.Checkbutton(tab2, text="Enforce filetype imports (recommended)")
+    tab2enforcebutton = ttk.Checkbutton(tabDeveloper, text="Enforce filetype imports (recommended)")
     tab2enforcebutton.place(x=20, y=160)
     tab2enforcebutton.state(['selected'])
 
-    tab2referencebutton = ttk.Checkbutton(tab2, text="Enforce referential integrity (recommended)")
-    tab2referencebutton.place(x=20, y=180)
-    tab2referencebutton.state(['selected'])
 
-    tab2geobutton = ttk.Checkbutton(tab2, text="Assume geographic area for lat/long data (recommended)")
-    tab2geobutton.place(x=20, y=200)
-    tab2geobutton.state(['selected'])
-
-    label=ttk.Label(tab2, image=photo)
+    label=ttk.Label(tabDeveloper, image=photo)
     label.image = photo
     label.place(x=650, y=180)
 
     # log settings
-    loglabel = ttk.Label(tab2, text="Log settings:")
-    loglabel.place(x=370, y=160)
+    loglabel = ttk.Label(tabDeveloper, text="Log settings")
+    loglabel.place(x=20, y=200)
 
-    logdelete = ttk.Checkbutton(tab2, text="Delete old log files (recommended)")
-    logdelete.place(x=370, y=180)
+    logdelete = ttk.Checkbutton(tabDeveloper, text="Delete old logs exceeding: ")
+    logdelete.place(x=20, y=225)
     logdelete.state(['selected'])
+    logDeleteOldInput = ttk.Entry(tabDeveloper, width=5)
+    logDeleteOldInput.place(x=180, y=225)
+    logDeleteOldInput.insert(0, '50')
 
-    logverbose = ttk.Checkbutton(tab2, text="Log all function calls (verbose) (recommended)")
-    logverbose.place(x=370, y=200)
+    logverbose = ttk.Checkbutton(tabDeveloper, text="Log all function calls (verbose) (recommended)")
+    logverbose.place(x=20, y=250)
     logverbose.state(['selected'])
 
 #################
-##Tab 3 Widgets##
+##Lat/Long Tab###
 #################
 
-currentlabel2 = ttk.Label(tab3, text="Current file: ")
+currentlabel2 = ttk.Label(tabLatLong, text="Current file: ")
 currentlabel2.place(x=220, y=20)
 
-text2 = tk.StringVar()
+labelFileVar = tk.StringVar()
 if os.path.isfile('download.dat'):
-    text2.set('download.dat')
+    labelFileVar.set('download.dat')
 else:
-    text2.set('None')
+    labelFileVar.set('None')
+labelFile = ttk.Label(tabLatLong, textvariable=labelFileVar)
+labelFile.place(x=290, y=20)
 
-label2 = ttk.Label(tab3, textvariable=text2)
-label2.place(x=290, y=20)
+btnNumkeyLat1 = ttk.Button(tabLatLong, text="1.", width=1.5, command=lambda:checkLatLongExists()).place(x=20, y=35)
+btnLatExists = ttk.Button(tabLatLong, text="Find First Lat/Long", width=BUTTON_WIDTH, command=lambda:checkLatLongExists()).place(x=50, y=35)
 
-btnNumkeyLat1 = ttk.Button(tab3, text="1.", width=1.5, command=lambda:checkLatLongExists()).place(x=20, y=35)
-btnLatExists = ttk.Button(tab3, text="Find First Lat/Long", width=BUTTON_WIDTH, command=lambda:checkLatLongExists()).place(x=50, y=35)
+btnNumkeyLat2 = ttk.Button(tabLatLong, text="2.", width=1.5, command=lambda:checkLatLongSigns()).place(x=20, y=76)
+btnLatSigns = ttk.Button(tabLatLong, text="Lat/Long Ranges", width=BUTTON_WIDTH, command=lambda:checkLatLongSigns()).place(x=50, y=76)
 
-btnNumkeyLat2 = ttk.Button(tab3, text="2.", width=1.5, command=lambda:checkLatLongSigns()).place(x=20, y=76)
-btnLatSigns = ttk.Button(tab3, text="Lat/Long Ranges", width=BUTTON_WIDTH, command=lambda:checkLatLongSigns()).place(x=50, y=76)
+btnNumkeyLat3 = ttk.Button(tabLatLong, text="3.", width=1.5, command=lambda:checkMalformedLatLong()).place(x=20, y=117)
+btnLatMalformed = ttk.Button(tabLatLong, text="Check for Malformation", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong()).place(x=50, y=117)
 
-btnNumkeyLat3 = ttk.Button(tab3, text="3.", width=1.5, command=lambda:checkMalformedLatLong()).place(x=20, y=117)
-btnLatMalformed = ttk.Button(tab3, text="Check for Malformation", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong()).place(x=50, y=117)
+btnNumkeyLat4 = ttk.Button(tabLatLong, text="4.", width=1.5, command=lambda:printAllLatLongData()).place(x=20, y=158)
+btnLatAllMalformed = ttk.Button(tabLatLong, text="All Lat/Long", width=BUTTON_WIDTH, command=lambda:printAllLatLongData()).place(x=50, y=158)
 
-btnNumkeyLat4 = ttk.Button(tab3, text="4.", width=1.5, command=lambda:printAllLatLongData()).place(x=20, y=158)
-btnLatAllMalformed = ttk.Button(tab3, text="All Lat/Long", width=BUTTON_WIDTH, command=lambda:printAllLatLongData()).place(x=50, y=158)
+labelRegion = ttk.Label(tabLatLong, text="Region:").place(x=22, y=200)
+dropdownRegion = ttk.Combobox(tabLatLong, width=26, values = ["Eastern US", "Westen US", "Canada"]).place(x=22, y=220)
+#dropdownRegion.current(0)
 
-labelRegion = ttk.Label(tab3, text="Region:").place(x=22, y=200)
-dropdownRegion = ttk.Combobox(tab3, width=26, values = ["Eastern US", "Westen US", "Canada"]).place(x=22, y=220)
-
-
-latLongConsole = tk.Text(tab3, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
-
+latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
 latLongConsole.place(x=220, y=42)
 latLongConsole.configure(font=consoleFont)
 latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.0]")
@@ -608,8 +603,8 @@ latLongConsole.insert(2.0, "\n")
 latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
 
-btnLatConsoleClear = ttk.Button(tab3, text="clear", width=4.25, command=lambda:clearLatLongConsole()).place(x=670, y=6)
-btnLatConsoleReset = ttk.Button(tab3, text="reset", width=4.25, command=lambda:resetWindow()).place(x=715, y=6)
+btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=lambda:clearLatLongConsole()).place(x=670, y=6)
+btnLatConsoleReset = ttk.Button(tabLatLong, text="reset", width=4.25, command=lambda:resetWindow()).place(x=715, y=6)
 
 ########
 ##Menu##
@@ -649,7 +644,7 @@ menubar.add_cascade(label="Window", menu=windowmenu)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
 helpmenu.add_command(label="About This Tool", accelerator='F1', command=lambda:aboutDialog())
-helpmenu.add_command(label="Delete old log files", accelerator='F2', command=lambda:Logging.deleteLog(5))
+helpmenu.add_command(label="Purge log files", accelerator='F2', command=lambda:Logging.deleteLog(5))
 menubar.add_cascade(label="Help", menu=helpmenu)
 
 if __name__ == "__main__":
