@@ -43,5 +43,16 @@ def viewLog():
     except:
         pass
 
-def deleteLog(filename):
-    pass
+def deleteLog(max_log_count):
+    count=0
+    d = os.getcwd()+'\\logs'
+    for path in os.listdir(d):
+        if os.path.isfile(os.path.join(d, path)):
+            count+=1
+    if count > max_log_count:
+        num_to_delete = count - max_log_count
+        files = os.listdir(d)
+        for i in range(num_to_delete):
+            os.remove(d+"\\"+files[i])
+
+    

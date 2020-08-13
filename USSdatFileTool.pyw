@@ -475,7 +475,7 @@ if developer == True:
 ###################
 
 btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:scanAllRecordsVerbose()).place(x=20, y=35)
-#btnSingleRecordScan = ttk.Button(tabBasicOperations, text="Record Count Search", command=lambda:singleRecordScan(), width=BUTTON_WIDTH).place(x=50, y=35)
+#btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:Logging.deleteLog(4)).place(x=20, y=35)
 btnVerboseRecordScan = ttk.Button(tabBasicOperations, text="Print Record Counts", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH).place(x=50, y=35)
 
 btnNumkey2 = ttk.Button(tabBasicOperations, text="2.", width=1.5, command=lambda:printSingleRecord()).place(x=20, y=76)
@@ -649,6 +649,7 @@ menubar.add_cascade(label="Window", menu=windowmenu)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
 helpmenu.add_command(label="About This Tool", accelerator='F1', command=lambda:aboutDialog())
+helpmenu.add_command(label="Delete old log files", accelerator='F2', command=lambda:Logging.deleteLog(5))
 menubar.add_cascade(label="Help", menu=helpmenu)
 
 if __name__ == "__main__":
