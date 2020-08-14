@@ -477,10 +477,10 @@ if developer == True:
 ###################
 
 btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:scanAllRecordsVerbose()).place(x=20, y=35)
-btnVerboseRecordScan = ttk.Button(tabBasicOperations, text="Print Record Counts", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH).place(x=50, y=35)
+btnVerboseRecordScan = ttk.Button(tabBasicOperations, text="Record Counts", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH).place(x=50, y=35)
 
 btnNumkey2 = ttk.Button(tabBasicOperations, text="2.", width=1.5, command=lambda:printSingleRecord()).place(x=20, y=76)
-btnPrintSingleRecord = ttk.Button(tabBasicOperations, text="Print Record Type", command=lambda:printSingleRecord(), width=BUTTON_WIDTH).place(x=50, y=76)
+btnPrintSingleRecord = ttk.Button(tabBasicOperations, text="Record Type Search", command=lambda:printSingleRecord(), width=BUTTON_WIDTH).place(x=50, y=76)
 
 btnNumkey3 = ttk.Button(tabBasicOperations, text="3.", width=1.5, command=lambda:disallowedCharacters()).place(x=20, y=117)
 btnSingleRecordScan = ttk.Button(tabBasicOperations, text="Meter Characters", command=lambda:disallowedCharacters(), width=BUTTON_WIDTH).place(x=50, y=117)
@@ -543,7 +543,7 @@ btnNumkeyLat4 = ttk.Button(tabLatLong, text="4.", width=1.5, command=lambda:prin
 btnLatAllMalformed = ttk.Button(tabLatLong, text="All Lat/Long", width=BUTTON_WIDTH, command=lambda:printAllLatLongData()).place(x=50, y=158)
 
 labelRegion = ttk.Label(tabLatLong, text="Region:").place(x=22, y=200)
-dropdownRegion = ttk.Combobox(tabLatLong, width=26, values = ["Eastern US", "Westen US", "Canada"])
+dropdownRegion = ttk.Combobox(tabLatLong, width=26, values = ["Eastern US", "Western US", "New Zealand"])
 dropdownRegion.place(x=22, y=220)
 dropdownRegion.state(['readonly'])
 dropdownRegion.set('Eastern US')
