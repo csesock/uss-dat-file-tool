@@ -477,19 +477,19 @@ if developer == True:
 ###################
 
 btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:scanAllRecordsVerbose()).place(x=20, y=35)
-btnVerboseRecordScan = ttk.Button(tabBasicOperations, text="Record Counts", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH).place(x=50, y=35)
+btnVerboseRecordScan = ttk.Button(tabBasicOperations, text="All Record Counts", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH).place(x=50, y=35)
 
 btnNumkey2 = ttk.Button(tabBasicOperations, text="2.", width=1.5, command=lambda:printSingleRecord()).place(x=20, y=76)
 btnPrintSingleRecord = ttk.Button(tabBasicOperations, text="Record Type Search", command=lambda:printSingleRecord(), width=BUTTON_WIDTH).place(x=50, y=76)
 
 btnNumkey3 = ttk.Button(tabBasicOperations, text="3.", width=1.5, command=lambda:disallowedCharacters()).place(x=20, y=117)
-btnSingleRecordScan = ttk.Button(tabBasicOperations, text="Meter Characters", command=lambda:disallowedCharacters(), width=BUTTON_WIDTH).place(x=50, y=117)
+btnSingleRecordScan = ttk.Button(tabBasicOperations, text="Bad Meter Characters", command=lambda:disallowedCharacters(), width=BUTTON_WIDTH).place(x=50, y=117)
 
-btnNumkey4 = ttk.Button(tabBasicOperations, text="4.", width=1.5, command=lambda:officeRegionZone()).place(x=20, y=158)
-btnOfficeRegionZone = ttk.Button(tabBasicOperations, text="Office-Region-Zone", command=lambda:officeRegionZone(), width=BUTTON_WIDTH).place(x=50, y=158)
+btnNumkey4 = ttk.Button(tabBasicOperations, text="4.", width=1.5, command=lambda:missingMeters()).place(x=20, y=158)
+btnOfficeRegionZone = ttk.Button(tabBasicOperations, text="Blank Meter Numbers", command=lambda:missingMeters(), width=BUTTON_WIDTH).place(x=50, y=158)
 
-btnNumkey5 = ttk.Button(tabBasicOperations, text="5.", width=1.5, command=lambda:missingMeters()).place(x=20, y=199)
-MissingMeterButton = ttk.Button(tabBasicOperations, text="Blank Meter Numbers", command=lambda:missingMeters(), width=BUTTON_WIDTH).place(x=50, y=199)
+btnNumkey5 = ttk.Button(tabBasicOperations, text="5.", width=1.5, command=lambda:officeRegionZone()).place(x=20, y=199)
+MissingMeterButton = ttk.Button(tabBasicOperations, text="Office-Region-Zone", command=lambda:officeRegionZone(), width=BUTTON_WIDTH).place(x=50, y=199)
 
 btnNumkey6 = ttk.Button(tabBasicOperations, text="6.", width=1.5, command=lambda:printReadTypeVerbose()).place(x=20, y=240)
 PrintReadTypeButton = ttk.Button(tabBasicOperations, text="Read Type Codes", command=lambda:printReadTypeVerbose(), width=BUTTON_WIDTH).place(x=50, y=240)
@@ -648,7 +648,7 @@ menubar.add_cascade(label="Window", menu=windowmenu)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
 helpmenu.add_command(label="About This Tool", accelerator='F1', command=lambda:aboutDialog())
-helpmenu.add_command(label="Purge log files", command=lambda:Logging.deleteLog(int(logDeleteOldInput.get())))
+helpmenu.add_command(label="Purge Log Files", command=lambda:Logging.deleteLog(int(logDeleteOldInput.get())))
 menubar.add_cascade(label="Help", menu=helpmenu)
 
 if __name__ == "__main__":
