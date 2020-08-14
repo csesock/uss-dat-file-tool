@@ -82,7 +82,6 @@ def disallowedCharacters(event=None):
                 if line.startswith('MTR'):
                     meter_number = line[45:57] #46-57
                     if '*' in meter_number or '/' in meter_number or '\\' in meter_number or ':' in meter_number or '<' in meter_number or '>' in meter_number:
-                        print(meter_number)
                         bocConsole.insert(index, str(line_number) + " " + line + "\n")
                         counter+=1
                         index+=1
@@ -90,6 +89,9 @@ def disallowedCharacters(event=None):
             if counter == 0:
                 bocConsole.delete(1.0, 'end')
                 bocConsole.insert(1.0, 'No disallowed characters found in download file.')
+                bocConsole.insert('end', '\n')
+                bocConsole.insert('end', "Disallowed characters include: * < > \\ / \"")
+        Logging.writeToLogs('End Function Call - disallowedCharacters()')
     except FileNotFoundError:
         fileNotFoundError()
 
@@ -132,7 +134,6 @@ def printSingleRecord(event=None):
         
 def officeRegionZone(event=None):
     Logging.writeToLogs('Start Function Call - officeRegionZone()')
-    all_fields = {}
     try:
         with open(download_filename, 'r') as openfile:
             for line in openfile:
@@ -409,14 +410,14 @@ def saveAs():
 def openFile():
     Logging.writeToLogs('Start Function Call - openFile()')
     filename = tk.filedialog.askopenfilename(title="Import File")
-    # if tab2enforcebutton.instate(['selected']):
-    #     if not filename.lower().endswith(('.dat', '.DAT', '.hdl', '.HDL')):
-    #         messagebox.showinfo("ERROR", "An error occured. Please select another file.")
-    #         return
+    if tab2enforcebutton.instate(['selected']):
+        if not filename.lower().endswith(('.dat', '.DAT', '.hdl', '.HDL')):
+            messagebox.showinfo("ERROR", "Filetype imports are enforced. Please select a compatible file.")
+            return
     global download_filename
     download_filename = filename
     text.set(os.path.basename(download_filename))
-    text2.set(os.path.basename(download_filename))
+    labelFileVar.set(os.path.basename(download_filename))
     Logging.writeToLogs('Opened new file: ' + str(filename))
        
 def resizeWindow():
@@ -429,12 +430,12 @@ def resetWindow():
     width = window.winfo_screenwidth()/3
     window.geometry('780x330+%d+%d' %(width, height)) #reset height must be height-20 to account for the menu being created at this point
     bocConsole.delete(1.0, "end")
-    bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.0]")
+    bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.1]")
     bocConsole.insert(2.0, "\n")
     bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
     bocConsole.insert(3.0, "\n")
     latLongConsole.delete(1.0, "end")
-    latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.0]")
+    latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.1]")
     latLongConsole.insert(2.0, "\n")
     latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
     latLongConsole.insert(3.0, "\n")
@@ -452,7 +453,7 @@ def fileNotFoundError2():
     latLongConsole.insert(1.0, "ERROR: FILE NOT FOUND")
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.5.0 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2020-08-13:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
+    dialog = """ Author: Chris Sesock \n Version: 1.5.1 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2020-08-13:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
              """
     messagebox.showinfo("About", dialog)
 
@@ -476,7 +477,6 @@ if developer == True:
 ###################
 
 btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:scanAllRecordsVerbose()).place(x=20, y=35)
-#btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:Logging.deleteLog(4)).place(x=20, y=35)
 btnVerboseRecordScan = ttk.Button(tabBasicOperations, text="Print Record Counts", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH).place(x=50, y=35)
 
 btnNumkey2 = ttk.Button(tabBasicOperations, text="2.", width=1.5, command=lambda:printSingleRecord()).place(x=20, y=76)
@@ -511,47 +511,45 @@ bocConsole = tk.Text(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WI
 
 bocConsole.place(x=220, y=42)
 bocConsole.configure(font=consoleFont)
-bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.0]")
+bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.1]")
 bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
 
-#################
-##Tab 2 Widgets##
-#################
+########################
+##Settings Tab Widgets##
+########################
 
 if developer == True:
-    tab2headerlabel = ttk.Label(tabDeveloper, text="""The settings below should be changed at your own risk. \nChanges may cause unexpected errors!""")
-    tab2headerlabel.place(x=20, y=20)
+    labelDevWarning = ttk.Label(tabDeveloper, text="""The settings below are for testing purposes and should be changed at your own risk.""").place(x=20, y=20)
 
-    tab2defaultextensionlabel = ttk.Label(tabDeveloper, text="Default file extension:").place(x=20, y=75)
+    labelFileSettings = ttk.Label(tabDeveloper, text="File Settings").place(x=20, y=85)
+
+    tab2defaultextensionlabel = ttk.Label(tabDeveloper, text="Default file extension:").place(x=20, y=108)
     tab2defaultinput = ttk.Entry(tabDeveloper, width=5)
     tab2defaultinput.insert(0, '.txt')
-    tab2defaultinput.place(x=150, y=75)
+    tab2defaultinput.place(x=150, y=108)
 
     tab2defaultsavelabel = ttk.Label(tabDeveloper, text="Default 'Save' location:")
-    tab2defaultsavelabel.place(x=20, y=100)
+    tab2defaultsavelabel.place(x=20, y=133)
     tab2defaultsaveentry = ttk.Entry(tabDeveloper, width=5)
     tab2defaultsaveentry.insert(0, '*')
-    tab2defaultsaveentry.place(x=150, y=100)
-    tab2explainlabel = ttk.Label(tabDeveloper, text="(* for same directory)")
-    tab2explainlabel.place(x=190, y=100)
+    tab2defaultsaveentry.place(x=150, y=133)
+    tab2explainlabel = ttk.Label(tabDeveloper, text="(* for same directory)").place(x=190, y=133)
 
-    tab2resizablebutton = ttk.Checkbutton(tabDeveloper, text="Make window resizable (not recommended)")
-    tab2resizablebutton.place(x=20, y=140)
+    #tab2resizablebutton = ttk.Checkbutton(tabDeveloper, text="Make window resizable (not recommended)")
+    #tab2resizablebutton.place(x=20, y=140)
 
-    tab2enforcebutton = ttk.Checkbutton(tabDeveloper, text="Enforce filetype imports (recommended)")
-    tab2enforcebutton.place(x=20, y=160)
-    tab2enforcebutton.state(['selected'])
-
+    tab2enforcebutton = ttk.Checkbutton(tabDeveloper, text="Enforce filetype imports (not recommended)")
+    tab2enforcebutton.place(x=20, y=155)
+    #tab2enforcebutton.state(['selected'])
 
     label=ttk.Label(tabDeveloper, image=photo)
     label.image = photo
     label.place(x=650, y=180)
 
     # log settings
-    loglabel = ttk.Label(tabDeveloper, text="Log settings")
-    loglabel.place(x=20, y=200)
+    loglabel = ttk.Label(tabDeveloper, text="Log Settings").place(x=20, y=200)
 
     logdelete = ttk.Checkbutton(tabDeveloper, text="Delete old logs exceeding: ")
     logdelete.place(x=20, y=225)
@@ -561,15 +559,14 @@ if developer == True:
     logDeleteOldInput.insert(0, '50')
 
     logverbose = ttk.Checkbutton(tabDeveloper, text="Log all function calls (verbose) (recommended)")
-    logverbose.place(x=20, y=250)
+    logverbose.place(x=20, y=247)
     logverbose.state(['selected'])
 
 #################
 ##Lat/Long Tab###
 #################
 
-currentlabel2 = ttk.Label(tabLatLong, text="Current file: ")
-currentlabel2.place(x=220, y=20)
+labelCurrentFileLatLong = ttk.Label(tabLatLong, text="Current file: ").place(x=220, y=20)
 
 labelFileVar = tk.StringVar()
 if os.path.isfile('download.dat'):
@@ -593,12 +590,11 @@ btnLatAllMalformed = ttk.Button(tabLatLong, text="All Lat/Long", width=BUTTON_WI
 
 labelRegion = ttk.Label(tabLatLong, text="Region:").place(x=22, y=200)
 dropdownRegion = ttk.Combobox(tabLatLong, width=26, values = ["Eastern US", "Westen US", "Canada"]).place(x=22, y=220)
-#dropdownRegion.current(0)
 
 latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
 latLongConsole.place(x=220, y=42)
 latLongConsole.configure(font=consoleFont)
-latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.0]")
+latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.1]")
 latLongConsole.insert(2.0, "\n")
 latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
