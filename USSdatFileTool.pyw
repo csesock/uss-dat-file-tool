@@ -62,7 +62,7 @@ window.bind('<Control-s>', lambda event: save())
 window.bind('<Control-Alt-s>', lambda event: saveAs())
 window.bind('<Control-c>', lambda event: bocConsole.delete(1.0, "end"))
 window.bind('<F1>', lambda event: aboutDialog())
-window.bind('<F2>', lambda event: Logging.deleteLog(5))
+#window.bind('<F2>', lambda event: Logging.deleteLog(int(logDeleteOldInput.get())))
 window.bind('<F10>', lambda event: resetWindow())
 window.bind('<F11>', lambda event: resizeWindow())
 
@@ -602,7 +602,7 @@ if developer == True:
     logdelete = ttk.Checkbutton(tabDeveloper, text="Max log files allowed before deletion:")
     logdelete.place(x=20, y=225)
     logdelete.state(['selected'])
-    logDeleteOldInput = ttk.Entry(tabDeveloper, width=5)
+    logDeleteOldInput = ttk.Entry(tabDeveloper, width=3)
     logDeleteOldInput.place(x=240, y=225)
     logDeleteOldInput.insert(0, '10')
 
@@ -648,7 +648,7 @@ menubar.add_cascade(label="Window", menu=windowmenu)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
 helpmenu.add_command(label="About This Tool", accelerator='F1', command=lambda:aboutDialog())
-helpmenu.add_command(label="Purge log files", accelerator='F2', command=lambda:Logging.deleteLog(5))
+helpmenu.add_command(label="Purge log files", command=lambda:Logging.deleteLog(int(logDeleteOldInput.get())))
 menubar.add_cascade(label="Help", menu=helpmenu)
 
 if __name__ == "__main__":
