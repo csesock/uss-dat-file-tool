@@ -11,7 +11,7 @@ def createLogFile():
         f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Program successfully started \n")
         f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Logfile successfully created")
         f.close()
-    except FileExistsError:
+    except:
         pass
 
 def writeToLogs(message):
@@ -26,11 +26,14 @@ def writeToLogs(message):
 def deleteLog(max_log_count):
     count=0
     d = os.getcwd()+'\\logs'
-    for path in os.listdir(d):
-        if os.path.isfile(os.path.join(d, path)):
-            count+=1
-    if count > max_log_count:
-        num_to_delete = count - max_log_count
-        files = os.listdir(d)
-        for i in range(num_to_delete):
-            os.remove(d+"\\"+files[i])
+    try:
+        for path in os.listdir(d):
+            if os.path.isfile(os.path.join(d, path)):
+                count+=1
+        if count > max_log_count:
+            num_to_delete = count - max_log_count
+            files = os.listdir(d)
+            for i in range(num_to_delete):
+                os.remove(d+"\\"+files[i])
+    except:
+        pass
