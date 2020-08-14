@@ -504,6 +504,11 @@ else:
     text.set('None')
 label = ttk.Label(tabBasicOperations, textvariable=text).place(x=290, y=20)
 
+# textStatus = tk.StringVar()
+# textStatus.set('0 records found')
+# labelStatus = ttk.Label(tabBasicOperations, textvariable=textStatus).place(x=660, y=273)
+# labelRecords = ttk.Label(tabBasicOperations, text=" records found").place(x=670, y=275)
+
 btnConsoleClear = ttk.Button(tabBasicOperations, text="clear", width=4.25, command=lambda:clearBOCConsole()).place(x=670, y=6)
 btnConsoleReset = ttk.Button(tabBasicOperations, text="reset", width = 4.24, command=lambda:resetWindow()).place(x=715,y=6)
 
