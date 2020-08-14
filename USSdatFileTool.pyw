@@ -551,12 +551,12 @@ if developer == True:
     # log settings
     loglabel = ttk.Label(tabDeveloper, text="Log Settings").place(x=20, y=200)
 
-    logdelete = ttk.Checkbutton(tabDeveloper, text="Delete old logs exceeding: ")
+    logdelete = ttk.Checkbutton(tabDeveloper, text="Max log files allowed before deletion:")
     logdelete.place(x=20, y=225)
     logdelete.state(['selected'])
     logDeleteOldInput = ttk.Entry(tabDeveloper, width=5)
-    logDeleteOldInput.place(x=180, y=225)
-    logDeleteOldInput.insert(0, '50')
+    logDeleteOldInput.place(x=240, y=225)
+    logDeleteOldInput.insert(0, '10')
 
     logverbose = ttk.Checkbutton(tabDeveloper, text="Log all function calls (verbose) (recommended)")
     logverbose.place(x=20, y=247)
