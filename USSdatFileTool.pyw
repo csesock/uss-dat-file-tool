@@ -516,6 +516,49 @@ bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
 
+#################
+##Lat/Long Tab###
+#################
+
+labelCurrentFileLatLong = ttk.Label(tabLatLong, text="Current file: ").place(x=220, y=20)
+
+labelFileVar = tk.StringVar()
+if os.path.isfile('download.dat'):
+    labelFileVar.set('download.dat')
+else:
+    labelFileVar.set('None')
+labelFile = ttk.Label(tabLatLong, textvariable=labelFileVar)
+labelFile.place(x=290, y=20)
+
+btnNumkeyLat1 = ttk.Button(tabLatLong, text="1.", width=1.5, command=lambda:checkLatLongExists()).place(x=20, y=35)
+btnLatExists = ttk.Button(tabLatLong, text="Find First Lat/Long", width=BUTTON_WIDTH, command=lambda:checkLatLongExists()).place(x=50, y=35)
+
+btnNumkeyLat2 = ttk.Button(tabLatLong, text="2.", width=1.5, command=lambda:checkLatLongSigns()).place(x=20, y=76)
+btnLatSigns = ttk.Button(tabLatLong, text="Lat/Long Ranges", width=BUTTON_WIDTH, command=lambda:checkLatLongSigns()).place(x=50, y=76)
+
+btnNumkeyLat3 = ttk.Button(tabLatLong, text="3.", width=1.5, command=lambda:checkMalformedLatLong()).place(x=20, y=117)
+btnLatMalformed = ttk.Button(tabLatLong, text="Check for Malformation", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong()).place(x=50, y=117)
+
+btnNumkeyLat4 = ttk.Button(tabLatLong, text="4.", width=1.5, command=lambda:printAllLatLongData()).place(x=20, y=158)
+btnLatAllMalformed = ttk.Button(tabLatLong, text="All Lat/Long", width=BUTTON_WIDTH, command=lambda:printAllLatLongData()).place(x=50, y=158)
+
+labelRegion = ttk.Label(tabLatLong, text="Region:").place(x=22, y=200)
+dropdownRegion = ttk.Combobox(tabLatLong, width=26, values = ["Eastern US", "Westen US", "Canada"])
+dropdownRegion.place(x=22, y=220)
+dropdownRegion.state(['readonly'])
+dropdownRegion.set('Eastern US')
+
+latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
+latLongConsole.place(x=220, y=42)
+latLongConsole.configure(font=consoleFont)
+latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.1]")
+latLongConsole.insert(2.0, "\n")
+latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
+latLongConsole.insert(3.0, "\n")
+
+btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=lambda:clearLatLongConsole()).place(x=670, y=6)
+btnLatConsoleReset = ttk.Button(tabLatLong, text="reset", width=4.25, command=lambda:resetWindow()).place(x=715, y=6)
+
 ########################
 ##Settings Tab Widgets##
 ########################
@@ -561,46 +604,6 @@ if developer == True:
     logverbose = ttk.Checkbutton(tabDeveloper, text="Log all function calls (verbose) (recommended)")
     logverbose.place(x=20, y=247)
     logverbose.state(['selected'])
-
-#################
-##Lat/Long Tab###
-#################
-
-labelCurrentFileLatLong = ttk.Label(tabLatLong, text="Current file: ").place(x=220, y=20)
-
-labelFileVar = tk.StringVar()
-if os.path.isfile('download.dat'):
-    labelFileVar.set('download.dat')
-else:
-    labelFileVar.set('None')
-labelFile = ttk.Label(tabLatLong, textvariable=labelFileVar)
-labelFile.place(x=290, y=20)
-
-btnNumkeyLat1 = ttk.Button(tabLatLong, text="1.", width=1.5, command=lambda:checkLatLongExists()).place(x=20, y=35)
-btnLatExists = ttk.Button(tabLatLong, text="Find First Lat/Long", width=BUTTON_WIDTH, command=lambda:checkLatLongExists()).place(x=50, y=35)
-
-btnNumkeyLat2 = ttk.Button(tabLatLong, text="2.", width=1.5, command=lambda:checkLatLongSigns()).place(x=20, y=76)
-btnLatSigns = ttk.Button(tabLatLong, text="Lat/Long Ranges", width=BUTTON_WIDTH, command=lambda:checkLatLongSigns()).place(x=50, y=76)
-
-btnNumkeyLat3 = ttk.Button(tabLatLong, text="3.", width=1.5, command=lambda:checkMalformedLatLong()).place(x=20, y=117)
-btnLatMalformed = ttk.Button(tabLatLong, text="Check for Malformation", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong()).place(x=50, y=117)
-
-btnNumkeyLat4 = ttk.Button(tabLatLong, text="4.", width=1.5, command=lambda:printAllLatLongData()).place(x=20, y=158)
-btnLatAllMalformed = ttk.Button(tabLatLong, text="All Lat/Long", width=BUTTON_WIDTH, command=lambda:printAllLatLongData()).place(x=50, y=158)
-
-labelRegion = ttk.Label(tabLatLong, text="Region:").place(x=22, y=200)
-dropdownRegion = ttk.Combobox(tabLatLong, width=26, values = ["Eastern US", "Westen US", "Canada"]).place(x=22, y=220)
-
-latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
-latLongConsole.place(x=220, y=42)
-latLongConsole.configure(font=consoleFont)
-latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.1]")
-latLongConsole.insert(2.0, "\n")
-latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
-latLongConsole.insert(3.0, "\n")
-
-btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=lambda:clearLatLongConsole()).place(x=670, y=6)
-btnLatConsoleReset = ttk.Button(tabLatLong, text="reset", width=4.25, command=lambda:resetWindow()).place(x=715, y=6)
 
 ########
 ##Menu##
