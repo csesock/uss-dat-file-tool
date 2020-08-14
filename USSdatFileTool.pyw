@@ -569,45 +569,38 @@ btnLatConsoleReset = ttk.Button(tabLatLong, text="reset", width=4.25, command=la
 ########################
 
 if developer == True:
-    labelDevWarning = ttk.Label(tabDeveloper, text="""The settings below are for testing purposes and should be changed at your own risk.""").place(x=20, y=20)
+    #labelDevWarning = ttk.Label(tabDeveloper, text="""The settings below are for testing purposes and should be changed at your own risk.""").place(x=20, y=20)
 
-    labelFileSettings = ttk.Label(tabDeveloper, text="File Settings").place(x=20, y=85)
+    labelFileSettings = ttk.Label(tabDeveloper, text="File Settings").place(x=20, y=55)
 
-    tab2defaultextensionlabel = ttk.Label(tabDeveloper, text="Default file extension:").place(x=20, y=108)
-    tab2defaultinput = ttk.Entry(tabDeveloper, width=5)
+    tab2defaultextensionlabel = ttk.Label(tabDeveloper, text="Default file extension:").place(x=20, y=78)
+    tab2defaultinput = ttk.Entry(tabDeveloper, width=4)
     tab2defaultinput.insert(0, '.txt')
-    tab2defaultinput.place(x=150, y=108)
+    tab2defaultinput.place(x=150, y=78)
 
     tab2defaultsavelabel = ttk.Label(tabDeveloper, text="Default 'Save' location:")
-    tab2defaultsavelabel.place(x=20, y=133)
-    tab2defaultsaveentry = ttk.Entry(tabDeveloper, width=5)
-    tab2defaultsaveentry.insert(0, '*')
-    tab2defaultsaveentry.place(x=150, y=133)
-    tab2explainlabel = ttk.Label(tabDeveloper, text="(* for same directory)").place(x=190, y=133)
+    tab2defaultsavelabel.place(x=20, y=103)
+    tab2defaultsaveentry = ttk.Entry(tabDeveloper, width=4)
+    tab2defaultsaveentry.insert(0, '***')
+    tab2defaultsaveentry.place(x=150, y=103)
 
-    #tab2resizablebutton = ttk.Checkbutton(tabDeveloper, text="Make window resizable (not recommended)")
-    #tab2resizablebutton.place(x=20, y=140)
-
-    tab2enforcebutton = ttk.Checkbutton(tabDeveloper, text="Enforce filetype imports (not recommended)")
-    tab2enforcebutton.place(x=20, y=155)
-    #tab2enforcebutton.state(['selected'])
+    tab2enforcebutton = ttk.Checkbutton(tabDeveloper, text="Enforce filetype imports")
+    tab2enforcebutton.place(x=20, y=125)
 
     label=ttk.Label(tabDeveloper, image=photo)
     label.image = photo
     label.place(x=650, y=180)
 
     # log settings
-    loglabel = ttk.Label(tabDeveloper, text="Log Settings").place(x=20, y=200)
+    loglabel = ttk.Label(tabDeveloper, text="Log Settings").place(x=20, y=180)
 
-    logdelete = ttk.Checkbutton(tabDeveloper, text="Max log files allowed before deletion:")
-    logdelete.place(x=20, y=225)
-    logdelete.state(['selected'])
+    labelDelete = ttk.Label(tabDeveloper, text="Log files allowed before deletion:").place(x=20, y=205)
     logDeleteOldInput = ttk.Entry(tabDeveloper, width=3)
-    logDeleteOldInput.place(x=240, y=225)
+    logDeleteOldInput.place(x=200, y=205)
     logDeleteOldInput.insert(0, '10')
 
-    logverbose = ttk.Checkbutton(tabDeveloper, text="Log all function calls (verbose) (recommended)")
-    logverbose.place(x=20, y=247)
+    logverbose = ttk.Checkbutton(tabDeveloper, text="Log all function calls")
+    logverbose.place(x=20, y=227)
     logverbose.state(['selected'])
 
 ########
