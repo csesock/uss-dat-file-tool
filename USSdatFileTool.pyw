@@ -97,7 +97,7 @@ def disallowedCharacters(event=None):
 
 def singleRecordScan(event=None):
     Logging.writeToLogs('Start Function Call - singleRecordScan()')
-    answer = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
+    answer = simpledialog.askstring("Enter Record", "Enter the record type to search: \n(blank to display entire file)", parent=window)
     if answer is None or answer == "":
         return
     answer = answer.upper()
@@ -116,7 +116,7 @@ def singleRecordScan(event=None):
 
 def printSingleRecord(event=None):
     Logging.writeToLogs('Start Function Call - printSingleRecord()')
-    record_type = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
+    record_type = simpledialog.askstring("Record Search", "Enter the record type to search: \n\n(blank to display entire file)", parent=window)
     if record_type is None:
         return
     record_type = record_type.upper()
