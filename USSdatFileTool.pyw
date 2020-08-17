@@ -509,6 +509,7 @@ label = ttk.Label(tabBasicOperations, textvariable=text).place(x=290, y=20)
 # labelStatus = ttk.Label(tabBasicOperations, textvariable=textStatus).place(x=660, y=273)
 # labelRecords = ttk.Label(tabBasicOperations, text=" records found").place(x=670, y=275)
 
+btnConsoleSave = ttk.Button(tabBasicOperations, text="save", width=4.25, command=lambda:save()).place(x=625, y=6)
 btnConsoleClear = ttk.Button(tabBasicOperations, text="clear", width=4.25, command=lambda:clearBOCConsole()).place(x=670, y=6)
 btnConsoleReset = ttk.Button(tabBasicOperations, text="reset", width = 4.24, command=lambda:resetWindow()).place(x=715,y=6)
 
@@ -561,6 +562,7 @@ latLongConsole.insert(2.0, "\n")
 latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
 
+btnConsoleSave = ttk.Button(tabLatLong, text="save", width=4.25, command=lambda:save()).place(x=625, y=6)
 btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=lambda:clearLatLongConsole()).place(x=670, y=6)
 btnLatConsoleReset = ttk.Button(tabLatLong, text="reset", width=4.25, command=lambda:resetWindow()).place(x=715, y=6)
 
