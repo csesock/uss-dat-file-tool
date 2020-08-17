@@ -7,12 +7,14 @@ download and upload files for use with both MVRS and FCS.
 Current features of this tool include:
 - [x] Scan for specific records 
 - [x] Identify missing meter numbers
-- [x] Identify all read type codes
+- [x] Find meter records with bad characters
+- [x] Identify all read type codes and their counts
 - [x] Print Office-Region-Zone fields for debugging
 - [x] Check for malformed lat/long data
 - [x] Perform full scans of download files
-- [x] Graphical user interface for ease-of-use
+
 - [x] Save any parsed data as .txt or .csv
+- [x] Logging system
 
 Future improvements include:
 - [ ] Modifying download files safely from the command line
