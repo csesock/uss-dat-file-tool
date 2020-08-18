@@ -1,1 +1,1 @@
-This folder is required for exports
+This folder is the default location where exports will be saved when 'Save' is used. 
