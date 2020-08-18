@@ -12,7 +12,6 @@ Current features of this tool include:
 - [x] Print Office-Region-Zone fields for debugging
 - [x] Check for malformed lat/long data
 - [x] Perform full scans of download files
-
 - [x] Save any parsed data as .txt or .csv
 - [x] Logging system
 
