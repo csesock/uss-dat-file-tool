@@ -1,0 +1,1 @@
+This folder is the default location where logs will be saved.

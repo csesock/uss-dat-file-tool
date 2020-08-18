@@ -5,6 +5,6 @@
 
 developer.py
 
-logs/*
+logs/*.txt
 exports/*.txt
 __pycache__/*
