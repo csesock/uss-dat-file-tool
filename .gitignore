@@ -6,5 +6,5 @@
 developer.py
 
 logs/*
-exports/*
+exports/*.txt
 __pycache__/*
