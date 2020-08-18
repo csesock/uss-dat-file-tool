@@ -41,6 +41,8 @@ window.resizable(False, False)
 height = window.winfo_screenheight()/3
 width = window.winfo_screenwidth()/3
 window.geometry('780x350+%d+%d' %(width, height))
+#window.geometry('1000x500+%d+%d' %(width, height))
+
 
 try:
     dirp = os.path.dirname(__file__)
@@ -513,8 +515,8 @@ btnConsoleSave = ttk.Button(tabBasicOperations, text="save", width=4.25, command
 btnConsoleClear = ttk.Button(tabBasicOperations, text="clear", width=4.25, command=lambda:clearBOCConsole()).place(x=670, y=6)
 btnConsoleReset = ttk.Button(tabBasicOperations, text="reset", width = 4.24, command=lambda:resetWindow()).place(x=715,y=6)
 
-bocConsole = tk.Text(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
-
+bocConsole = tk.Text(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
+                    insertborderwidth=7, undo=True, bd=3)
 bocConsole.place(x=220, y=42)
 bocConsole.configure(font=consoleFont)
 bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.1]")
@@ -554,7 +556,8 @@ dropdownRegion.place(x=22, y=220)
 dropdownRegion.state(['readonly'])
 dropdownRegion.set('Eastern US')
 
-latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green')
+latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green',
+                        insertborderwidth=7, undo=True, bd=3)
 latLongConsole.place(x=220, y=42)
 latLongConsole.configure(font=consoleFont)
 latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.1]")
