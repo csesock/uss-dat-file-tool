@@ -521,6 +521,10 @@ bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
 
+# scrollbar = ttk.Scrollbar(tabBasicOperations, command=bocConsole.yview, orient="vertical")
+# scrollbar.pack(side=RIGHT, fill=Y)
+# bocConsole.configure(yscrollcommand=scrollbar.set)
+
 #################
 ##Lat/Long Tab###
 #################
@@ -572,8 +576,14 @@ btnLatConsoleReset = ttk.Button(tabLatLong, text="reset", width=4.25, command=la
 
 if developer == True:
     #labelDevWarning = ttk.Label(tabDeveloper, text="""The settings below are for testing purposes and should be changed at your own risk.""").place(x=20, y=20)
+    labelFont = Font(size=10, weight='bold')
 
-    labelFileSettings = ttk.Label(tabDeveloper, text="File Settings").place(x=20, y=30)
+    labelFileSettings = ttk.Label(tabDeveloper, text="File Settings", font=labelFont).place(x=20, y=30)
+
+    #labelframe = ttk.LabelFrame(tabDeveloper, text="File Settings", width=50, height=50)
+    #labelframe.place(x=20, y=30)
+    #labelframe.pack(fill="both", expand="yes")
+    #labelframe.pack(padx=10, pady=10)
 
     tab2defaultextensionlabel = ttk.Label(tabDeveloper, text="Default file extension:").place(x=20, y=53)
     tab2defaultinput = ttk.Entry(tabDeveloper, width=4)
@@ -582,8 +592,8 @@ if developer == True:
 
     tab2defaultsavelabel = ttk.Label(tabDeveloper, text="Default 'Save' location:")
     tab2defaultsavelabel.place(x=20, y=78)
-    tab2defaultsaveentry = ttk.Entry(tabDeveloper, width=4)
-    tab2defaultsaveentry.insert(0, '***')
+    tab2defaultsaveentry = ttk.Entry(tabDeveloper, width=10)
+    tab2defaultsaveentry.insert(0, '\\exports')
     tab2defaultsaveentry.place(x=150, y=78)
 
     tab2enforcebutton = ttk.Checkbutton(tabDeveloper, text="Enforce filetype imports")
@@ -594,7 +604,7 @@ if developer == True:
     label.place(x=650, y=180)
 
     # log settings
-    loglabel = ttk.Label(tabDeveloper, text="Log Settings").place(x=20, y=180)
+    loglabel = ttk.Label(tabDeveloper, text="Log Settings", font=labelFont).place(x=20, y=180)
 
     labelDelete = ttk.Label(tabDeveloper, text="Log files allowed before deletion:").place(x=20, y=205)
     logDeleteOldInput = ttk.Entry(tabDeveloper, width=3)
