@@ -12,7 +12,6 @@ Current features of this tool include:
 - [x] Print Office-Region-Zone fields for debugging
 - [x] Check for malformed lat/long data
 - [x] Perform full scans of download files
-
 - [x] Save any parsed data as .txt or .csv
 - [x] Logging system
 
@@ -28,7 +27,7 @@ Currently, the main focus of development is an easy-to-use UI that requires no e
 
 ![GUI2](https://imgur.com/NjGBLV6.png)
 
-![GUI3](https://imgur.com/xpzR3FI.png)
+![GUI3](https://imgur.com/NyeOJss.png)
 
 ## Dependencies
 Currently, the tool has moved away from a command-line collection of scripts and towards a UI-based tool which allows for a number of more practical features. Despite this move towards verbosity, there are still no third-party depenencies within the tool; simply install Python and double click 'USSdatFileTool.py' to get started using the tool. 
