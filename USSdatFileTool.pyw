@@ -94,31 +94,36 @@ def disallowedCharacters(event=None):
     except FileNotFoundError:
         fileNotFoundError()
 
-def singleRecordScan(event=None):
-    Logging.writeToLogs('Start Function Call - singleRecordScan()')
-    answer = simpledialog.askstring("Enter Record", "Enter the record type to search: \n(blank to display entire file)", parent=window)
-    if answer is None or answer == "":
-        return
-    answer = answer.upper()
-    counter = 0
-    try:
-        with open(download_filename, 'r') as openfile:
-            for line in openfile:
-                if line.startswith(answer):
-                    counter+=1
-            bocConsole.delete(1.0, "end")
-            bocConsole.insert("end", f"{counter:,d} " + answer + " records found")
-            bocConsole.insert("end", "\n")
-        Logging.writeToLogs('End Function Call - singleRecordScan()')
-    except FileNotFoundError:
-        fileNotFoundError()
+
+# def singleRecordScan(event=None):
+#     Logging.writeToLogs('Start Function Call - singleRecordScan()')
+#     answer = simpledialog.askstring("Enter Record", "Enter the record type to search: \n(blank to display entire file)", parent=window)
+#     if answer is None or answer == "":
+#         return
+#     answer = answer.upper()
+#     counter = 0
+#     try:
+#         with open(download_filename, 'r') as openfile:
+#             for line in openfile:
+#                 if line.startswith(answer):
+#                     counter+=1
+#             bocConsole.delete(1.0, "end")
+#             bocConsole.insert("end", f"{counter:,d} " + answer + " records found")
+#             bocConsole.insert("end", "\n")
+#         Logging.writeToLogs('End Function Call - singleRecordScan()')
+#     except FileNotFoundError:
+#         fileNotFoundError()
+
 
 def printSingleRecord(event=None):
     Logging.writeToLogs('Start Function Call - printSingleRecord()')
-    record_type = simpledialog.askstring("Record Search", "Enter the record type to search: \n\n(blank to display entire file)", parent=window)
+    record_type = simpledialog.askstring("Record Search", ' Enter the record types to search \n (Separate multiple records by comma) \n', parent=window)
     if record_type is None:
         return
     record_type = record_type.upper()
+    if ',' in record_type:
+        #multiple records to search
+        pass
     counter = 1.0
     try:
         with open(download_filename, 'r') as openfile:
