@@ -41,8 +41,6 @@ window.resizable(False, False)
 height = window.winfo_screenheight()/3
 width = window.winfo_screenwidth()/3
 window.geometry('780x350+%d+%d' %(width, height))
-#window.geometry('1000x500+%d+%d' %(width, height))
-
 
 try:
     dirp = os.path.dirname(__file__)
@@ -64,7 +62,6 @@ window.bind('<Control-s>', lambda event: save())
 window.bind('<Control-Alt-s>', lambda event: saveAs())
 window.bind('<Control-c>', lambda event: bocConsole.delete(1.0, "end"))
 window.bind('<F1>', lambda event: aboutDialog())
-#window.bind('<F2>', lambda event: Logging.deleteLog(int(logDeleteOldInput.get())))
 window.bind('<F10>', lambda event: resetWindow())
 window.bind('<F11>', lambda event: resizeWindow())
 
@@ -576,21 +573,21 @@ btnLatConsoleReset = ttk.Button(tabLatLong, text="reset", width=4.25, command=la
 if developer == True:
     #labelDevWarning = ttk.Label(tabDeveloper, text="""The settings below are for testing purposes and should be changed at your own risk.""").place(x=20, y=20)
 
-    labelFileSettings = ttk.Label(tabDeveloper, text="File Settings").place(x=20, y=55)
+    labelFileSettings = ttk.Label(tabDeveloper, text="File Settings").place(x=20, y=30)
 
-    tab2defaultextensionlabel = ttk.Label(tabDeveloper, text="Default file extension:").place(x=20, y=78)
+    tab2defaultextensionlabel = ttk.Label(tabDeveloper, text="Default file extension:").place(x=20, y=53)
     tab2defaultinput = ttk.Entry(tabDeveloper, width=4)
     tab2defaultinput.insert(0, '.txt')
-    tab2defaultinput.place(x=150, y=78)
+    tab2defaultinput.place(x=150, y=53)
 
     tab2defaultsavelabel = ttk.Label(tabDeveloper, text="Default 'Save' location:")
-    tab2defaultsavelabel.place(x=20, y=103)
+    tab2defaultsavelabel.place(x=20, y=78)
     tab2defaultsaveentry = ttk.Entry(tabDeveloper, width=4)
     tab2defaultsaveentry.insert(0, '***')
-    tab2defaultsaveentry.place(x=150, y=103)
+    tab2defaultsaveentry.place(x=150, y=78)
 
     tab2enforcebutton = ttk.Checkbutton(tabDeveloper, text="Enforce filetype imports")
-    tab2enforcebutton.place(x=20, y=125)
+    tab2enforcebutton.place(x=20, y=100)
 
     label=ttk.Label(tabDeveloper, image=photo)
     label.image = photo
