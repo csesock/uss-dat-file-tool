@@ -49,7 +49,7 @@ try:
 except:
     pass
 
-window.bind('1', lambda event: singleRecordScan())
+#window.bind('1', lambda event: singleRecordScan())
 window.bind('2', lambda event: scanAllRecordsVerbose())
 window.bind('3', lambda event: printSingleRecord())
 window.bind('4', lambda event: officeRegionZone())
@@ -117,21 +117,30 @@ def disallowedCharacters(event=None):
 
 def printSingleRecord(event=None):
     Logging.writeToLogs('Start Function Call - printSingleRecord()')
-    record_type = simpledialog.askstring("Record Search", ' Enter the record types to search \n (Separate multiple records by comma) \n', parent=window)
+    records = []
+    record_type = simpledialog.askstring("Record Search", '     Enter the record types to search \n (Or leave blank to display entire file) \n', parent=window)
     if record_type is None:
         return
     record_type = record_type.upper()
     if ',' in record_type:
         #multiple records to search
-        pass
+        records = record_type.split(',')
+        records = [x.strip(' ') for x in records]
     counter = 1.0
     try:
         with open(download_filename, 'r') as openfile:
             bocConsole.delete(1.0, "end")
-            for line in openfile:
-                if line.startswith(record_type):
-                    bocConsole.insert(counter, line + "\n")
-                    counter+=1
+            if not records:
+                for line in openfile:
+                    if line.startswith(record_type):
+                        bocConsole.insert(counter, line + "\n")
+                        counter+=1
+            else:
+                for line in openfile:
+                    for record in records:
+                        if line.startswith(record):
+                            bocConsole.insert(counter, line+ "\n")
+                            counter+=1
         Logging.writeToLogs('End Function Call - printSingleRecord()')
     except FileNotFoundError:
         fileNotFoundError()
@@ -434,12 +443,12 @@ def resetWindow():
     width = window.winfo_screenwidth()/3
     window.geometry('780x330+%d+%d' %(width, height)) #reset height must be height-20 to account for the menu being created at this point
     bocConsole.delete(1.0, "end")
-    bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.1]")
+    bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.2]")
     bocConsole.insert(2.0, "\n")
     bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
     bocConsole.insert(3.0, "\n")
     latLongConsole.delete(1.0, "end")
-    latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.1]")
+    latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.2]")
     latLongConsole.insert(2.0, "\n")
     latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
     latLongConsole.insert(3.0, "\n")
@@ -457,7 +466,7 @@ def fileNotFoundError2():
     latLongConsole.insert(1.0, "ERROR: FILE NOT FOUND")
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.5.1 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2020-08-13:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
+    dialog = """ Author: Chris Sesock \n Version: 1.5.2 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2020-08-13:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
              """
     messagebox.showinfo("About", dialog)
 
@@ -521,7 +530,7 @@ bocConsole = tk.Text(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WI
                     insertborderwidth=7, undo=True, bd=3)
 bocConsole.place(x=220, y=42)
 bocConsole.configure(font=consoleFont)
-bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.1]")
+bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.2]")
 bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
@@ -566,7 +575,7 @@ latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH,
                         insertborderwidth=7, undo=True, bd=3)
 latLongConsole.place(x=220, y=42)
 latLongConsole.configure(font=consoleFont)
-latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.1]")
+latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.2]")
 latLongConsole.insert(2.0, "\n")
 latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
