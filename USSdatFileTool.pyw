@@ -6,7 +6,7 @@ from tkinter.font import Font
 
 from collections import deque
 from datetime import datetime
-import sys, os, re, time
+import sys, os, re, time, csv
 try:
     import Logging
 except:
@@ -391,6 +391,8 @@ def saveAs():
         text2save = str(bocConsole.get(1.0, "end"))
     else:
         text2save = str(latLongConsole.get(1.0, "end"))
+    if f.name.endswith('.csv'):
+        pass # csv parsing here
     f.write(text2save)
     f.close()
 
@@ -529,10 +531,10 @@ btnNumkeyLat4 = ttk.Button(tabLatLong, text="2.", width=1.5, command=lambda:prin
 btnLatAllMalformed = ttk.Button(tabLatLong, text="All Lat/Long", width=BUTTON_WIDTH, command=lambda:printAllLatLongData()).place(x=50, y=76)
 
 labelRegion = ttk.Label(tabLatLong, text="Region:").place(x=22, y=120)
-dropdownRegion = ttk.Combobox(tabLatLong, width=26, values = ["Eastern US", "Western US", "New Zealand"])
+dropdownRegion = ttk.Combobox(tabLatLong, width=26, values = ["Midwest US (Default)", "Western US", "Eastern US"])
 dropdownRegion.place(x=22, y=140)
 dropdownRegion.state(['readonly'])
-dropdownRegion.set('Eastern US')
+dropdownRegion.set('Midwest US (Default)')
 
 latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green',
                         insertborderwidth=7, undo=True, bd=3)
