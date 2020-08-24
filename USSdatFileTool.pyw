@@ -13,13 +13,8 @@ except:
     print("Logging system files not found -- to enable logging please place Logging.py in the same directory")
     pass
 
-#enables advanced options in UI
-developer=True
-
 #regular expressions for parsing
-record_pattern = re.compile('[a-z][0-9]*\s*')   
 empty_pattern = re.compile('[^\S\n\t]{11}')     #missing meters
-empty2_pattern = re.compile('[^\S\r\n]{8}')
 lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
 
 #file configurations
@@ -49,7 +44,6 @@ try:
 except:
     pass
 
-#window.bind('1', lambda event: singleRecordScan())
 window.bind('2', lambda event: scanAllRecordsVerbose())
 window.bind('3', lambda event: printSingleRecord())
 window.bind('4', lambda event: officeRegionZone())
@@ -94,31 +88,10 @@ def disallowedCharacters(event=None):
     except FileNotFoundError:
         fileNotFoundError()
 
-
-# def singleRecordScan(event=None):
-#     Logging.writeToLogs('Start Function Call - singleRecordScan()')
-#     answer = simpledialog.askstring("Enter Record", "Enter the record type to search: \n(blank to display entire file)", parent=window)
-#     if answer is None or answer == "":
-#         return
-#     answer = answer.upper()
-#     counter = 0
-#     try:
-#         with open(download_filename, 'r') as openfile:
-#             for line in openfile:
-#                 if line.startswith(answer):
-#                     counter+=1
-#             bocConsole.delete(1.0, "end")
-#             bocConsole.insert("end", f"{counter:,d} " + answer + " records found")
-#             bocConsole.insert("end", "\n")
-#         Logging.writeToLogs('End Function Call - singleRecordScan()')
-#     except FileNotFoundError:
-#         fileNotFoundError()
-
-
 def printSingleRecord(event=None):
     Logging.writeToLogs('Start Function Call - printSingleRecord()')
     records = []
-    record_type = simpledialog.askstring("Record Search", '    Enter the record types to search \n (Separate record types by comma)  \n', parent=window)
+    record_type = simpledialog.askstring("Record Search", '    Enter the record types to search \n\n (Separate record types by comma)  ', parent=window)
     if record_type is None:
         return
     record_type = record_type.upper()
@@ -355,6 +328,7 @@ def checkLatLongExists(event=None):
 def printAllLatLongData(event=None):
     counter = 1.0
     total_latlong = 0
+    line_number = 1
     try:
         with open(download_filename, 'r') as openfile:
             latLongConsole.delete(1.0, "end")
@@ -363,10 +337,11 @@ def printAllLatLongData(event=None):
                     lat_data = line[23:40].rstrip()
                     long_data = line[40:57].rstrip()
                     if lat_long_pattern.match(lat_data) and lat_long_pattern.match(long_data):
-                        latLongConsole.insert(counter, line)
+                        latLongConsole.insert(counter, str(line_number)+" "+line)
                         latLongConsole.insert(counter+1, "\n")
                         total_latlong+=1
                 counter+=1
+                line_number+=1
             if total_latlong == 0:
                 latLongConsole.insert(1.0, "There was no lat/long data found.")
     except FileNotFoundError:
@@ -408,7 +383,6 @@ def saveAs():
     Logging.writeToLogs('Start Function Call - saveAs()')
     files = [('Text Files', '*.txt'),
              ('All Files', '*.*'),
-             ('Python Files', '*.py'),
              ('CSV Files', '*.csv')]
     f = asksaveasfile(mode='w', defaultextension='.txt', filetypes=files)
     if f is None:
@@ -422,7 +396,7 @@ def saveAs():
 
 def openFile():
     Logging.writeToLogs('Start Function Call - openFile()')
-    filename = tk.filedialog.askopenfilename(title="Import File")
+    filename = tk.filedialog.askopenfilename(title="Open File")
     if tab2enforcebutton.instate(['selected']):
         if not filename.lower().endswith(('.dat', '.DAT', '.hdl', '.HDL')):
             messagebox.showinfo("ERROR", "Filetype imports are enforced. Please select a compatible file.")
@@ -480,10 +454,9 @@ tabLatLong = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tabLatLong, text="Lat/Long Operations")
 TAB_CONTROL.pack(expand=1, fill="both")
 # (Optional) Developer Settings tab
-if developer == True:
-    tabDeveloper = ttk.Frame(TAB_CONTROL)
-    TAB_CONTROL.add(tabDeveloper, text="Settings")
-    TAB_CONTROL.pack(expand=1, fill="both")
+tabDeveloper = ttk.Frame(TAB_CONTROL)
+TAB_CONTROL.add(tabDeveloper, text="Settings")
+TAB_CONTROL.pack(expand=1, fill="both")
 
 ###################
 ##BOC Tab Widgets##
@@ -517,14 +490,8 @@ else:
     text.set('None')
 label = ttk.Label(tabBasicOperations, textvariable=text).place(x=290, y=20)
 
-# textStatus = tk.StringVar()
-# textStatus.set('0 records found')
-# labelStatus = ttk.Label(tabBasicOperations, textvariable=textStatus).place(x=660, y=273)
-# labelRecords = ttk.Label(tabBasicOperations, text=" records found").place(x=670, y=275)
-
 btnConsoleSave = ttk.Button(tabBasicOperations, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnConsoleClear = ttk.Button(tabBasicOperations, text="clear", width=4.25, command=lambda:clearBOCConsole()).place(x=717, y=6)
-#btnConsoleReset = ttk.Button(tabBasicOperations, text="reset", width = 4.24, command=lambda:resetWindow()).place(x=715,y=6)
 
 bocConsole = tk.Text(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
                     insertborderwidth=7, undo=True, bd=3)
@@ -534,10 +501,6 @@ bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.2]")
 bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
-
-# scrollbar = ttk.Scrollbar(tabBasicOperations, command=bocConsole.yview, orient="vertical")
-# scrollbar.pack(side=RIGHT, fill=Y)
-# bocConsole.configure(yscrollcommand=scrollbar.set)
 
 #################
 ##Lat/Long Tab###
@@ -588,46 +551,44 @@ btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=la
 ##Settings Tab Widgets##
 ########################
 
-if developer == True:
-    #labelDevWarning = ttk.Label(tabDeveloper, text="""The settings below are for testing purposes and should be changed at your own risk.""").place(x=20, y=20)
-    labelFont = Font(size=10, weight='bold')
+labelFont = Font(size=10, weight='bold')
 
-    labelFileSettings = ttk.Label(tabDeveloper, text="File Settings", font=labelFont).place(x=20, y=30)
+labelFileSettings = ttk.Label(tabDeveloper, text="File Settings", font=labelFont).place(x=20, y=30)
 
-    #labelframe = ttk.LabelFrame(tabDeveloper, text="File Settings", width=50, height=50)
-    #labelframe.place(x=20, y=30)
-    #labelframe.pack(fill="both", expand="yes")
-    #labelframe.pack(padx=10, pady=10)
+#labelframe = ttk.LabelFrame(tabDeveloper, text="File Settings", width=50, height=50)
+#labelframe.place(x=20, y=30)
+#labelframe.pack(fill="both", expand="yes")
+#labelframe.pack(padx=10, pady=10)
 
-    tab2defaultextensionlabel = ttk.Label(tabDeveloper, text="• Default file extension:").place(x=20, y=53)
-    tab2defaultinput = ttk.Entry(tabDeveloper, width=4)
-    tab2defaultinput.insert(0, '.txt')
-    tab2defaultinput.place(x=155, y=53)
+tab2defaultextensionlabel = ttk.Label(tabDeveloper, text="• Default file extension:").place(x=20, y=53)
+tab2defaultinput = ttk.Entry(tabDeveloper, width=4)
+tab2defaultinput.insert(0, '.txt')
+tab2defaultinput.place(x=155, y=53)
 
-    tab2defaultsavelabel = ttk.Label(tabDeveloper, text="• Default 'save' location:")
-    tab2defaultsavelabel.place(x=20, y=78)
-    tab2defaultsaveentry = ttk.Entry(tabDeveloper, width=10)
-    tab2defaultsaveentry.insert(0, '\\exports')
-    tab2defaultsaveentry.place(x=155, y=78)
+tab2defaultsavelabel = ttk.Label(tabDeveloper, text="• Default 'save' location:")
+tab2defaultsavelabel.place(x=20, y=78)
+tab2defaultsaveentry = ttk.Entry(tabDeveloper, width=10)
+tab2defaultsaveentry.insert(0, '\\exports')
+tab2defaultsaveentry.place(x=155, y=78)
 
-    tab2enforcebutton = ttk.Checkbutton(tabDeveloper, text="Enforce filetype imports")
-    tab2enforcebutton.place(x=20, y=100)
+tab2enforcebutton = ttk.Checkbutton(tabDeveloper, text="Enforce filetype imports")
+tab2enforcebutton.place(x=20, y=100)
 
-    label=ttk.Label(tabDeveloper, image=photo)
-    label.image = photo
-    label.place(x=650, y=180)
+label=ttk.Label(tabDeveloper, image=photo)
+label.image = photo
+label.place(x=650, y=180)
 
-    # log settings
-    loglabel = ttk.Label(tabDeveloper, text="Log Settings", font=labelFont).place(x=20, y=140)
+# log settings
+loglabel = ttk.Label(tabDeveloper, text="Log Settings", font=labelFont).place(x=20, y=140)
 
-    labelDelete = ttk.Label(tabDeveloper, text="• Log files allowed before deletion:").place(x=20, y=165)
-    logDeleteOldInput = ttk.Entry(tabDeveloper, width=4)
-    logDeleteOldInput.place(x=210, y=165)
-    logDeleteOldInput.insert(0, '10')
+labelDelete = ttk.Label(tabDeveloper, text="• Log files allowed before deletion:").place(x=20, y=165)
+logDeleteOldInput = ttk.Entry(tabDeveloper, width=4)
+logDeleteOldInput.place(x=210, y=165)
+logDeleteOldInput.insert(0, '10')
 
-    logverbose = ttk.Checkbutton(tabDeveloper, text="Log all function calls")
-    logverbose.place(x=20, y=187)
-    logverbose.state(['selected'])
+logverbose = ttk.Checkbutton(tabDeveloper, text="Log all function calls")
+logverbose.place(x=20, y=187)
+logverbose.state(['selected'])
 
 ########
 ##Menu##
