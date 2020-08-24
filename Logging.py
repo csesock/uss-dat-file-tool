@@ -5,8 +5,12 @@ from datetime import datetime
 
 log_filename = os.getcwd() + "\\logs\\Logfile " + datetime.today().strftime('%Y-%m-%d_%H-%M') + ".txt"
 
-def createLogFile():
+def createLogFile(max_log_count):
+    file_path = os.getcwd()+"\\logs"
     try:
+        count = getFileCount(file_path)
+        if count >= max_log_count:
+            deleteLog(max_log_count)
         f = open(log_filename, 'w')
         f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Program successfully started \n")
         f.write(datetime.today().strftime('%Y-%m-%d_%H-%M') + " Logfile successfully created")
@@ -24,16 +28,23 @@ def writeToLogs(message):
         pass
 
 def deleteLog(max_log_count):
-    count=0
-    d = os.getcwd()+'\\logs'
     try:
-        for path in os.listdir(d):
-            if os.path.isfile(os.path.join(d, path)):
-                count+=1
+        file_path = os.getcwd()+'\\logs'
+        count = getFileCount(file_path)
         if count > max_log_count:
             num_to_delete = count - max_log_count
-            files = os.listdir(d)
+            files = os.listdir(file_path)
             for i in range(num_to_delete):
-                os.remove(d+"\\"+files[i])
+                os.remove(file_path+"\\"+files[i])
+    except:
+        pass
+
+def getFileCount(file_path):
+    count=0
+    try:
+        for path in os.listdir(file_path):
+            if os.path.isfile(os.path.join(file_path, path)):
+                count+=1
+        return count 
     except:
         pass

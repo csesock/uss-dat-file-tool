@@ -671,6 +671,6 @@ helpmenu.add_command(label="Purge Log Files", command=lambda:Logging.deleteLog(i
 menubar.add_cascade(label="Help", menu=helpmenu)
 
 if __name__ == "__main__":
-    Logging.createLogFile()
+    Logging.createLogFile(int(logDeleteOldInput.get()))
     window.config(menu=menubar)
     window.mainloop()
