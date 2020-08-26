@@ -16,6 +16,8 @@ except:
 #regex
 pattern_missing_meters = re.compile(r'[^\S\n\t]{11}')
 pattern_lat_long = re.compile(r'-?[0-9]{2}\.\d{1,13}$')
+#pattern_space_nonewline = re.compile(r'[ \t]{2,}') #working
+pattern_space_nonewline = re.compile(r'\t|[ ]{2,}') #test
 
 #file configurations
 download_filename = 'download.dat'
@@ -397,7 +399,7 @@ def saveAs():
     else:
         text2save = str(latLongConsole.get(1.0, "end"))
     if f.name.endswith('.csv'):
-        parsed = re.sub(r'[ \t]{2,}', ',', text2save.strip())
+        parsed = re.sub(pattern_space_nonewline, ',', text2save.strip())
         f.write(parsed)
         f.close()
         return
