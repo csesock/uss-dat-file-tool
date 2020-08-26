@@ -10,7 +10,7 @@ import sys, os, re, time, csv
 try:
     import Logging
 except:
-    print("Logging system files not found -- to enable logging please place Logging.py in the same directory")
+    print("Logging system files not found -- to enable logging please place Logging.py in the default directory")
     pass
 
 #regex
@@ -96,7 +96,7 @@ def disallowedCharacters(event=None):
 def printSingleRecord(event=None):
     Logging.writeToLogs('Start Function Call - printSingleRecord()')
     records = []
-    record_type = simpledialog.askstring("Record Search", '    Enter the record types to search \n\n (Separate record types by comma)  ', parent=window)
+    record_type = simpledialog.askstring("Record Search", '    Enter the record types to search \n\n (Separate record types by comma) \n               (ex. cus, mtr, rff)  ', parent=window)
     if record_type is None:
         return
     record_type = record_type.upper()
@@ -382,7 +382,7 @@ def save():
         else:
             text2save = str(latLongConsole.get(1.0, "end"))
         openfile.write(text2save)
-    messagebox.showinfo("Export", "Data successfully exported to the 'exports' folder!")
+    messagebox.showinfo("Export", "Data successfully exported to the 'exports' folder")
  
 def saveAs():
     Logging.writeToLogs('Start Function Call - saveAs()')
@@ -458,7 +458,7 @@ TAB_CONTROL.add(tabBasicOperations, text='Basic Operations')
 tabLatLong = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tabLatLong, text="Lat/Long Operations")
 TAB_CONTROL.pack(expand=1, fill="both")
-# (Optional) Developer Settings tab
+# Settings tab
 tabDeveloper = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tabDeveloper, text="Settings")
 TAB_CONTROL.pack(expand=1, fill="both")
@@ -521,12 +521,6 @@ else:
 labelFile = ttk.Label(tabLatLong, textvariable=labelFileVar)
 labelFile.place(x=290, y=20)
 
-#btnNumkeyLat1 = ttk.Button(tabLatLong, text="1.", width=1.5, command=lambda:checkLatLongExists()).place(x=20, y=35)
-#btnLatExists = ttk.Button(tabLatLong, text="Find First Lat/Long", width=BUTTON_WIDTH, command=lambda:checkLatLongExists()).place(x=50, y=35)
-
-#btnNumkeyLat2 = ttk.Button(tabLatLong, text="2.", width=1.5, command=lambda:checkLatLongSigns()).place(x=20, y=76)
-#btnLatSigns = ttk.Button(tabLatLong, text="Lat/Long Ranges", width=BUTTON_WIDTH, command=lambda:checkLatLongSigns()).place(x=50, y=76)
-
 btnNumkeyLat3 = ttk.Button(tabLatLong, text="1.", width=1.5, command=lambda:checkMalformedLatLong()).place(x=20, y=35)
 btnLatMalformed = ttk.Button(tabLatLong, text="Malformed Lat/Long", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong()).place(x=50, y=35)
 
@@ -550,7 +544,6 @@ latLongConsole.insert(3.0, "\n")
 
 btnConsoleSave = ttk.Button(tabLatLong, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=lambda:clearLatLongConsole()).place(x=717, y=6)
-#btnLatConsoleReset = ttk.Button(tabLatLong, text="reset", width=4.25, command=lambda:resetWindow()).place(x=715, y=6)
 
 ########################
 ##Settings Tab Widgets##
@@ -559,11 +552,6 @@ btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=la
 labelFont = Font(size=10, weight='bold')
 
 labelFileSettings = ttk.Label(tabDeveloper, text="File Settings", font=labelFont).place(x=20, y=30)
-
-#labelframe = ttk.LabelFrame(tabDeveloper, text="File Settings", width=50, height=50)
-#labelframe.place(x=20, y=30)
-#labelframe.pack(fill="both", expand="yes")
-#labelframe.pack(padx=10, pady=10)
 
 tab2defaultextensionlabel = ttk.Label(tabDeveloper, text="• Default file extension:").place(x=20, y=53)
 tab2defaultinput = ttk.Entry(tabDeveloper, width=4)
