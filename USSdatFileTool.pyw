@@ -382,7 +382,7 @@ def save():
         else:
             text2save = str(latLongConsole.get(1.0, "end"))
         openfile.write(text2save)
-    messagebox.showinfo("Export", "Data successfully exported to the 'exports' folder")
+    messagebox.showinfo("Export", "Data successfully exported to the 'exports' folder!")
  
 def saveAs():
     Logging.writeToLogs('Start Function Call - saveAs()')
@@ -396,6 +396,11 @@ def saveAs():
         text2save = str(bocConsole.get(1.0, "end"))
     else:
         text2save = str(latLongConsole.get(1.0, "end"))
+    if f.name.endswith('.csv'):
+        parsed = re.sub(r'[ \t]{2,}', ',', text2save.strip())
+        f.write(parsed)
+        f.close()
+        return
     f.write(text2save)
     f.close()
 
