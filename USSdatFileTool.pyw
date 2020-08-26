@@ -13,9 +13,9 @@ except:
     print("Logging system files not found -- to enable logging please place Logging.py in the same directory")
     pass
 
-#regular expressions for parsing
-empty_pattern = re.compile('[^\S\n\t]{11}')     #missing meters
-lat_long_pattern = re.compile('-?[0-9]{2}\.\d{1,13}$')
+#regex
+pattern_missing_meters = re.compile(r'[^\S\n\t]{11}')
+pattern_lat_long = re.compile(r'-?[0-9]{2}\.\d{1,13}$')
 
 #file configurations
 download_filename = 'download.dat'
@@ -25,11 +25,13 @@ window = tk.Tk()
 s = ttk.Style()
 s.theme_use('clam')
 
-#default UI visual configuration
+#default UI sizes
 DEFAULT_FONT_SIZE = 10
 CONSOLE_WIDTH = 76
 CONSOLE_HEIGHT = 15
 BUTTON_WIDTH = 22
+
+#default tkk configuration
 consoleFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
 window.title("United System .dat File Tool")
 window.resizable(False, False)
@@ -37,6 +39,7 @@ height = window.winfo_screenheight()/3
 width = window.winfo_screenwidth()/3
 window.geometry('780x350+%d+%d' %(width, height))
 
+#build window icons
 try:
     dirp = os.path.dirname(__file__)
     photo = PhotoImage(file="assets\\IconSmall.png")
@@ -44,6 +47,7 @@ try:
 except:
     pass
 
+#hotkey bindings
 window.bind('2', lambda event: scanAllRecordsVerbose())
 window.bind('3', lambda event: printSingleRecord())
 window.bind('4', lambda event: officeRegionZone())
@@ -51,6 +55,7 @@ window.bind('5', lambda event: missingMeters())
 window.bind('6', lambda event: printReadType())
 window.bind('7', lambda event: checkMalformedLatLong())
 
+#menu bindings
 window.bind('<Control-o>', lambda event: openFile())
 window.bind('<Control-s>', lambda event: save())
 window.bind('<Control-Alt-s>', lambda event: saveAs())
@@ -189,7 +194,7 @@ def missingMeters(event=None):
             for line in openfile:
                         if line.startswith('MTR'):
                             meter_record = line[45:57] #46-57
-                            if empty_pattern.match(meter_record):
+                            if pattern_missing_meters.match(meter_record):
                                 bocConsole.insert("end", str(line_number) + " " + previous_line)
                                 bocConsole.insert("end", "\n")
                                 counter+=1
@@ -269,7 +274,7 @@ def checkMalformedLatLong(event=None):
                 if line.startswith('MTX'):
                     lat_data = line[23:40].rstrip()
                     long_data = line[40:57].rstrip()
-                    if not lat_long_pattern.match(lat_data) and not lat_long_pattern.match(long_data):
+                    if not pattern_lat_long.match(lat_data) and not pattern_lat_long.match(long_data):
                         latLongConsole.delete(1.0, "end")
                         latLongConsole.insert(1.0, "Malformed lat/long data at line: " + str(line_number))
                         latLongConsole.insert(2.0, "\n")
@@ -336,7 +341,7 @@ def printAllLatLongData(event=None):
                 if line.startswith('MTX'):
                     lat_data = line[23:40].rstrip()
                     long_data = line[40:57].rstrip()
-                    if lat_long_pattern.match(lat_data) and lat_long_pattern.match(long_data):
+                    if pattern_lat_long.match(lat_data) and pattern_lat_long.match(long_data):
                         latLongConsole.insert(counter, str(line_number)+" "+line)
                         latLongConsole.insert(counter+1, "\n")
                         total_latlong+=1
@@ -391,8 +396,6 @@ def saveAs():
         text2save = str(bocConsole.get(1.0, "end"))
     else:
         text2save = str(latLongConsole.get(1.0, "end"))
-    if f.name.endswith('.csv'):
-        pass # csv parsing here
     f.write(text2save)
     f.close()
 
@@ -531,10 +534,10 @@ btnNumkeyLat4 = ttk.Button(tabLatLong, text="2.", width=1.5, command=lambda:prin
 btnLatAllMalformed = ttk.Button(tabLatLong, text="All Lat/Long", width=BUTTON_WIDTH, command=lambda:printAllLatLongData()).place(x=50, y=76)
 
 labelRegion = ttk.Label(tabLatLong, text="Region:").place(x=22, y=120)
-dropdownRegion = ttk.Combobox(tabLatLong, width=26, values = ["Midwest US (Default)", "Western US", "Eastern US"])
+dropdownRegion = ttk.Combobox(tabLatLong, width=26, values = ["Pacific Daylight Time", "Mountain Daylight Time", "Central Daylight Time", "Eastern Daylight Time"])
 dropdownRegion.place(x=22, y=140)
 dropdownRegion.state(['readonly'])
-dropdownRegion.set('Midwest US (Default)')
+dropdownRegion.set('Central Daylight Time')
 
 latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green',
                         insertborderwidth=7, undo=True, bd=3)
