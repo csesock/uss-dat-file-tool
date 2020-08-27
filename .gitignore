@@ -2,6 +2,8 @@
 *.DAT
 *.csv
 *.CSV
+*.pdf
+*.PDF
 
 developer.py
 

@@ -19,10 +19,10 @@ pattern_lat_long = re.compile(r'-?[0-9]{2}\.\d{1,13}$')
 #pattern_space_nonewline = re.compile(r'[ \t]{2,}') #working
 pattern_space_nonewline = re.compile(r'\t|[ ]{2,}') #test
 
+
 #file configurations
 download_filename = 'download.dat'
 defaut_file_extension = '.txt'
-
 window = tk.Tk()
 s = ttk.Style()
 s.theme_use('clam')
@@ -399,12 +399,38 @@ def saveAs():
     else:
         text2save = str(latLongConsole.get(1.0, "end"))
     if f.name.endswith('.csv'):
-        parsed = re.sub(pattern_space_nonewline, ',', text2save.strip())
+        parsed = parseCSV(text2save)
         f.write(parsed)
         f.close()
         return
     f.write(text2save)
     f.close()
+
+def parseCSV(text):
+    return re.sub(pattern_space_nonewline, ',', text.strip())
+    # for line in text:
+    #     if line.startswith('CUS'):
+    #         line = re.sub(pattern_space_nonewline, ',', line.strip())
+    #         print('cus')
+    #     if line.startswith('MTR'):
+    #         #line = re.sub(pattern_space_nonewline, ',', line.strip())
+    #         print('mtr')
+    #     if line.startswith('RFF'):
+    #         print('rff"')
+    # return text
+
+def populateMissingMeters(event=None):
+    try:
+        with open(download_filename, 'r') as openfile:
+            with open('download -- populated meters.dat', 'w') as builtfile:
+                for line in openfile:
+                    if line.startswith('MTR'):
+                        meter_record = line[45:57]
+                        if pattern_missing_meters.match(meter_record):
+                            line = str(line[0:49]) + "11111" + str(line[56::])
+                    builtfile.write(line)
+    except:
+        print("ERROR")
 
 def openFile():
     Logging.writeToLogs('Start Function Call - openFile()')
@@ -535,10 +561,10 @@ btnNumkeyLat4 = ttk.Button(tabLatLong, text="2.", width=1.5, command=lambda:prin
 btnLatAllMalformed = ttk.Button(tabLatLong, text="All Lat/Long", width=BUTTON_WIDTH, command=lambda:printAllLatLongData()).place(x=50, y=76)
 
 labelRegion = ttk.Label(tabLatLong, text="Region:").place(x=22, y=120)
-dropdownRegion = ttk.Combobox(tabLatLong, width=26, values = ["Pacific Daylight Time", "Mountain Daylight Time", "Central Daylight Time", "Eastern Daylight Time"])
+dropdownRegion = ttk.Combobox(tabLatLong, width=26, values = ["Central US", "Eastern US", "Western US"])
 dropdownRegion.place(x=22, y=140)
 dropdownRegion.state(['readonly'])
-dropdownRegion.set('Central Daylight Time')
+dropdownRegion.set("Central US (default)")
 
 latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green',
                         insertborderwidth=7, undo=True, bd=3)
@@ -589,6 +615,8 @@ logDeleteOldInput.insert(0, '10')
 logverbose = ttk.Checkbutton(tabDeveloper, text="Log all function calls")
 logverbose.place(x=20, y=187)
 logverbose.state(['selected'])
+
+btnPopulateMissingMeters = ttk.Button(tabDeveloper, text="Populate Missing Meters", command=lambda:populateMissingMeters()).place(x=300, y=187)
 
 ########
 ##Menu##
