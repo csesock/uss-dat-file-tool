@@ -408,16 +408,6 @@ def saveAs():
 
 def parseCSV(text):
     return re.sub(pattern_space_nonewline, ',', text.strip())
-    # for line in text:
-    #     if line.startswith('CUS'):
-    #         line = re.sub(pattern_space_nonewline, ',', line.strip())
-    #         print('cus')
-    #     if line.startswith('MTR'):
-    #         #line = re.sub(pattern_space_nonewline, ',', line.strip())
-    #         print('mtr')
-    #     if line.startswith('RFF'):
-    #         print('rff"')
-    # return text
 
 def populateMissingMeters(event=None):
     try:
@@ -427,7 +417,7 @@ def populateMissingMeters(event=None):
                     if line.startswith('MTR'):
                         meter_record = line[45:57]
                         if pattern_missing_meters.match(meter_record):
-                            line = str(line[0:49]) + "11111" + str(line[56::])
+                            line = str(line[0:49]) + "11111" + str(line[54::]) #concatenate a new line with populated record
                     builtfile.write(line)
     except:
         print("ERROR")
@@ -616,7 +606,7 @@ logverbose = ttk.Checkbutton(tabDeveloper, text="Log all function calls")
 logverbose.place(x=20, y=187)
 logverbose.state(['selected'])
 
-btnPopulateMissingMeters = ttk.Button(tabDeveloper, text="Populate Missing Meters", command=lambda:populateMissingMeters()).place(x=300, y=187)
+btnPopulateMissingMeters = ttk.Button(tabDeveloper, text="Populate Missing Meters", command=lambda:populateMissingMeters()).place(x=20, y=230)
 
 ########
 ##Menu##
