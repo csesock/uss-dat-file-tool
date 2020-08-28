@@ -481,6 +481,10 @@ TAB_CONTROL.add(tabBasicOperations, text='Basic Operations')
 tabLatLong = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tabLatLong, text="Lat/Long Operations")
 TAB_CONTROL.pack(expand=1, fill="both")
+#ELF File Creation tab
+tabELFcreation = ttk.Frame(TAB_CONTROL)
+TAB_CONTROL.add(tabELFcreation, text="ELF Operations")
+TAB_CONTROL.pack(expand=1, fill="both")
 # Settings tab
 tabDeveloper = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tabDeveloper, text="Settings")
@@ -569,6 +573,27 @@ btnConsoleSave = ttk.Button(tabLatLong, text="save", width=4.25, command=lambda:
 btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=lambda:clearLatLongConsole()).place(x=717, y=6)
 
 ########################
+###ELF Tab Widgets######
+########################
+
+btnPopulateMissingMeters = ttk.Button(tabELFcreation, text="Populate Missing Meters", width=BUTTON_WIDTH, command=lambda:populateMissingMeters()).place(x=50, y=35)
+
+btnCheckForELFCompatibility = ttk.Button(tabELFcreation, text="Check Compatibility", width=BUTTON_WIDTH).place(x=50, y=76)
+btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=BUTTON_WIDTH).place(x=50, y=117)
+
+btnELFsave = ttk.Button(tabELFcreation, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
+btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearBOCConsole()).place(x=717, y=6)
+
+ELFConsole = tk.Text(tabELFcreation, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
+                    insertborderwidth=7, undo=True, bd=3)
+ELFConsole.place(x=220, y=42)
+ELFConsole.configure(font=consoleFont)
+ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.2]")
+ELFConsole.insert(2.0, "\n")
+ELFConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
+ELFConsole.insert(3.0, "\n")
+
+########################
 ##Settings Tab Widgets##
 ########################
 
@@ -605,8 +630,6 @@ logDeleteOldInput.insert(0, '10')
 logverbose = ttk.Checkbutton(tabDeveloper, text="Log all function calls")
 logverbose.place(x=20, y=187)
 logverbose.state(['selected'])
-
-btnPopulateMissingMeters = ttk.Button(tabDeveloper, text="Populate Missing Meters", command=lambda:populateMissingMeters()).place(x=20, y=230)
 
 ########
 ##Menu##
