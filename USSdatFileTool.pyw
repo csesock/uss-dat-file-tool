@@ -483,7 +483,7 @@ TAB_CONTROL.add(tabLatLong, text="Lat/Long Operations")
 TAB_CONTROL.pack(expand=1, fill="both")
 #ELF File Creation tab
 tabELFcreation = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tabELFcreation, text="ELF Operations")
+TAB_CONTROL.add(tabELFcreation, text="File Operations")
 TAB_CONTROL.pack(expand=1, fill="both")
 # Settings tab
 tabDeveloper = ttk.Frame(TAB_CONTROL)
@@ -576,11 +576,17 @@ btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=la
 ###ELF Tab Widgets######
 ########################
 
+#tab widgets
+btnPopulateMissingMetersNumKey1 = ttk.Button(tabELFcreation, text="1.", width=1.5, command=lambda:populateMissingMeters()).place(x=20, y=35)
 btnPopulateMissingMeters = ttk.Button(tabELFcreation, text="Populate Missing Meters", width=BUTTON_WIDTH, command=lambda:populateMissingMeters()).place(x=50, y=35)
 
+btnCheckForELFCompatibilityNumKey2 = ttk.Button(tabELFcreation, text="2.", width=1.5).place(x=20, y=76)
 btnCheckForELFCompatibility = ttk.Button(tabELFcreation, text="Check Compatibility", width=BUTTON_WIDTH).place(x=50, y=76)
+
+btnCreatELFFileNumkey3 = ttk.Button(tabELFcreation, text="3.", width=1.5).place(x=20, y=117)
 btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=BUTTON_WIDTH).place(x=50, y=117)
 
+#default console widgets
 btnELFsave = ttk.Button(tabELFcreation, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearBOCConsole()).place(x=717, y=6)
 
@@ -598,6 +604,7 @@ ELFConsole.insert(3.0, "\n")
 ########################
 
 labelFont = Font(size=10, weight='bold')
+
 
 labelFileSettings = ttk.Label(tabDeveloper, text="File Settings", font=labelFont).place(x=20, y=30)
 
@@ -620,15 +627,15 @@ label.image = photo
 label.place(x=650, y=180)
 
 # log settings
-loglabel = ttk.Label(tabDeveloper, text="Log Settings", font=labelFont).place(x=20, y=140)
+loglabel = ttk.Label(tabDeveloper, text="Log Settings", font=labelFont).place(x=300, y=30)
 
-labelDelete = ttk.Label(tabDeveloper, text="• Log files allowed before deletion:").place(x=20, y=165)
+labelDelete = ttk.Label(tabDeveloper, text="• Log files allowed before deletion:").place(x=300, y=53)
 logDeleteOldInput = ttk.Entry(tabDeveloper, width=4)
-logDeleteOldInput.place(x=210, y=165)
+logDeleteOldInput.place(x=490, y=53)
 logDeleteOldInput.insert(0, '10')
 
 logverbose = ttk.Checkbutton(tabDeveloper, text="Log all function calls")
-logverbose.place(x=20, y=187)
+logverbose.place(x=300, y=78)
 logverbose.state(['selected'])
 
 ########
