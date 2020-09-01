@@ -354,6 +354,24 @@ def printAllLatLongData(event=None):
     except FileNotFoundError:
         fileNotFoundError2()
 
+def getReadDirections(event=None):
+    cc = {}
+    try:
+        with open(download_filename, 'r') as openfile:
+            for line in openfile:
+                if line.startswith('RDG'):
+                    commodity = line[11:15].strip()
+                    direction = line[16]
+                    c = commodity + " " + direction
+                    if c not in cc:
+                        cc[c]=1
+                    else:
+                        cc[c]+=1
+            ELFConsole.delete(1.0, "end")
+            ELFConsole.insert(1.0, cc)
+    except:
+        pass
+
 def getCustomerRecordLength():
     try:
         with open(download_filename, 'r') as openfile:
@@ -586,7 +604,19 @@ btnCheckForELFCompatibility = ttk.Button(tabELFcreation, text="Check Compatibili
 btnCreatELFFileNumkey3 = ttk.Button(tabELFcreation, text="3.", width=1.5).place(x=20, y=117)
 btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=BUTTON_WIDTH).place(x=50, y=117)
 
+btnReadDirectionNumkey4 = ttk.Button(tabELFcreation, text="4.", width=1.5).place(x=20, y=158)
+btnReadDirection = ttk.Button(tabELFcreation, text="Read Direction", width=BUTTON_WIDTH, command=lambda:getReadDirections()).place(x=50, y=158)
+
 #default console widgets
+labelCurrentFileELF = ttk.Label(tabELFcreation, text="Current file: ").place(x=220, y=20)
+
+ELFtext = tk.StringVar()
+if os.path.isfile('download.dat'):
+    ELFtext.set('download.dat')
+else:
+    ELFtext.set('None')
+
+label = ttk.Label(tabELFcreation, textvariable=text).place(x=290, y=20)
 btnELFsave = ttk.Button(tabELFcreation, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearBOCConsole()).place(x=717, y=6)
 
