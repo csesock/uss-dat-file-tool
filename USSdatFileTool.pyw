@@ -356,6 +356,7 @@ def printAllLatLongData(event=None):
 
 def getReadDirections(event=None):
     cc = {}
+    counter = 1.0
     try:
         with open(download_filename, 'r') as openfile:
             for line in openfile:
@@ -368,7 +369,9 @@ def getReadDirections(event=None):
                     else:
                         cc[c]+=1
             ELFConsole.delete(1.0, "end")
-            ELFConsole.insert(1.0, cc)
+            for fart in cc:
+                ELFConsole.insert(counter, str(fart)+"\t. . . :\t"+str(cc[fart])+"\n")
+                counter+=1.0
     except:
         pass
 
@@ -392,6 +395,9 @@ def clearBOCConsole():
 
 def clearLatLongConsole():
     latLongConsole.delete(1.0, "end")
+
+def clearELFConsole():
+    ELFConsole.delete(1.0, "end")
 
 def save():
     Logging.writeToLogs('Start Function Call - save()')
@@ -463,12 +469,12 @@ def resetWindow():
     width = window.winfo_screenwidth()/3
     window.geometry('780x330+%d+%d' %(width, height)) #reset height must be height-20 to account for the menu being created at this point
     bocConsole.delete(1.0, "end")
-    bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.2]")
+    bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.0]")
     bocConsole.insert(2.0, "\n")
     bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
     bocConsole.insert(3.0, "\n")
     latLongConsole.delete(1.0, "end")
-    latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.2]")
+    latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.0]")
     latLongConsole.insert(2.0, "\n")
     latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
     latLongConsole.insert(3.0, "\n")
@@ -485,8 +491,12 @@ def fileNotFoundError2():
     latLongConsole.delete(1.0, "end")
     latLongConsole.insert(1.0, "ERROR: FILE NOT FOUND")
 
+def fileNotFoundError3():
+    ELFConsole.delete(1.0, "end")
+    ELFConsole.insert(1.0, "ERROR: FILE NOT FOUND")
+
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.5.2 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2020-08-13:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
+    dialog = """ Author: Chris Sesock \n Version: 1.6.0 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2020-08-13:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
              """
     messagebox.showinfo("About", dialog)
 
@@ -547,7 +557,7 @@ bocConsole = tk.Text(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WI
                     insertborderwidth=7, undo=True, bd=3)
 bocConsole.place(x=220, y=42)
 bocConsole.configure(font=consoleFont)
-bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.2]")
+bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.0]")
 bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
@@ -582,7 +592,7 @@ latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH,
                         insertborderwidth=7, undo=True, bd=3)
 latLongConsole.place(x=220, y=42)
 latLongConsole.configure(font=consoleFont)
-latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.2]")
+latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.0]")
 latLongConsole.insert(2.0, "\n")
 latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
@@ -618,13 +628,13 @@ else:
 
 label = ttk.Label(tabELFcreation, textvariable=text).place(x=290, y=20)
 btnELFsave = ttk.Button(tabELFcreation, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
-btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearBOCConsole()).place(x=717, y=6)
+btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearELFConsole()).place(x=717, y=6)
 
 ELFConsole = tk.Text(tabELFcreation, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
                     insertborderwidth=7, undo=True, bd=3)
 ELFConsole.place(x=220, y=42)
 ELFConsole.configure(font=consoleFont)
-ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.5.2]")
+ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.0]")
 ELFConsole.insert(2.0, "\n")
 ELFConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 ELFConsole.insert(3.0, "\n")
