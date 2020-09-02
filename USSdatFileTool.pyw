@@ -16,7 +16,6 @@ except:
 #regex
 pattern_missing_meters = re.compile(r'[^\S\n\t]{11}')
 pattern_lat_long = re.compile(r'-?[0-9]{2}\.\d{1,13}$')
-#pattern_space_nonewline = re.compile(r'[ \t]{2,}') #working
 pattern_space_nonewline = re.compile(r'\t|[ ]{2,}') #test
 
 
@@ -434,6 +433,9 @@ def parseCSV(text):
     return re.sub(pattern_space_nonewline, ',', text.strip())
 
 def populateMissingMeters(event=None):
+    answer = messagebox.askokcancel("Confirmation", "A new download file will be created\n with populated meter records.")
+    if answer == None or answer == False:
+        return 
     try:
         with open(download_filename, 'r') as openfile:
             with open('download -- populated meters.dat', 'w') as builtfile:
@@ -443,8 +445,10 @@ def populateMissingMeters(event=None):
                         if pattern_missing_meters.match(meter_record):
                             line = str(line[0:49]) + "11111" + str(line[54::]) #concatenate a new line with populated record
                     builtfile.write(line)
-    except:
-        print("ERROR")
+    except FileExistsError:
+        messagebox.showinfo("Error", "A populated download file already exists in the directory")
+    except FileNotFoundError:
+        fileNotFoundError3()
 
 def openFile():
     Logging.writeToLogs('Start Function Call - openFile()')
