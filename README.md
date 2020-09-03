@@ -14,11 +14,13 @@ Current features of this tool include:
 - [x] Perform full scans of download files
 - [x] Save any parsed data as .txt or .csv
 - [x] Logging system
+- [x] Populate meter records with temp data
 
 Future improvements include:
 - [ ] Modifying download files safely from the command line
 - [ ] Standalone scripts for each operation included
 - [ ] General UI improvements
+- [ ] Create ELF file from download file
 
 ## User Interface
 Currently, the main focus of development is an easy-to-use UI that requires no external libraries. Written in pure python using the tkinter library. 
