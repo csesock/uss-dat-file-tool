@@ -50,7 +50,7 @@ except:
 
 #hotkey bindings
 window.bind('2', lambda event: scanAllRecordsVerbose())
-window.bind('3', lambda event: printSingleRecord())
+window.bind('3', lambda event: searchRecords())
 window.bind('4', lambda event: officeRegionZone())
 window.bind('5', lambda event: missingMeters())
 window.bind('6', lambda event: printReadType())
@@ -94,8 +94,8 @@ def disallowedCharacters(event=None):
     except FileNotFoundError:
         fileNotFoundError()
 
-def printSingleRecord(event=None):
-    Logging.writeToLogs('Start Function Call - printSingleRecord()')
+def searchRecords(event=None):
+    Logging.writeToLogs('Start Function Call - searchRecords()')
     records = []
     record_type = simpledialog.askstring("Record Search", '    Enter the record types to search \n\n (Separate record types by comma) \n               (ex. cus, mtr, rff)  ', parent=window)
     if record_type is None:
@@ -120,7 +120,7 @@ def printSingleRecord(event=None):
                         if line.startswith(record):
                             bocConsole.insert(counter, line+ "\n")
                             counter+=1
-        Logging.writeToLogs('End Function Call - printSingleRecord()')
+        Logging.writeToLogs('End Function Call - searchRecords()')
     except FileNotFoundError:
         fileNotFoundError()
         
@@ -355,7 +355,7 @@ def printAllLatLongData(event=None):
 
 def getReadDirections(event=None):
     cc = {}
-    counter = 1.0
+    counter = 3.0
     try:
         with open(download_filename, 'r') as openfile:
             for line in openfile:
@@ -367,12 +367,15 @@ def getReadDirections(event=None):
                         cc[c]=1
                     else:
                         cc[c]+=1
-            ELFConsole.delete(1.0, "end")
+            bocConsole.delete(1.0, "end")
+            bocConsole.insert(1.0, "Read Directions\n")
+            bocConsole.insert(2.0, "-------------------\n")
             for fart in cc:
-                ELFConsole.insert(counter, str(fart)+"\t. . . :\t"+str(cc[fart])+"\n")
+                bocConsole.insert(counter, str(fart)+"\t. . . :\t"+str(cc[fart])+"\n")
                 counter+=1.0
-    except:
-        pass
+            bocConsole.insert(counter, "-------------------")
+    except FileNotFoundError:
+        fileNotFoundError()
 
 def getCustomerRecordLength():
     try:
@@ -460,7 +463,6 @@ def openFile():
     global download_filename
     download_filename = filename
     text.set(os.path.basename(download_filename))
-    labelFileVar.set(os.path.basename(download_filename))
     Logging.writeToLogs('Opened new file: ' + str(filename))
        
 def resizeWindow():
@@ -526,23 +528,44 @@ TAB_CONTROL.pack(expand=1, fill="both")
 ##BOC Tab Widgets##
 ###################
 
-btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:scanAllRecordsVerbose()).place(x=20, y=35)
-btnVerboseRecordScan = ttk.Button(tabBasicOperations, text="All Record Counts", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH).place(x=50, y=35)
+# btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:searchRecords()).place(x=20, y=35)
+# btnVerboseRecordScan = ttk.Button(tabBasicOperations, text="Record Search...", command=lambda:searchRecords(), width=BUTTON_WIDTH).place(x=50, y=35)
 
-btnNumkey2 = ttk.Button(tabBasicOperations, text="2.", width=1.5, command=lambda:printSingleRecord()).place(x=20, y=76)
-btnPrintSingleRecord = ttk.Button(tabBasicOperations, text="Record Type Search", command=lambda:printSingleRecord(), width=BUTTON_WIDTH).place(x=50, y=76)
+# btnNumkey2 = ttk.Button(tabBasicOperations, text="2.", width=1.5, command=lambda:scanAllRecordsVerbose()).place(x=20, y=76)
+# btnsearchRecords = ttk.Button(tabBasicOperations, text="Record Counts", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH).place(x=50, y=76)
 
-btnNumkey3 = ttk.Button(tabBasicOperations, text="3.", width=1.5, command=lambda:disallowedCharacters()).place(x=20, y=117)
-btnSingleRecordScan = ttk.Button(tabBasicOperations, text="Bad Meter Characters", command=lambda:disallowedCharacters(), width=BUTTON_WIDTH).place(x=50, y=117)
+# btnNumkey3 = ttk.Button(tabBasicOperations, text="3.", width=1.5, command=lambda:disallowedCharacters()).place(x=20, y=117)
+# btnSingleRecordScan = ttk.Button(tabBasicOperations, text="Bad Meter Characters", command=lambda:disallowedCharacters(), width=BUTTON_WIDTH).place(x=50, y=117)
 
-btnNumkey4 = ttk.Button(tabBasicOperations, text="4.", width=1.5, command=lambda:missingMeters()).place(x=20, y=158)
-btnOfficeRegionZone = ttk.Button(tabBasicOperations, text="Blank Meter Numbers", command=lambda:missingMeters(), width=BUTTON_WIDTH).place(x=50, y=158)
+# btnNumkey4 = ttk.Button(tabBasicOperations, text="4.", width=1.5, command=lambda:missingMeters()).place(x=20, y=158)
+# btnOfficeRegionZone = ttk.Button(tabBasicOperations, text="Blank Meter Numbers", command=lambda:missingMeters(), width=BUTTON_WIDTH).place(x=50, y=158)
 
-btnNumkey5 = ttk.Button(tabBasicOperations, text="5.", width=1.5, command=lambda:officeRegionZone()).place(x=20, y=199)
-MissingMeterButton = ttk.Button(tabBasicOperations, text="Office-Region-Zone", command=lambda:officeRegionZone(), width=BUTTON_WIDTH).place(x=50, y=199)
+# btnNumkey5 = ttk.Button(tabBasicOperations, text="5.", width=1.5, command=lambda:officeRegionZone()).place(x=20, y=199)
+# MissingMeterButton = ttk.Button(tabBasicOperations, text="Office-Region-Zone", command=lambda:officeRegionZone(), width=BUTTON_WIDTH).place(x=50, y=199)
 
-btnNumkey6 = ttk.Button(tabBasicOperations, text="6.", width=1.5, command=lambda:printReadTypeVerbose()).place(x=20, y=240)
-PrintReadTypeButton = ttk.Button(tabBasicOperations, text="Read Type Codes", command=lambda:printReadTypeVerbose(), width=BUTTON_WIDTH).place(x=50, y=240)
+# btnNumkey6 = ttk.Button(tabBasicOperations, text="6.", width=1.5, command=lambda:printReadTypeVerbose()).place(x=20, y=240)
+# PrintReadTypeButton = ttk.Button(tabBasicOperations, text="Read Type Codes", command=lambda:printReadTypeVerbose(), width=BUTTON_WIDTH).place(x=50, y=240)
+
+btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:searchRecords()).place(x=20, y=20)
+btnVerboseRecordScan = ttk.Button(tabBasicOperations, text="Record Search...", command=lambda:searchRecords(), width=BUTTON_WIDTH).place(x=50, y=20)
+
+btnNumkey2 = ttk.Button(tabBasicOperations, text="2.", width=1.5, command=lambda:scanAllRecordsVerbose()).place(x=20, y=58)
+btnsearchRecords = ttk.Button(tabBasicOperations, text="Record Counts", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH).place(x=50, y=58)
+
+btnNumkey3 = ttk.Button(tabBasicOperations, text="3.", width=1.5, command=lambda:disallowedCharacters()).place(x=20, y=96)
+btnSingleRecordScan = ttk.Button(tabBasicOperations, text="Bad Meter Characters", command=lambda:disallowedCharacters(), width=BUTTON_WIDTH).place(x=50, y=96)
+
+btnNumkey4 = ttk.Button(tabBasicOperations, text="4.", width=1.5, command=lambda:missingMeters()).place(x=20, y=134)
+btnOfficeRegionZone = ttk.Button(tabBasicOperations, text="Blank Meter Numbers", command=lambda:missingMeters(), width=BUTTON_WIDTH).place(x=50, y=134)
+
+btnNumkey5 = ttk.Button(tabBasicOperations, text="5.", width=1.5, command=lambda:officeRegionZone()).place(x=20, y=172)
+MissingMeterButton = ttk.Button(tabBasicOperations, text="Office-Region-Zone", command=lambda:officeRegionZone(), width=BUTTON_WIDTH).place(x=50, y=172)
+
+btnNumkey6 = ttk.Button(tabBasicOperations, text="6.", width=1.5, command=lambda:printReadTypeVerbose()).place(x=20, y=210)
+PrintReadTypeButton = ttk.Button(tabBasicOperations, text="Read Type Codes", command=lambda:printReadTypeVerbose(), width=BUTTON_WIDTH).place(x=50, y=210)
+
+btnReadDirectionNumkey4 = ttk.Button(tabBasicOperations, text="4.", width=1.5, command=lambda:getReadDirections()).place(x=20, y=248)
+btnReadDirection = ttk.Button(tabBasicOperations, text="Read Direction", width=BUTTON_WIDTH, command=lambda:getReadDirections()).place(x=50, y=248)
 
 currentlabel = ttk.Label(tabBasicOperations, text="Current file: ")
 currentlabel.place(x=220, y=20)
@@ -552,7 +575,7 @@ if os.path.isfile('download.dat'):
     text.set('download.dat')
 else:
     text.set('None')
-label = ttk.Label(tabBasicOperations, textvariable=text).place(x=290, y=20)
+label = ttk.Label(tabBasicOperations, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
 
 btnConsoleSave = ttk.Button(tabBasicOperations, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnConsoleClear = ttk.Button(tabBasicOperations, text="clear", width=4.25, command=lambda:clearBOCConsole()).place(x=717, y=6)
@@ -571,14 +594,7 @@ bocConsole.insert(3.0, "\n")
 #################
 
 labelCurrentFileLatLong = ttk.Label(tabLatLong, text="Current file: ").place(x=220, y=20)
-
-labelFileVar = tk.StringVar()
-if os.path.isfile('download.dat'):
-    labelFileVar.set('download.dat')
-else:
-    labelFileVar.set('None')
-labelFile = ttk.Label(tabLatLong, textvariable=labelFileVar)
-labelFile.place(x=290, y=20)
+labelFile = ttk.Label(tabLatLong, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
 
 btnNumkeyLat3 = ttk.Button(tabLatLong, text="1.", width=1.5, command=lambda:checkMalformedLatLong()).place(x=20, y=35)
 btnLatMalformed = ttk.Button(tabLatLong, text="Malformed Lat/Long", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong()).place(x=50, y=35)
@@ -613,24 +629,15 @@ btnPopulateMissingMetersNumKey1 = ttk.Button(tabELFcreation, text="1.", width=1.
 btnPopulateMissingMeters = ttk.Button(tabELFcreation, text="Populate Missing Meters", width=BUTTON_WIDTH, command=lambda:populateMissingMeters()).place(x=50, y=35)
 
 btnCheckForELFCompatibilityNumKey2 = ttk.Button(tabELFcreation, text="2.", width=1.5).place(x=20, y=76)
-btnCheckForELFCompatibility = ttk.Button(tabELFcreation, text="Check Compatibility", width=BUTTON_WIDTH).place(x=50, y=76)
+btnCheckForELFCompatibility = ttk.Button(tabELFcreation, text="Validate All Records", width=BUTTON_WIDTH).place(x=50, y=76)
 
 btnCreatELFFileNumkey3 = ttk.Button(tabELFcreation, text="3.", width=1.5).place(x=20, y=117)
 btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=BUTTON_WIDTH).place(x=50, y=117)
 
-btnReadDirectionNumkey4 = ttk.Button(tabELFcreation, text="4.", width=1.5).place(x=20, y=158)
-btnReadDirection = ttk.Button(tabELFcreation, text="Read Direction", width=BUTTON_WIDTH, command=lambda:getReadDirections()).place(x=50, y=158)
-
 #default console widgets
 labelCurrentFileELF = ttk.Label(tabELFcreation, text="Current file: ").place(x=220, y=20)
+labelELF = ttk.Label(tabELFcreation, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
 
-ELFtext = tk.StringVar()
-if os.path.isfile('download.dat'):
-    ELFtext.set('download.dat')
-else:
-    ELFtext.set('None')
-
-label = ttk.Label(tabELFcreation, textvariable=text).place(x=290, y=20)
 btnELFsave = ttk.Button(tabELFcreation, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearELFConsole()).place(x=717, y=6)
 
@@ -648,7 +655,6 @@ ELFConsole.insert(3.0, "\n")
 ########################
 
 labelFont = Font(size=10, weight='bold')
-
 
 labelFileSettings = ttk.Label(tabDeveloper, text="File Settings", font=labelFont).place(x=20, y=30)
 
