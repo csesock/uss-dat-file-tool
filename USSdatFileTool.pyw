@@ -377,6 +377,40 @@ def getReadDirections(event=None):
     except FileNotFoundError:
         fileNotFoundError()
 
+def createELFfile(event=None):
+    answer = messagebox.askokcancel("Confirmation", "All possible fields will be formatted into an ELF file.\nRFF records must exist and must match a customer record.")
+    if answer == None or answer == False:
+        return 
+    try:
+        with open(download_filename, 'r') as openfile:
+            with open('generatedELF.csv', 'w') as builtfile:
+                builtfile.write('Street Address, Endpoint ID, City, State, Zip, Latitude, Longitude, GeopointSource, Market\n')
+                for line in openfile:
+                    if line.startswith('CUS'):
+                        address = line[54:94]
+                        #print("address: " + address)
+                        builtfile.write(address+',')
+                    if line.startswith('RFF'):
+                        ert = line[11:21]
+                        #print("ert: " + ert)
+                        builtfile.write(ert+'\n')
+
+    except FileNotFoundError():
+        fileNotFoundError3()
+
+def compareReads():
+    try:
+        with open(download_filename, 'r') as openfile:
+            for line in openfile:
+                if line.startswith('RDG'):
+                    formatted_read = line[33:43]
+                    print("formatted: \t" + formatted_read)
+                if line.startswith('RFF'):
+                    raw_read = line[72:82]
+                    print("raw read: \t"+ raw_read)
+    except FileNotFoundError:
+        fileNotFoundError3()
+
 def getCustomerRecordLength():
     try:
         with open(download_filename, 'r') as openfile:
@@ -632,7 +666,9 @@ btnCheckForELFCompatibilityNumKey2 = ttk.Button(tabELFcreation, text="2.", width
 btnCheckForELFCompatibility = ttk.Button(tabELFcreation, text="Validate All Records", width=BUTTON_WIDTH).place(x=50, y=76)
 
 btnCreatELFFileNumkey3 = ttk.Button(tabELFcreation, text="3.", width=1.5).place(x=20, y=117)
-btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=BUTTON_WIDTH).place(x=50, y=117)
+btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=BUTTON_WIDTH, command=lambda:createELFfile()).place(x=50, y=117)
+
+btnCompareRawFormatted = ttk.Button(tabELFcreation, text="Compare Reads", width=BUTTON_WIDTH, command=lambda:compareReads()).place(x=50, y=158)
 
 #default console widgets
 labelCurrentFileELF = ttk.Label(tabELFcreation, text="Current file: ").place(x=220, y=20)
