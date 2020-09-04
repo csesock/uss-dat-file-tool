@@ -34,6 +34,7 @@ BUTTON_WIDTH = 22
 
 #default tkk configuration
 consoleFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
+labelFont = Font(size=10, weight='bold')
 window.title("United System .dat File Tool")
 window.resizable(False, False)
 height = window.winfo_screenheight()/3
@@ -547,11 +548,15 @@ tabBasicOperations = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tabBasicOperations, text='Basic Operations')
 # Lat/Long tab
 tabLatLong = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tabLatLong, text="Lat/Long Operations")
+TAB_CONTROL.add(tabLatLong, text="Lat/Long")
 TAB_CONTROL.pack(expand=1, fill="both")
-#ELF File Creation tab
+# File Operations tab
 tabELFcreation = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tabELFcreation, text="File Operations")
+TAB_CONTROL.add(tabELFcreation, text="Exports")
+TAB_CONTROL.pack(expand=1, fill="both")
+# ELF File Creation Tool tab
+tab4 = ttk.Frame(TAB_CONTROL)
+TAB_CONTROL.add(tab4, text="ELF Creator")
 TAB_CONTROL.pack(expand=1, fill="both")
 # Settings tab
 tabDeveloper = ttk.Frame(TAB_CONTROL)
@@ -665,9 +670,6 @@ btnPopulateMissingMeters = ttk.Button(tabELFcreation, text="Populate Missing Met
 btnCheckForELFCompatibilityNumKey2 = ttk.Button(tabELFcreation, text="2.", width=1.5).place(x=20, y=76)
 btnCheckForELFCompatibility = ttk.Button(tabELFcreation, text="Validate All Records", width=BUTTON_WIDTH).place(x=50, y=76)
 
-btnCreatELFFileNumkey3 = ttk.Button(tabELFcreation, text="3.", width=1.5).place(x=20, y=117)
-btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=BUTTON_WIDTH, command=lambda:createELFfile()).place(x=50, y=117)
-
 btnCompareRawFormatted = ttk.Button(tabELFcreation, text="Compare Reads", width=BUTTON_WIDTH, command=lambda:compareReads()).place(x=50, y=158)
 
 #default console widgets
@@ -687,10 +689,28 @@ ELFConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 ELFConsole.insert(3.0, "\n")
 
 ########################
-##Settings Tab Widgets##
+####### Tab 4 Widgets ##
 ########################
 
-labelFont = Font(size=10, weight='bold')
+labelAutoPopulate = ttk.Label(tab4, text="Fields to auto-populate:", font=labelFont).place(x=20, y=25)
+
+checkboxState = ttk.Checkbutton(tab4, text="State").place(x=20, y=50)
+inputState = ttk.Entry(tab4, width=12).place(x=90, y=50)
+checkboxCountry = ttk.Checkbutton(tab4, text="Country").place(x=20, y=70)
+inputCountry = ttk.Entry(tab4, width=12).place(x=90, y=70)
+checkboxZip = ttk.Checkbutton(tab4, text="Zip").place(x=20, y=90)
+inputZip = ttk.Entry(tab4, width=12).place(x=90, y=90)
+
+checkboxGeopointSource = ttk.Checkbutton(tab4, text="GeopointSource").place(x=20, y=130)
+inputGeonpointSource = ttk.Entry(tab4, width=12).place(x=90, y=130)
+checkboxMarket = ttk.Checkbutton(tab4, text="Market").place(x=20, y=150)
+inputMarket = ttk.Entry(tab4, width=12).place(x=90, y=150)
+
+btnCreateELFfile = ttk.Button(tab4, text="Create ELF File", width=BUTTON_WIDTH, command=lambda:createELFfile()).place(x=50, y=200)
+
+########################
+##Settings Tab Widgets##
+########################
 
 labelFileSettings = ttk.Label(tabDeveloper, text="File Settings", font=labelFont).place(x=20, y=30)
 
