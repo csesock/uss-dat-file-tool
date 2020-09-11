@@ -555,19 +555,19 @@ def aboutDialog():
 TAB_CONTROL = ttk.Notebook(window)
 # Basic Operations tab
 tabBasicOperations = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tabBasicOperations, text='Basic Operations')
+TAB_CONTROL.add(tabBasicOperations, text='Validation Tools')
 # Lat/Long tab
 tabLatLong = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tabLatLong, text="Lat/Long")
+TAB_CONTROL.add(tabLatLong, text="Lat/Long Tools")
 TAB_CONTROL.pack(expand=1, fill="both")
 # File Operations tab
 tabELFcreation = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tabELFcreation, text="Exports")
+TAB_CONTROL.add(tabELFcreation, text="Export Tools")
 TAB_CONTROL.pack(expand=1, fill="both")
 # ELF File Creation Tool tab
-tab4 = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tab4, text="ELF Creator")
-TAB_CONTROL.pack(expand=1, fill="both")
+# tab4 = ttk.Frame(TAB_CONTROL)
+# TAB_CONTROL.add(tab4, text="ELF Creation Tool")
+# TAB_CONTROL.pack(expand=1, fill="both")
 # Settings tab
 tabDeveloper = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tabDeveloper, text="Settings")
@@ -680,7 +680,19 @@ btnPopulateMissingMeters = ttk.Button(tabELFcreation, text="Populate Missing Met
 btnCheckForELFCompatibilityNumKey2 = ttk.Button(tabELFcreation, text="2.", width=1.5).place(x=20, y=76)
 btnCheckForELFCompatibility = ttk.Button(tabELFcreation, text="Validate All Records", width=BUTTON_WIDTH).place(x=50, y=76)
 
-btnCompareRawFormatted = ttk.Button(tabELFcreation, text="Compare Reads", width=BUTTON_WIDTH, command=lambda:compareReads()).place(x=50, y=158)
+#btnCompareRawFormatted = ttk.Button(tabELFcreation, text="Compare Reads", width=BUTTON_WIDTH, command=lambda:compareReads()).place(x=50, y=158)
+btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=27, command=lambda:createELFfile()).place(x=20, y=134)
+
+labelAutoPopulate = ttk.Label(tabELFcreation, text="Fields to auto-populate").place(x=20, y=170)
+checkboxState = ttk.Checkbutton(tabELFcreation, text="State").place(x=20, y=190)
+inputState = ttk.Entry(tabELFcreation, width=9).place(x=135, y=190)
+checkboxCountry = ttk.Checkbutton(tabELFcreation, text="Country").place(x=20, y=212)
+inputCountry = ttk.Entry(tabELFcreation, width=9).place(x=135, y=212)
+checkboxGeopointSource = ttk.Checkbutton(tabELFcreation, text="GeopointSource").place(x=20, y=234)
+inputGeonpointSource = ttk.Entry(tabELFcreation, width=9).place(x=135, y=234)
+checkboxMarket = ttk.Checkbutton(tabELFcreation, text="Market").place(x=20, y=256)
+inputMarket = ttk.Entry(tabELFcreation, width=9).place(x=135, y=256)
+
 
 #default console widgets
 labelCurrentFileELF = ttk.Label(tabELFcreation, text="Current file: ").place(x=220, y=20)
@@ -702,21 +714,20 @@ ELFConsole.insert(3.0, "\n")
 ####### Tab 4 Widgets ##
 ########################
 
-labelAutoPopulate = ttk.Label(tab4, text="Fields to auto-populate:", font=labelFont).place(x=20, y=25)
+# labelAutoPopulate = ttk.Label(tab4, text="Fields to auto-populate:", font=labelFont).place(x=20, y=25)
 
-checkboxState = ttk.Checkbutton(tab4, text="State").place(x=20, y=50)
-inputState = ttk.Entry(tab4, width=16).place(x=90, y=50)
-checkboxCountry = ttk.Checkbutton(tab4, text="Country").place(x=20, y=70)
-inputCountry = ttk.Entry(tab4, width=16).place(x=90, y=70)
-checkboxZip = ttk.Checkbutton(tab4, text="Zip").place(x=20, y=90)
-inputZip = ttk.Entry(tab4, width=16).place(x=90, y=90)
+# checkboxState = ttk.Checkbutton(tab4, text="State").place(x=20, y=50)
+# inputState = ttk.Entry(tab4, width=16).place(x=90, y=50)
+# checkboxCountry = ttk.Checkbutton(tab4, text="Country").place(x=20, y=70)
+# inputCountry = ttk.Entry(tab4, width=16).place(x=90, y=70)
+# checkboxZip = ttk.Checkbutton(tab4, text="Zip").place(x=20, y=90)
+# inputZip = ttk.Entry(tab4, width=16).place(x=90, y=90)
 
-checkboxGeopointSource = ttk.Checkbutton(tab4, text="GeopointSource").place(x=20, y=130)
-inputGeonpointSource = ttk.Entry(tab4, width=9).place(x=135, y=130)
-checkboxMarket = ttk.Checkbutton(tab4, text="Market").place(x=20, y=150)
-inputMarket = ttk.Entry(tab4, width=9).place(x=135, y=150)
+# checkboxGeopointSource = ttk.Checkbutton(tab4, text="GeopointSource").place(x=20, y=130)
+# inputGeonpointSource = ttk.Entry(tab4, width=9).place(x=135, y=130)
+# checkboxMarket = ttk.Checkbutton(tab4, text="Market").place(x=20, y=150)
+# inputMarket = ttk.Entry(tab4, width=9).place(x=135, y=150)
 
-btnCreateELFfile = ttk.Button(tab4, text="Create ELF File", width=27, command=lambda:createELFfile()).place(x=20, y=200)
 
 ########################
 ##Settings Tab Widgets##
