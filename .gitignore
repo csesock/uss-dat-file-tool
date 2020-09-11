@@ -2,10 +2,12 @@
 *.DAT
 *.csv
 *.CSV
+*.xlsx
 *.pdf
 *.PDF
 
 developer.py
+Possible Changes.txt
 
 logs/*.txt
 exports/*.txt

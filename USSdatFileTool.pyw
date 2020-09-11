@@ -140,6 +140,16 @@ def officeRegionZone(event=None):
                     zone = line[75:77]
                     if zone == "  ":
                         zone = "BLANK"
+                if line.startswith('ERH'):
+                    office = line[81:83]
+                    if office == "  ":
+                        office = "BLANK"
+                    region = line[83:85]
+                    if region == "  ":
+                        region = "BLANK"
+                    zone = line[85:87]
+                    if zone == "  ":
+                        zone = "BLANK" 
                     bocConsole.delete(1.0, "end")
                     bocConsole.insert(1.0, "Office-Region-Zone Fields")
                     bocConsole.insert(2.0, "\n")
@@ -603,7 +613,7 @@ MissingMeterButton = ttk.Button(tabBasicOperations, text="Office-Region-Zone", c
 btnNumkey6 = ttk.Button(tabBasicOperations, text="6.", width=1.5, command=lambda:printReadTypeVerbose()).place(x=20, y=210)
 PrintReadTypeButton = ttk.Button(tabBasicOperations, text="Read Type Codes", command=lambda:printReadTypeVerbose(), width=BUTTON_WIDTH).place(x=50, y=210)
 
-btnReadDirectionNumkey4 = ttk.Button(tabBasicOperations, text="4.", width=1.5, command=lambda:getReadDirections()).place(x=20, y=248)
+btnReadDirectionNumkey4 = ttk.Button(tabBasicOperations, text="7.", width=1.5, command=lambda:getReadDirections()).place(x=20, y=248)
 btnReadDirection = ttk.Button(tabBasicOperations, text="Read Direction", width=BUTTON_WIDTH, command=lambda:getReadDirections()).place(x=50, y=248)
 
 currentlabel = ttk.Label(tabBasicOperations, text="Current file: ")
@@ -695,18 +705,18 @@ ELFConsole.insert(3.0, "\n")
 labelAutoPopulate = ttk.Label(tab4, text="Fields to auto-populate:", font=labelFont).place(x=20, y=25)
 
 checkboxState = ttk.Checkbutton(tab4, text="State").place(x=20, y=50)
-inputState = ttk.Entry(tab4, width=12).place(x=90, y=50)
+inputState = ttk.Entry(tab4, width=16).place(x=90, y=50)
 checkboxCountry = ttk.Checkbutton(tab4, text="Country").place(x=20, y=70)
-inputCountry = ttk.Entry(tab4, width=12).place(x=90, y=70)
+inputCountry = ttk.Entry(tab4, width=16).place(x=90, y=70)
 checkboxZip = ttk.Checkbutton(tab4, text="Zip").place(x=20, y=90)
-inputZip = ttk.Entry(tab4, width=12).place(x=90, y=90)
+inputZip = ttk.Entry(tab4, width=16).place(x=90, y=90)
 
 checkboxGeopointSource = ttk.Checkbutton(tab4, text="GeopointSource").place(x=20, y=130)
-inputGeonpointSource = ttk.Entry(tab4, width=12).place(x=90, y=130)
+inputGeonpointSource = ttk.Entry(tab4, width=9).place(x=135, y=130)
 checkboxMarket = ttk.Checkbutton(tab4, text="Market").place(x=20, y=150)
-inputMarket = ttk.Entry(tab4, width=12).place(x=90, y=150)
+inputMarket = ttk.Entry(tab4, width=9).place(x=135, y=150)
 
-btnCreateELFfile = ttk.Button(tab4, text="Create ELF File", width=BUTTON_WIDTH, command=lambda:createELFfile()).place(x=50, y=200)
+btnCreateELFfile = ttk.Button(tab4, text="Create ELF File", width=27, command=lambda:createELFfile()).place(x=20, y=200)
 
 ########################
 ##Settings Tab Widgets##
