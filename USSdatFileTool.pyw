@@ -140,16 +140,16 @@ def officeRegionZone(event=None):
                     zone = line[75:77]
                     if zone == "  ":
                         zone = "BLANK"
-                if line.startswith('ERH'):
-                    office = line[81:83]
-                    if office == "  ":
-                        office = "BLANK"
-                    region = line[83:85]
-                    if region == "  ":
-                        region = "BLANK"
-                    zone = line[85:87]
-                    if zone == "  ":
-                        zone = "BLANK" 
+                # if line.startswith('ERH'):
+                #     office = line[81:83]
+                #     if office == "  ":
+                #         office = "BLANK"
+                #     region = line[83:85]
+                #     if region == "  ":
+                #         region = "BLANK"
+                #     zone = line[85:87]
+                #     if zone == "  ":
+                #         zone = "BLANK" 
                     bocConsole.delete(1.0, "end")
                     bocConsole.insert(1.0, "Office-Region-Zone Fields")
                     bocConsole.insert(2.0, "\n")
@@ -422,6 +422,38 @@ def compareReads():
     except FileNotFoundError:
         fileNotFoundError3()
 
+def validateAllRecords(event=None):
+    answer = messagebox.askokcancel("Confirmation", "All records in the file will be validated to fit Itron's format specifications. \nThis may take some time. ")
+    if answer == None or answer == False:
+        return
+    try:
+        with open(download_filename, 'r') as openfile:
+            bocConsole.delete(1.0, 'end')
+            bocConsole.insert(1.0, "Invalid Records")
+            counter = 2.0
+            lines_validated = 0
+            lines_failed = 0
+            for line in openfile:
+                if validateRecord(line) == False:
+                    #if line is an invalid record, print to console
+                    bocConsole.insert(counter, line)
+                    lines_failed+=1
+                else:
+                    lines_validated+=1
+            print("Lines validated: ", lines_validated)
+            print("Lines failed: ", lines_failed)
+    except FileNotFoundError:
+        fileNotFoundError()
+    
+def validateRecord(line, event=None):
+    if line.startswith("CUS"):
+        route_number = line[3:11]
+        flag = isinstance(route_number, int)
+        if flag:
+            return True
+    return False                 
+
+
 def getCustomerRecordLength():
     try:
         with open(download_filename, 'r') as openfile:
@@ -678,7 +710,7 @@ btnPopulateMissingMetersNumKey1 = ttk.Button(tabELFcreation, text="1.", width=1.
 btnPopulateMissingMeters = ttk.Button(tabELFcreation, text="Populate Missing Meters", width=BUTTON_WIDTH, command=lambda:populateMissingMeters()).place(x=50, y=35)
 
 btnCheckForELFCompatibilityNumKey2 = ttk.Button(tabELFcreation, text="2.", width=1.5).place(x=20, y=76)
-btnCheckForELFCompatibility = ttk.Button(tabELFcreation, text="Validate All Records", width=BUTTON_WIDTH).place(x=50, y=76)
+btnCheckForELFCompatibility = ttk.Button(tabELFcreation, text="Validate All Records", width=BUTTON_WIDTH, command=lambda:validateAllRecords()).place(x=50, y=76)
 
 #btnCompareRawFormatted = ttk.Button(tabELFcreation, text="Compare Reads", width=BUTTON_WIDTH, command=lambda:compareReads()).place(x=50, y=158)
 btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=27, command=lambda:createELFfile()).place(x=20, y=134)
