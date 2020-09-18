@@ -395,18 +395,21 @@ def createELFfile(event=None):
     try:
         with open(download_filename, 'r') as openfile:
             with open('generatedELF.csv', 'w') as builtfile:
-                builtfile.write('Street Address, Endpoint ID, City, State, Zip, Latitude, Longitude, GeopointSource, Market\n')
+                builtfile.write('Endpoint ID, Street Address, City, State, Zip, Latitude, Longitude, GeopointSource, Market\n')
                 for line in openfile:
+                    address = " "
+                    ert = " "
                     if line.startswith('CUS'):
                         address = line[54:94]
                         #print("address: " + address)
-                        builtfile.write(address+',')
+                        #builtfile.write(address+',')
                     if line.startswith('RFF'):
                         ert = line[11:21]
                         #print("ert: " + ert)
-                        builtfile.write(ert+'\n')
-
-    except FileNotFoundError():
+                        #builtfile.write(ert+'\n')
+                    elfline = ert+','+address+', , KY, , , , CIS, W\n' 
+                    builtfile.write(elfline)
+    except FileNotFoundError:
         fileNotFoundError3()
 
 def compareReads():
@@ -706,24 +709,24 @@ btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=la
 ########################
 
 #tab widgets
-btnPopulateMissingMetersNumKey1 = ttk.Button(tabELFcreation, text="1.", width=1.5, command=lambda:populateMissingMeters()).place(x=20, y=35)
-btnPopulateMissingMeters = ttk.Button(tabELFcreation, text="Populate Missing Meters", width=BUTTON_WIDTH, command=lambda:populateMissingMeters()).place(x=50, y=35)
+#btnPopulateMissingMetersNumKey1 = ttk.Button(tabELFcreation, text="1.", width=1.5, command=lambda:populateMissingMeters()).place(x=20, y=35)
+btnPopulateMissingMeters = ttk.Button(tabELFcreation, text="Populate Missing Meters", width=27, command=lambda:populateMissingMeters()).place(x=20, y=220)
 
-btnCheckForELFCompatibilityNumKey2 = ttk.Button(tabELFcreation, text="2.", width=1.5).place(x=20, y=76)
-btnCheckForELFCompatibility = ttk.Button(tabELFcreation, text="Validate All Records", width=BUTTON_WIDTH, command=lambda:validateAllRecords()).place(x=50, y=76)
+#btnCheckForELFCompatibilityNumKey2 = ttk.Button(tabELFcreation, text="2.", width=1.5).place(x=20, y=76)
+#btnCheckForELFCompatibility = ttk.Button(tabELFcreation, text="Validate All Records", width=BUTTON_WIDTH, command=lambda:validateAllRecords()).place(x=50, y=76)
 
 #btnCompareRawFormatted = ttk.Button(tabELFcreation, text="Compare Reads", width=BUTTON_WIDTH, command=lambda:compareReads()).place(x=50, y=158)
-btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=27, command=lambda:createELFfile()).place(x=20, y=134)
+btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=27, command=lambda:createELFfile()).place(x=20, y=180)
 
-labelAutoPopulate = ttk.Label(tabELFcreation, text="Fields to auto-populate").place(x=20, y=170)
-checkboxState = ttk.Checkbutton(tabELFcreation, text="State").place(x=20, y=190)
-inputState = ttk.Entry(tabELFcreation, width=9).place(x=135, y=190)
-checkboxCountry = ttk.Checkbutton(tabELFcreation, text="Country").place(x=20, y=212)
-inputCountry = ttk.Entry(tabELFcreation, width=9).place(x=135, y=212)
-checkboxGeopointSource = ttk.Checkbutton(tabELFcreation, text="GeopointSource").place(x=20, y=234)
-inputGeonpointSource = ttk.Entry(tabELFcreation, width=9).place(x=135, y=234)
-checkboxMarket = ttk.Checkbutton(tabELFcreation, text="Market").place(x=20, y=256)
-inputMarket = ttk.Entry(tabELFcreation, width=9).place(x=135, y=256)
+labelAutoPopulate = ttk.Label(tabELFcreation, text="Fields to auto-populate").place(x=20, y=75)
+labelState = ttk.Label(tabELFcreation, text="State").place(x=20, y=95)
+inputState = ttk.Entry(tabELFcreation, width=9).place(x=135, y=95)
+labelCountry = ttk.Label(tabELFcreation, text="Country").place(x=20, y=115)
+inputCountry = ttk.Entry(tabELFcreation, width=9).place(x=135, y=115)
+labelGeoPointSource = ttk.Label(tabELFcreation, text="GeopointSource").place(x=20, y=135)
+inputGeopointSource = ttk.Entry(tabELFcreation, width=9).place(x=135, y=135)
+labelMarket = ttk.Label(tabELFcreation, text="Market").place(x=20, y=155)
+inputMarket = ttk.Entry(tabELFcreation, width=9).place(x=135, y=155)
 
 
 #default console widgets
