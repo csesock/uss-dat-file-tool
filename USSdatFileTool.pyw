@@ -407,7 +407,7 @@ def createELFfile(event=None):
                         ert = line[11:21]
                         #print("ert: " + ert)
                         #builtfile.write(ert+'\n')
-                    elfline = ert+','+address+', , KY, , , , CIS, W\n' 
+                    elfline = ert+','+address+','+'42001'+','+str(inputCountry.get())+', , '+str(inputGeopointSource.get())+','+str(inputMarket.get())+'\n' 
                     builtfile.write(elfline)
     except FileNotFoundError:
         fileNotFoundError3()
@@ -716,18 +716,25 @@ btnPopulateMissingMeters = ttk.Button(tabELFcreation, text="Populate Missing Met
 #btnCheckForELFCompatibility = ttk.Button(tabELFcreation, text="Validate All Records", width=BUTTON_WIDTH, command=lambda:validateAllRecords()).place(x=50, y=76)
 
 #btnCompareRawFormatted = ttk.Button(tabELFcreation, text="Compare Reads", width=BUTTON_WIDTH, command=lambda:compareReads()).place(x=50, y=158)
-btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=27, command=lambda:createELFfile()).place(x=20, y=180)
+btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=27, command=lambda:createELFfile()).place(x=20, y=140)
 
-labelAutoPopulate = ttk.Label(tabELFcreation, text="Fields to auto-populate").place(x=20, y=75)
-labelState = ttk.Label(tabELFcreation, text="State").place(x=20, y=95)
-inputState = ttk.Entry(tabELFcreation, width=9).place(x=135, y=95)
-labelCountry = ttk.Label(tabELFcreation, text="Country").place(x=20, y=115)
-inputCountry = ttk.Entry(tabELFcreation, width=9).place(x=135, y=115)
-labelGeoPointSource = ttk.Label(tabELFcreation, text="GeopointSource").place(x=20, y=135)
-inputGeopointSource = ttk.Entry(tabELFcreation, width=9).place(x=135, y=135)
-labelMarket = ttk.Label(tabELFcreation, text="Market").place(x=20, y=155)
-inputMarket = ttk.Entry(tabELFcreation, width=9).place(x=135, y=155)
+labelAutoPopulate = ttk.Label(tabELFcreation, text="Fields to auto-populate").place(x=20, y=30)
 
+labelState = ttk.Label(tabELFcreation, text="State").place(x=20, y=55)
+inputState = ttk.Entry(tabELFcreation, width=9).place(x=115, y=55)
+
+labelCountry = ttk.Label(tabELFcreation, text="Country").place(x=20, y=75)
+inputCountry = ttk.Entry(tabELFcreation, width=9)
+inputCountry.place(x=115, y=75)
+inputCountry.insert(0, "USA")
+
+labelGeoPointSource = ttk.Label(tabELFcreation, text="GeopointSource").place(x=20, y=95)
+inputGeopointSource = ttk.Entry(tabELFcreation, width=9)
+inputGeopointSource.place(x=115, y=95)
+inputGeopointSource.insert(0, "CIS")
+
+labelMarket = ttk.Label(tabELFcreation, text="Market").place(x=20, y=115)
+inputMarket = ttk.Entry(tabELFcreation, width=9).place(x=135, y=115)
 
 #default console widgets
 labelCurrentFileELF = ttk.Label(tabELFcreation, text="Current file: ").place(x=220, y=20)
