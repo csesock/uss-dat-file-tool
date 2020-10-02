@@ -18,9 +18,9 @@ pattern_missing_meters = re.compile(r'[^\S\n\t]{11}')
 pattern_lat_long = re.compile(r'-?[0-9]{2}\.\d{1,13}$')
 pattern_space_nonewline = re.compile(r'\t|[ ]{2,}') #test
 
-
 #file configurations
 download_filename = 'download.dat'
+ELF_filename = "Generated ELF File " + datetime.today().strftime('%Y-%m-%d_%H-%M') + '.csv'
 defaut_file_extension = '.txt'
 window = tk.Tk()
 s = ttk.Style()
@@ -126,40 +126,31 @@ def searchRecords(event=None):
         fileNotFoundError()
         
 def officeRegionZone(event=None):
+    # region then zone then office
     Logging.writeToLogs('Start Function Call - officeRegionZone()')
     try:
         with open(download_filename, 'r') as openfile:
             for line in openfile:
                 if line.startswith('RHD'):
-                    office = line[71:73]
-                    if office == "  ":
-                        office = "BLANK"
-                    region = line[73:75]
+                    region = line[71:73]
                     if region == "  ":
                         region = "BLANK"
-                    zone = line[75:77]
+                    zone = line[73:75]
                     if zone == "  ":
                         zone = "BLANK"
-                # if line.startswith('ERH'):
-                #     office = line[81:83]
-                #     if office == "  ":
-                #         office = "BLANK"
-                #     region = line[83:85]
-                #     if region == "  ":
-                #         region = "BLANK"
-                #     zone = line[85:87]
-                #     if zone == "  ":
-                #         zone = "BLANK" 
+                    office = line[75:77]
+                    if office == "  ":
+                        office = "BLANK"
                     bocConsole.delete(1.0, "end")
-                    bocConsole.insert(1.0, "Office-Region-Zone Fields")
+                    bocConsole.insert(1.0, "Region-Zone-Office Fields")
                     bocConsole.insert(2.0, "\n")
                     bocConsole.insert(2.0, "------------------------")
                     bocConsole.insert(3.0, "\n")
-                    bocConsole.insert(3.0, "Office . . . . : \t" + str(office))
+                    bocConsole.insert(3.0, "Region . . . . : \t" + str(region))
                     bocConsole.insert(4.0, "\n")
-                    bocConsole.insert(4.0, "Region . . . . : \t" + str(region))
+                    bocConsole.insert(4.0, "Zone . . . . . : \t" + str(zone))
                     bocConsole.insert(5.0, "\n")
-                    bocConsole.insert(5.0, "Zone . . . . . : \t" + str(zone))
+                    bocConsole.insert(5.0, "Office . . . . : \t" + str(office))
                     bocConsole.insert(6.0, "\n")
                     bocConsole.insert(6.0, "------------------------")
                     return
@@ -394,21 +385,20 @@ def createELFfile(event=None):
         return 
     try:
         with open(download_filename, 'r') as openfile:
-            with open('generatedELF.csv', 'w') as builtfile:
-                builtfile.write('Endpoint ID, Street Address, City, State, Zip, Latitude, Longitude, GeopointSource, Market\n')
+            #with open('generatedELF.csv', 'w') as builtfile:
+            with open("exports\\"+ELF_filename, 'w') as builtfile:
+                builtfile.write('Endpoint ID, Street Address, City, State, Country, Zip, Latitude, Longitude, GeopointSource, Market\n')
+                address = ""
+                ert = ""
                 for line in openfile:
-                    address = " "
-                    ert = " "
                     if line.startswith('CUS'):
                         address = line[54:94]
-                        #print("address: " + address)
-                        #builtfile.write(address+',')
                     if line.startswith('RFF'):
                         ert = line[11:21]
-                        #print("ert: " + ert)
-                        #builtfile.write(ert+'\n')
-                    elfline = ert+','+address+','+'42001'+','+str(inputCountry.get())+', , '+str(inputGeopointSource.get())+','+str(inputMarket.get())+'\n' 
-                    builtfile.write(elfline)
+                        #elfline = ert+','+address+',Benton,KY,USA,42001,0,0,CIS,W'+'\n'
+                        elfline = ert + ',' + address + ',' + inputCity.get() + ',' + inputState.get() + ',' + inputCountry.get() + ',' + '42001' + ',' + '0,0' + ',' + inputGeopointSource.get() + ',' + inputMarket.get() + ',' + '\n'
+                        builtfile.write(elfline)
+        messagebox.showinfo("ELF File Created", "ELF file successfully created in root directory of tool.")
     except FileNotFoundError:
         fileNotFoundError3()
 
@@ -599,10 +589,6 @@ TAB_CONTROL.pack(expand=1, fill="both")
 tabELFcreation = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tabELFcreation, text="Export Tools")
 TAB_CONTROL.pack(expand=1, fill="both")
-# ELF File Creation Tool tab
-# tab4 = ttk.Frame(TAB_CONTROL)
-# TAB_CONTROL.add(tab4, text="ELF Creation Tool")
-# TAB_CONTROL.pack(expand=1, fill="both")
 # Settings tab
 tabDeveloper = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tabDeveloper, text="Settings")
@@ -611,24 +597,6 @@ TAB_CONTROL.pack(expand=1, fill="both")
 ###################
 ##BOC Tab Widgets##
 ###################
-
-# btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:searchRecords()).place(x=20, y=35)
-# btnVerboseRecordScan = ttk.Button(tabBasicOperations, text="Record Search...", command=lambda:searchRecords(), width=BUTTON_WIDTH).place(x=50, y=35)
-
-# btnNumkey2 = ttk.Button(tabBasicOperations, text="2.", width=1.5, command=lambda:scanAllRecordsVerbose()).place(x=20, y=76)
-# btnsearchRecords = ttk.Button(tabBasicOperations, text="Record Counts", command=lambda:scanAllRecordsVerbose(), width=BUTTON_WIDTH).place(x=50, y=76)
-
-# btnNumkey3 = ttk.Button(tabBasicOperations, text="3.", width=1.5, command=lambda:disallowedCharacters()).place(x=20, y=117)
-# btnSingleRecordScan = ttk.Button(tabBasicOperations, text="Bad Meter Characters", command=lambda:disallowedCharacters(), width=BUTTON_WIDTH).place(x=50, y=117)
-
-# btnNumkey4 = ttk.Button(tabBasicOperations, text="4.", width=1.5, command=lambda:missingMeters()).place(x=20, y=158)
-# btnOfficeRegionZone = ttk.Button(tabBasicOperations, text="Blank Meter Numbers", command=lambda:missingMeters(), width=BUTTON_WIDTH).place(x=50, y=158)
-
-# btnNumkey5 = ttk.Button(tabBasicOperations, text="5.", width=1.5, command=lambda:officeRegionZone()).place(x=20, y=199)
-# MissingMeterButton = ttk.Button(tabBasicOperations, text="Office-Region-Zone", command=lambda:officeRegionZone(), width=BUTTON_WIDTH).place(x=50, y=199)
-
-# btnNumkey6 = ttk.Button(tabBasicOperations, text="6.", width=1.5, command=lambda:printReadTypeVerbose()).place(x=20, y=240)
-# PrintReadTypeButton = ttk.Button(tabBasicOperations, text="Read Type Codes", command=lambda:printReadTypeVerbose(), width=BUTTON_WIDTH).place(x=50, y=240)
 
 btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:searchRecords()).place(x=20, y=20)
 btnVerboseRecordScan = ttk.Button(tabBasicOperations, text="Record Search...", command=lambda:searchRecords(), width=BUTTON_WIDTH).place(x=50, y=20)
@@ -643,7 +611,7 @@ btnNumkey4 = ttk.Button(tabBasicOperations, text="4.", width=1.5, command=lambda
 btnOfficeRegionZone = ttk.Button(tabBasicOperations, text="Blank Meter Numbers", command=lambda:missingMeters(), width=BUTTON_WIDTH).place(x=50, y=134)
 
 btnNumkey5 = ttk.Button(tabBasicOperations, text="5.", width=1.5, command=lambda:officeRegionZone()).place(x=20, y=172)
-MissingMeterButton = ttk.Button(tabBasicOperations, text="Office-Region-Zone", command=lambda:officeRegionZone(), width=BUTTON_WIDTH).place(x=50, y=172)
+MissingMeterButton = ttk.Button(tabBasicOperations, text="Region-Zone-Office", command=lambda:officeRegionZone(), width=BUTTON_WIDTH).place(x=50, y=172)
 
 btnNumkey6 = ttk.Button(tabBasicOperations, text="6.", width=1.5, command=lambda:printReadTypeVerbose()).place(x=20, y=210)
 PrintReadTypeButton = ttk.Button(tabBasicOperations, text="Read Type Codes", command=lambda:printReadTypeVerbose(), width=BUTTON_WIDTH).place(x=50, y=210)
@@ -710,7 +678,7 @@ btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=la
 
 #tab widgets
 #btnPopulateMissingMetersNumKey1 = ttk.Button(tabELFcreation, text="1.", width=1.5, command=lambda:populateMissingMeters()).place(x=20, y=35)
-btnPopulateMissingMeters = ttk.Button(tabELFcreation, text="Populate Missing Meters", width=27, command=lambda:populateMissingMeters()).place(x=20, y=220)
+#btnPopulateMissingMeters = ttk.Button(tabELFcreation, text="Populate Missing Meters", width=27, command=lambda:populateMissingMeters()).place(x=20, y=220)
 
 #btnCheckForELFCompatibilityNumKey2 = ttk.Button(tabELFcreation, text="2.", width=1.5).place(x=20, y=76)
 #btnCheckForELFCompatibility = ttk.Button(tabELFcreation, text="Validate All Records", width=BUTTON_WIDTH, command=lambda:validateAllRecords()).place(x=50, y=76)
@@ -718,10 +686,17 @@ btnPopulateMissingMeters = ttk.Button(tabELFcreation, text="Populate Missing Met
 #btnCompareRawFormatted = ttk.Button(tabELFcreation, text="Compare Reads", width=BUTTON_WIDTH, command=lambda:compareReads()).place(x=50, y=158)
 btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=27, command=lambda:createELFfile()).place(x=20, y=140)
 
-labelAutoPopulate = ttk.Label(tabELFcreation, text="Fields to auto-populate").place(x=20, y=30)
+labelAutoPopulate = ttk.Label(tabELFcreation, text="Fields to auto-populate").place(x=20, y=15)
+
+labelCity = ttk.Label(tabELFcreation, text="City").place(x=20, y=35)
+inputCity = ttk.Entry(tabELFcreation, width=9)
+inputCity.place(x=115, y=35)
+inputCity.insert(0, "Benton")
 
 labelState = ttk.Label(tabELFcreation, text="State").place(x=20, y=55)
-inputState = ttk.Entry(tabELFcreation, width=9).place(x=115, y=55)
+inputState = ttk.Entry(tabELFcreation, width=9)
+inputState.place(x=115, y=55)
+inputState.insert(0, "KY")
 
 labelCountry = ttk.Label(tabELFcreation, text="Country").place(x=20, y=75)
 inputCountry = ttk.Entry(tabELFcreation, width=9)
@@ -734,7 +709,9 @@ inputGeopointSource.place(x=115, y=95)
 inputGeopointSource.insert(0, "CIS")
 
 labelMarket = ttk.Label(tabELFcreation, text="Market").place(x=20, y=115)
-inputMarket = ttk.Entry(tabELFcreation, width=9).place(x=135, y=115)
+inputMarket = ttk.Entry(tabELFcreation, width=9)
+inputMarket.place(x=115, y=115)
+inputMarket.insert(0, "W")
 
 #default console widgets
 labelCurrentFileELF = ttk.Label(tabELFcreation, text="Current file: ").place(x=220, y=20)
@@ -751,25 +728,6 @@ ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.0]")
 ELFConsole.insert(2.0, "\n")
 ELFConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 ELFConsole.insert(3.0, "\n")
-
-########################
-####### Tab 4 Widgets ##
-########################
-
-# labelAutoPopulate = ttk.Label(tab4, text="Fields to auto-populate:", font=labelFont).place(x=20, y=25)
-
-# checkboxState = ttk.Checkbutton(tab4, text="State").place(x=20, y=50)
-# inputState = ttk.Entry(tab4, width=16).place(x=90, y=50)
-# checkboxCountry = ttk.Checkbutton(tab4, text="Country").place(x=20, y=70)
-# inputCountry = ttk.Entry(tab4, width=16).place(x=90, y=70)
-# checkboxZip = ttk.Checkbutton(tab4, text="Zip").place(x=20, y=90)
-# inputZip = ttk.Entry(tab4, width=16).place(x=90, y=90)
-
-# checkboxGeopointSource = ttk.Checkbutton(tab4, text="GeopointSource").place(x=20, y=130)
-# inputGeonpointSource = ttk.Entry(tab4, width=9).place(x=135, y=130)
-# checkboxMarket = ttk.Checkbutton(tab4, text="Market").place(x=20, y=150)
-# inputMarket = ttk.Entry(tab4, width=9).place(x=135, y=150)
-
 
 ########################
 ##Settings Tab Widgets##
