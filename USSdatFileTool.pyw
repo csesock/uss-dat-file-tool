@@ -545,12 +545,12 @@ def resetWindow():
     width = window.winfo_screenwidth()/3
     window.geometry('780x330+%d+%d' %(width, height)) #reset height must be height-20 to account for the menu being created at this point
     bocConsole.delete(1.0, "end")
-    bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.0]")
+    bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.1]")
     bocConsole.insert(2.0, "\n")
     bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
     bocConsole.insert(3.0, "\n")
     latLongConsole.delete(1.0, "end")
-    latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.0]")
+    latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.1]")
     latLongConsole.insert(2.0, "\n")
     latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
     latLongConsole.insert(3.0, "\n")
@@ -572,7 +572,7 @@ def fileNotFoundError3():
     ELFConsole.insert(1.0, "ERROR: FILE NOT FOUND")
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.6.0 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2020-08-13:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
+    dialog = """ Author: Chris Sesock \n Version: 1.6.1 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2020-08-13:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
              """
     messagebox.showinfo("About", dialog)
 
@@ -581,13 +581,16 @@ TAB_CONTROL = ttk.Notebook(window)
 # Basic Operations tab
 tabBasicOperations = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tabBasicOperations, text='Validation Tools')
+# Advanced tab
+tabAdvanced = ttk.Frame(TAB_CONTROL)
+TAB_CONTROL.add(tabAdvanced, text="Advanced Tools")
 # Lat/Long tab
 tabLatLong = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tabLatLong, text="Lat/Long Tools")
 TAB_CONTROL.pack(expand=1, fill="both")
 # File Operations tab
 tabELFcreation = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tabELFcreation, text="Export Tools")
+TAB_CONTROL.add(tabELFcreation, text="ELF Tools")
 TAB_CONTROL.pack(expand=1, fill="both")
 # Settings tab
 tabDeveloper = ttk.Frame(TAB_CONTROL)
@@ -636,10 +639,20 @@ bocConsole = tk.Text(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WI
                     insertborderwidth=7, undo=True, bd=3)
 bocConsole.place(x=220, y=42)
 bocConsole.configure(font=consoleFont)
-bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.0]")
+bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.1]")
 bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
+
+#################
+## Advanced Tab #
+#################
+
+btnAdvNumkey1 = ttk.Button(tabAdvanced, text="1.", width=1.5).place(x=20, y=35)
+btnPrintERTs = ttk.Button(tabAdvanced, text="Find All ERTs", width=BUTTON_WIDTH).place(x=50, y=35)
+
+btnAdvNumkey2 = ttk.Button(tabAdvanced, text="2.", width=1.5).place(x=20, y=76)
+btnCustomerReport = ttk.Button(tabAdvanced, text="Customer Report", width=BUTTON_WIDTH).place(x=50, y=76)
 
 #################
 ##Lat/Long Tab###
@@ -664,7 +677,7 @@ latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH,
                         insertborderwidth=7, undo=True, bd=3)
 latLongConsole.place(x=220, y=42)
 latLongConsole.configure(font=consoleFont)
-latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.0]")
+latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.1]")
 latLongConsole.insert(2.0, "\n")
 latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
@@ -729,7 +742,7 @@ ELFConsole = tk.Text(tabELFcreation, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH,
                     insertborderwidth=7, undo=True, bd=3)
 ELFConsole.place(x=220, y=42)
 ELFConsole.configure(font=consoleFont)
-ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.0]")
+ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.1]")
 ELFConsole.insert(2.0, "\n")
 ELFConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 ELFConsole.insert(3.0, "\n")
