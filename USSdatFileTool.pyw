@@ -8,9 +8,10 @@ from collections import deque
 from datetime import datetime
 import sys, os, re, time, csv
 try:
-    import Logging
+    import Logging, Searching 
 except:
-    print("Logging system files not found -- to enable logging please place Logging.py in the default directory")
+    #print("Logging system files not found -- to enable logging please place Logging.py in the default directory")
+    print("something broke")
     pass
 
 #regex
@@ -385,7 +386,6 @@ def createELFfile(event=None):
         return 
     try:
         with open(download_filename, 'r') as openfile:
-            #with open('generatedELF.csv', 'w') as builtfile:
             with open("exports\\"+ELF_filename, 'w') as builtfile:
                 builtfile.write('Endpoint ID, Street Address, City, State, Country, Zip, Latitude, Longitude, GeopointSource, Market\n')
                 address = ""
@@ -396,7 +396,7 @@ def createELFfile(event=None):
                     if line.startswith('RFF'):
                         ert = line[11:21]
                         #elfline = ert+','+address+',Benton,KY,USA,42001,0,0,CIS,W'+'\n'
-                        elfline = ert + ',' + address + ',' + inputCity.get() + ',' + inputState.get() + ',' + inputCountry.get() + ',' + '42001' + ',' + '0,0' + ',' + inputGeopointSource.get() + ',' + inputMarket.get() + ',' + '\n'
+                        elfline = ert + ',' + address + ',' + inputCity.get() + ',' + inputState.get() + ',' + inputCountry.get() + ',' + inputZip.get() + ',' + '0,0' + ',' + inputGeopointSource.get() + ',' + inputMarket.get() + ',' + '\n'
                         builtfile.write(elfline)
         messagebox.showinfo("ELF File Created", "ELF file successfully created in root directory of tool.")
     except FileNotFoundError:
@@ -684,33 +684,38 @@ btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=la
 #btnCheckForELFCompatibility = ttk.Button(tabELFcreation, text="Validate All Records", width=BUTTON_WIDTH, command=lambda:validateAllRecords()).place(x=50, y=76)
 
 #btnCompareRawFormatted = ttk.Button(tabELFcreation, text="Compare Reads", width=BUTTON_WIDTH, command=lambda:compareReads()).place(x=50, y=158)
-btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=27, command=lambda:createELFfile()).place(x=20, y=140)
+btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=27, command=lambda:createELFfile()).place(x=20, y=180)
 
-labelAutoPopulate = ttk.Label(tabELFcreation, text="Fields to auto-populate").place(x=20, y=15)
+labelAutoPopulate = ttk.Label(tabELFcreation, text="Fields to auto-populate", font=labelFont).place(x=20, y=15)
 
-labelCity = ttk.Label(tabELFcreation, text="City").place(x=20, y=35)
-inputCity = ttk.Entry(tabELFcreation, width=9)
-inputCity.place(x=115, y=35)
+labelCity = ttk.Label(tabELFcreation, text="City").place(x=20, y=40)
+inputCity = ttk.Entry(tabELFcreation, width=12)
+inputCity.place(x=115, y=40)
 inputCity.insert(0, "Benton")
 
-labelState = ttk.Label(tabELFcreation, text="State").place(x=20, y=55)
-inputState = ttk.Entry(tabELFcreation, width=9)
-inputState.place(x=115, y=55)
+labelState = ttk.Label(tabELFcreation, text="State").place(x=20, y=62)
+inputState = ttk.Entry(tabELFcreation, width=12)
+inputState.place(x=115, y=62)
 inputState.insert(0, "KY")
 
-labelCountry = ttk.Label(tabELFcreation, text="Country").place(x=20, y=75)
-inputCountry = ttk.Entry(tabELFcreation, width=9)
-inputCountry.place(x=115, y=75)
+labelCountry = ttk.Label(tabELFcreation, text="Country").place(x=20, y=84)
+inputCountry = ttk.Entry(tabELFcreation, width=12)
+inputCountry.place(x=115, y=84)
 inputCountry.insert(0, "USA")
 
-labelGeoPointSource = ttk.Label(tabELFcreation, text="GeopointSource").place(x=20, y=95)
-inputGeopointSource = ttk.Entry(tabELFcreation, width=9)
-inputGeopointSource.place(x=115, y=95)
+labelZip = ttk.Label(tabELFcreation, text="Zip Code").place(x=20, y=106)
+inputZip = ttk.Entry(tabELFcreation, width=12)
+inputZip.place(x=115,y=106)
+inputZip.insert(0, "42001")
+
+labelGeoPointSource = ttk.Label(tabELFcreation, text="GeopointSource").place(x=20, y=128)
+inputGeopointSource = ttk.Entry(tabELFcreation, width=12)
+inputGeopointSource.place(x=115, y=128)
 inputGeopointSource.insert(0, "CIS")
 
-labelMarket = ttk.Label(tabELFcreation, text="Market").place(x=20, y=115)
-inputMarket = ttk.Entry(tabELFcreation, width=9)
-inputMarket.place(x=115, y=115)
+labelMarket = ttk.Label(tabELFcreation, text="Market").place(x=20, y=150)
+inputMarket = ttk.Entry(tabELFcreation, width=12)
+inputMarket.place(x=115, y=150)
 inputMarket.insert(0, "W")
 
 #default console widgets
