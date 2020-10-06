@@ -11,30 +11,29 @@ Current features of this tool include:
 - [x] Identify all read type codes and their counts
 - [x] Print Office-Region-Zone fields for debugging
 - [x] Check for malformed lat/long data
-- [x] Perform full scans of download files
 - [x] Save any parsed data as .txt or .csv
 - [x] Logging system
-- [x] Populate meter records with temp data
+- [x] Create ELF file from download file
 
 Future improvements include:
 - [ ] Modifying download files safely from the command line
 - [ ] Standalone scripts for each operation included
 - [ ] General UI improvements
-- [ ] Create ELF file from download file
+
 
 ## User Interface
 Currently, the main focus of development is an easy-to-use UI that requires no external libraries. Written in pure python using the tkinter library. 
 
-![GUI](https://imgur.com/EJWVkok.png)
+![GUI](https://imgur.com/oIk9ejv.png)
 
-![GUI2](https://imgur.com/NjGBLV6.png)
+![GUI2](https://imgur.com/qm9E6Sx.png)
 
-![GUI3](https://imgur.com/NyeOJss.png)
+![GUI3](https://imgur.com/nrHMwxp.png)
 
 ## Dependencies
-Currently, the tool has moved away from a command-line collection of scripts and towards a UI-based tool which allows for a number of more practical features. Despite this move towards verbosity, there are still no third-party depenencies within the tool; simply install Python and double click 'USSdatFileTool.py' to get started using the tool. 
+Currently, the tool has moved away from a command-line collection of scripts and towards a UI-based tool which allows for a number of more practical features. Despite this move towards verbosity, there are still no third-party depenencies within the tool -- simply install Python and double click 'USSdatFileTool.py' to get started using the tool. 
 
-This will be the focus moving forward, and any iteration of the tool that includes third-party libraries will be clearly delineated. 
+This will be the focus moving forward, and any iteration of the tool that includes third-party libraries will be a separate build. 
 
 ## Installation and Usage
 To use the tool, simply install the most recent version of Python (3.X) from https://www.python.org/downloads/ and ensure that Python exists in the PATH. 
@@ -49,7 +48,7 @@ The tool also has a logging system to help identify errors in both the tool and 
 
 ## 
 
-Currently, the tool support saving any information currently in the console as a .txt, .csv, and .py file. To request additional filetypes be added, contact me at the email address below or make a pull request. 
+Currently, the tool support saving any information currently in the console as a .txt, .csv, and .xls file. To request additional filetypes be added, contact me at the email address below or make a pull request. 
 
 ##
 
