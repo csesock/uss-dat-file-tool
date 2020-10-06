@@ -8,9 +8,9 @@ from collections import deque
 from datetime import datetime
 import sys, os, re, time, csv
 try:
-    import Logging, Searching 
+    import Logging
+    #import Searching
 except:
-    #print("Logging system files not found -- to enable logging please place Logging.py in the default directory")
     print("something broke")
     pass
 
@@ -291,49 +291,6 @@ def checkMalformedLatLong(event=None):
     except FileNotFoundError:
         fileNotFoundError2()
 
-def checkLatLongSigns(event=None):
-    Logging.writeToLogs("Start Function Call - checkLatLongSigns()")
-    try:
-        with open(download_filename, 'r') as openfile:
-            for line in openfile:
-                if line.startswith('MTX'):
-                    lat_data = float(line[23:40].rstrip())
-                    long_data = float(line[40:57].rstrip())
-                    if lat_data < 27 or lat_data > 50 or long_data < -100 or long_data > -70:
-                        latLongConsole.delete(1.0, "end")
-                        latLongConsole.insert(1.0, "The lat/long signs are incorrect.")
-                        return
-                    else:
-                        latLongConsole.delete(1.0, "end")
-                        latLongConsole.insert(1.0, "The lat/long signs are correct:")
-                        latLongConsole.insert(2.0, "\n")
-                        latLongConsole.insert(2.0, "Latitude Sign: Positive")
-                        latLongConsole.insert(3.0, "\n")
-                        latLongConsole.insert(3.0, "Longitude Sign: Negative")
-                        return
-            latLongConsole.delete(1.0, "end")
-            latLongConsole.insert(1.0, "No lat/long data detected.")
-        Logging.writeToLogs("End Function Call - checkLatLongSigns()")
-    except FileNotFoundError:
-        fileNotFoundError2()
-
-def checkLatLongExists(event=None):
-    latLongConsole.delete(1.0, "end")
-    try:
-        with open(download_filename, 'r') as openfile:
-            for line in openfile:
-                if line.startswith('MTX'):
-                    latLongConsole.delete(1.0, "end")
-                    latLongConsole.insert(1.0, "Sample Lat/Long Data:")
-                    latLongConsole.insert(2.0, "\n")
-                    latLongConsole.insert(2.0, "Lattitude: " + str(line[23:40]))
-                    latLongConsole.insert(3.0, "\n")
-                    latLongConsole.insert(3.0, "Longitude: " + str(line[40:57]))
-                    return
-            latLongConsole.insert(1.0, "No lat/long data detected.")
-    except FileNotFoundError:
-        fileNotFoundError2()
-
 def printAllLatLongData(event=None):
     counter = 1.0
     total_latlong = 0
@@ -395,57 +352,24 @@ def createELFfile(event=None):
                         address = line[54:94]
                     if line.startswith('RFF'):
                         ert = line[11:21]
-                        #elfline = ert+','+address+',Benton,KY,USA,42001,0,0,CIS,W'+'\n'
                         elfline = ert + ',' + address + ',' + inputCity.get() + ',' + inputState.get() + ',' + inputCountry.get() + ',' + inputZip.get() + ',' + '0,0' + ',' + inputGeopointSource.get() + ',' + inputMarket.get() + ',' + '\n'
                         builtfile.write(elfline)
         messagebox.showinfo("ELF File Created", "ELF file successfully created in root directory of tool.")
     except FileNotFoundError:
         fileNotFoundError3()
 
-def compareReads():
+def printERTs(event=None):
     try:
         with open(download_filename, 'r') as openfile:
+            counter = 1.0
             for line in openfile:
-                if line.startswith('RDG'):
-                    formatted_read = line[33:43]
-                    print("formatted: \t" + formatted_read)
                 if line.startswith('RFF'):
-                    raw_read = line[72:82]
-                    print("raw read: \t"+ raw_read)
-    except FileNotFoundError:
-        fileNotFoundError3()
-
-def validateAllRecords(event=None):
-    answer = messagebox.askokcancel("Confirmation", "All records in the file will be validated to fit Itron's format specifications. \nThis may take some time. ")
-    if answer == None or answer == False:
-        return
-    try:
-        with open(download_filename, 'r') as openfile:
-            bocConsole.delete(1.0, 'end')
-            bocConsole.insert(1.0, "Invalid Records")
-            counter = 2.0
-            lines_validated = 0
-            lines_failed = 0
-            for line in openfile:
-                if validateRecord(line) == False:
-                    #if line is an invalid record, print to console
-                    bocConsole.insert(counter, line)
-                    lines_failed+=1
-                else:
-                    lines_validated+=1
-            print("Lines validated: ", lines_validated)
-            print("Lines failed: ", lines_failed)
-    except FileNotFoundError:
+                    ert = line[11:21]
+                    advConsole.insert(counter, ert)
+                    advConsole.insert('end', '\n')
+                    counter+=1
+    except:
         fileNotFoundError()
-    
-def validateRecord(line, event=None):
-    if line.startswith("CUS"):
-        route_number = line[3:11]
-        flag = isinstance(route_number, int)
-        if flag:
-            return True
-    return False                 
-
 
 def getCustomerRecordLength():
     try:
@@ -462,21 +386,14 @@ def getCustomerRecordLength():
     except FileNotFoundError:
         fileNotFoundError()       
 
-def clearBOCConsole():
-    bocConsole.delete(1.0, "end")
-
-def clearLatLongConsole():
-    latLongConsole.delete(1.0, "end")
-
-def clearELFConsole():
-    ELFConsole.delete(1.0, "end")
-
 def save():
     Logging.writeToLogs('Start Function Call - save()')
     export_filename = "DatFileToolExport " + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + ".txt"
     with open("exports\\"+export_filename, 'w') as openfile:
         if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
             text2save = str(bocConsole.get(1.0, "end"))
+        elif TAB_CONTROL.index(TAB_CONTROL.select()) == 1:
+            text2save = str(advConsole.get(1.0, "end"))
         else:
             text2save = str(latLongConsole.get(1.0, "end"))
         openfile.write(text2save)
@@ -492,6 +409,8 @@ def saveAs():
         return
     if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
         text2save = str(bocConsole.get(1.0, "end"))
+    elif TAB_CONTROL.index(TAB_CONTROL.select()) == 1:
+        text2save = str(advConsole.get(1.0, "end"))
     else:
         text2save = str(latLongConsole.get(1.0, "end"))
     if f.name.endswith('.csv'):
@@ -544,20 +463,22 @@ def resetWindow():
     height = window.winfo_screenheight()/3
     width = window.winfo_screenwidth()/3
     window.geometry('780x330+%d+%d' %(width, height)) #reset height must be height-20 to account for the menu being created at this point
-    bocConsole.delete(1.0, "end")
-    bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.1]")
-    bocConsole.insert(2.0, "\n")
-    bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
-    bocConsole.insert(3.0, "\n")
-    latLongConsole.delete(1.0, "end")
-    latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.1]")
-    latLongConsole.insert(2.0, "\n")
-    latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
-    latLongConsole.insert(3.0, "\n")
 
 def changeTheme(theme):
     s = ttk.Style()
     s.theme_use(theme)
+
+def clearConsole(tab):
+    if tab==1:
+        bocConsole.delete(1.0, "end")
+    elif tab==2:
+        advConsole.delete(1.0, "end")
+    elif tab==3:
+        latLongConsole.delete(1.0, "end")
+    elif tab==4:
+        ELFConsole.delete(1.0, "end")
+    else:
+        return 
 
 def fileNotFoundError():
     bocConsole.delete(1.0, "end")
@@ -572,7 +493,7 @@ def fileNotFoundError3():
     ELFConsole.insert(1.0, "ERROR: FILE NOT FOUND")
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.6.1 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2020-08-13:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
+    dialog = """ Author: Chris Sesock \n Version: 1.6.1 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2020-10-06:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
              """
     messagebox.showinfo("About", dialog)
 
@@ -580,17 +501,17 @@ def aboutDialog():
 TAB_CONTROL = ttk.Notebook(window)
 # Basic Operations tab
 tabBasicOperations = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tabBasicOperations, text='Validation Tools')
+TAB_CONTROL.add(tabBasicOperations, text='Basic Operations')
 # Advanced tab
 tabAdvanced = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tabAdvanced, text="Advanced Tools")
+TAB_CONTROL.add(tabAdvanced, text="Advanced Operations")
 # Lat/Long tab
 tabLatLong = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tabLatLong, text="Lat/Long Tools")
+TAB_CONTROL.add(tabLatLong, text="Lat/Long Operations")
 TAB_CONTROL.pack(expand=1, fill="both")
 # File Operations tab
 tabELFcreation = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tabELFcreation, text="ELF Tools")
+TAB_CONTROL.add(tabELFcreation, text="ELF Creator")
 TAB_CONTROL.pack(expand=1, fill="both")
 # Settings tab
 tabDeveloper = ttk.Frame(TAB_CONTROL)
@@ -622,8 +543,7 @@ PrintReadTypeButton = ttk.Button(tabBasicOperations, text="Read Type Codes", com
 btnReadDirectionNumkey4 = ttk.Button(tabBasicOperations, text="7.", width=1.5, command=lambda:getReadDirections()).place(x=20, y=248)
 btnReadDirection = ttk.Button(tabBasicOperations, text="Read Direction", width=BUTTON_WIDTH, command=lambda:getReadDirections()).place(x=50, y=248)
 
-currentlabel = ttk.Label(tabBasicOperations, text="Current file: ")
-currentlabel.place(x=220, y=20)
+currentlabel = ttk.Label(tabBasicOperations, text="Current file: ").place(x=220, y=20)
 
 text = tk.StringVar()
 if os.path.isfile('download.dat'):
@@ -633,7 +553,7 @@ else:
 label = ttk.Label(tabBasicOperations, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
 
 btnConsoleSave = ttk.Button(tabBasicOperations, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
-btnConsoleClear = ttk.Button(tabBasicOperations, text="clear", width=4.25, command=lambda:clearBOCConsole()).place(x=717, y=6)
+btnConsoleClear = ttk.Button(tabBasicOperations, text="clear", width=4.25, command=lambda:clearConsole(1)).place(x=717, y=6)
 
 bocConsole = tk.Text(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
                     insertborderwidth=7, undo=True, bd=3)
@@ -649,10 +569,25 @@ bocConsole.insert(3.0, "\n")
 #################
 
 btnAdvNumkey1 = ttk.Button(tabAdvanced, text="1.", width=1.5).place(x=20, y=35)
-btnPrintERTs = ttk.Button(tabAdvanced, text="Find All ERTs", width=BUTTON_WIDTH).place(x=50, y=35)
+btnPrintERTs = ttk.Button(tabAdvanced, text="Find All ERTs", width=BUTTON_WIDTH, command=lambda:printERTs()).place(x=50, y=35)
 
 btnAdvNumkey2 = ttk.Button(tabAdvanced, text="2.", width=1.5).place(x=20, y=76)
 btnCustomerReport = ttk.Button(tabAdvanced, text="Customer Report", width=BUTTON_WIDTH).place(x=50, y=76)
+
+label3 = ttk.Label(tabAdvanced, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
+
+btnConsoleSave3 = ttk.Button(tabAdvanced, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
+btnConsoleClear3 = ttk.Button(tabAdvanced, text="clear", width=4.25, command=lambda:clearConsole(2)).place(x=717, y=6)
+
+currentlabeladv = ttk.Label(tabAdvanced, text="Current file: ").place(x=220, y=20)
+advConsole = tk.Text(tabAdvanced, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
+                    insertborderwidth=7, undo=True, bd=3)
+advConsole.place(x=220, y=42)
+advConsole.configure(font=consoleFont)
+advConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.1]")
+advConsole.insert(2.0, "\n")
+advConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
+advConsole.insert(3.0, "\n")
 
 #################
 ##Lat/Long Tab###
@@ -683,20 +618,12 @@ latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
 
 btnConsoleSave = ttk.Button(tabLatLong, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
-btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=lambda:clearLatLongConsole()).place(x=717, y=6)
+btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=lambda:clearConsole(3)).place(x=717, y=6)
 
 ########################
 ###ELF Tab Widgets######
 ########################
 
-#tab widgets
-#btnPopulateMissingMetersNumKey1 = ttk.Button(tabELFcreation, text="1.", width=1.5, command=lambda:populateMissingMeters()).place(x=20, y=35)
-#btnPopulateMissingMeters = ttk.Button(tabELFcreation, text="Populate Missing Meters", width=27, command=lambda:populateMissingMeters()).place(x=20, y=220)
-
-#btnCheckForELFCompatibilityNumKey2 = ttk.Button(tabELFcreation, text="2.", width=1.5).place(x=20, y=76)
-#btnCheckForELFCompatibility = ttk.Button(tabELFcreation, text="Validate All Records", width=BUTTON_WIDTH, command=lambda:validateAllRecords()).place(x=50, y=76)
-
-#btnCompareRawFormatted = ttk.Button(tabELFcreation, text="Compare Reads", width=BUTTON_WIDTH, command=lambda:compareReads()).place(x=50, y=158)
 btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=27, command=lambda:createELFfile()).place(x=20, y=180)
 
 labelAutoPopulate = ttk.Label(tabELFcreation, text="Fields to auto-populate", font=labelFont).place(x=20, y=15)
@@ -736,7 +663,7 @@ labelCurrentFileELF = ttk.Label(tabELFcreation, text="Current file: ").place(x=2
 labelELF = ttk.Label(tabELFcreation, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
 
 btnELFsave = ttk.Button(tabELFcreation, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
-btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearELFConsole()).place(x=717, y=6)
+btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearConsole(4)).place(x=717, y=6)
 
 ELFConsole = tk.Text(tabELFcreation, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
                     insertborderwidth=7, undo=True, bd=3)

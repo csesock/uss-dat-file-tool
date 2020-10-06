@@ -6,8 +6,8 @@ def searchFront(download_filename, to_search, condition=None):
 	with open(download_filename, 'r') as openfile:
 		for line in openfile:
 			if line.startswith(to_search):
-                                records.append(line)
-                return records 
+                records.append(line)
+        return records
 				
 
 def searchMiddle(download_filename, to_search, index1, index2):
