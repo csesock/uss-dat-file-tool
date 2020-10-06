@@ -71,6 +71,8 @@ window.bind('<F11>', lambda event: resizeWindow())
 ##File Functions###
 ###################
 
+# BOC tab functions
+
 def disallowedCharacters(event=None):
     Logging.writeToLogs('Start Function Call - disallowedCharacters()')
     counter = 0
@@ -94,7 +96,7 @@ def disallowedCharacters(event=None):
                 bocConsole.insert('end', "Disallowed characters include: * < > \\ / \"")
         Logging.writeToLogs('End Function Call - disallowedCharacters()')
     except FileNotFoundError:
-        fileNotFoundError()
+        fileNotFoundError(1)
 
 def searchRecords(event=None):
     Logging.writeToLogs('Start Function Call - searchRecords()')
@@ -124,7 +126,7 @@ def searchRecords(event=None):
                             counter+=1
         Logging.writeToLogs('End Function Call - searchRecords()')
     except FileNotFoundError:
-        fileNotFoundError()
+        fileNotFoundError(1)
         
 def officeRegionZone(event=None):
     # region then zone then office
@@ -157,7 +159,7 @@ def officeRegionZone(event=None):
                     return
         Logging.writeToLogs('End Function Call - officeRegionZone()')
     except FileNotFoundError:
-        fileNotFoundError()
+        fileNotFoundError(1)
         
 def scanAllRecordsVerbose(event=None):
     Logging.writeToLogs('Start Function Call - scanAllRecordsVerbose()')
@@ -185,7 +187,7 @@ def scanAllRecordsVerbose(event=None):
             bocConsole.insert(counter, "----------------------")
         Logging.writeToLogs('End Function Call - scanAllRecordsVerbose()')
     except FileNotFoundError:
-        fileNotFoundError()
+        fileNotFoundError(1)
 
 def missingMeters(event=None):
     Logging.writeToLogs('Start Function Call - missingMeters()')
@@ -210,7 +212,7 @@ def missingMeters(event=None):
                 return
         Logging.writeToLogs('End Function Call - missingMeters()')
     except FileNotFoundError:
-        fileNotFoundError()
+        fileNotFoundError(1)
 
 def printReadType(event=None):
     Logging.writeToLogs('Start Function Call - printReadType()')
@@ -238,7 +240,7 @@ def printReadType(event=None):
                 bocConsole.insert("end", counter)
         Logging.writeToLogs('End Function Call - printReadType()')
     except FileNotFoundError:
-        fileNotFoundError()
+        fileNotFoundError(1)
 
 def printReadTypeVerbose(event=None):
     Logging.writeToLogs("Start Function Call - printReadTypeVerbose()")
@@ -267,51 +269,7 @@ def printReadTypeVerbose(event=None):
             bocConsole.insert(counter, "----------------------")
         Logging.writeToLogs("End Function Call - printReadTypeVerbose()")
     except FileNotFoundError:
-        fileNotFoundError()
-
-def checkMalformedLatLong(event=None):
-    Logging.writeToLogs("Start Function Call - checkMalformedLatLong()")
-    line_number = 1
-    try:
-        with open(download_filename, 'r') as openfile:
-            for line in openfile:
-                if line.startswith('MTX'):
-                    lat_data = line[23:40].rstrip()
-                    long_data = line[40:57].rstrip()
-                    if not pattern_lat_long.match(lat_data) and not pattern_lat_long.match(long_data):
-                        latLongConsole.delete(1.0, "end")
-                        latLongConsole.insert(1.0, "Malformed lat/long data at line: " + str(line_number))
-                        latLongConsole.insert(2.0, "\n")
-                        latLongConsole.insert(2.0, "Line: " + line)
-                        return
-                line_number+=1
-            latLongConsole.delete(1.0, "end")
-            latLongConsole.insert(1.0, "No malformation within lat/long data detected.")
-        Logging.writeToLogs("End Function Call - checkMalformedLatLong()")
-    except FileNotFoundError:
-        fileNotFoundError2()
-
-def printAllLatLongData(event=None):
-    counter = 1.0
-    total_latlong = 0
-    line_number = 1
-    try:
-        with open(download_filename, 'r') as openfile:
-            latLongConsole.delete(1.0, "end")
-            for line in openfile:
-                if line.startswith('MTX'):
-                    lat_data = line[23:40].rstrip()
-                    long_data = line[40:57].rstrip()
-                    if pattern_lat_long.match(lat_data) and pattern_lat_long.match(long_data):
-                        latLongConsole.insert(counter, str(line_number)+" "+line)
-                        latLongConsole.insert(counter+1, "\n")
-                        total_latlong+=1
-                counter+=1
-                line_number+=1
-            if total_latlong == 0:
-                latLongConsole.insert(1.0, "There was no lat/long data found.")
-    except FileNotFoundError:
-        fileNotFoundError2()
+        fileNotFoundError(1)
 
 def getReadDirections(event=None):
     cc = {}
@@ -335,7 +293,53 @@ def getReadDirections(event=None):
                 counter+=1.0
             bocConsole.insert(counter, "-------------------")
     except FileNotFoundError:
-        fileNotFoundError()
+        fileNotFoundError(1)
+
+# Lat/Long tab functions
+
+def checkMalformedLatLong(event=None):
+    Logging.writeToLogs("Start Function Call - checkMalformedLatLong()")
+    line_number = 1
+    try:
+        with open(download_filename, 'r') as openfile:
+            for line in openfile:
+                if line.startswith('MTX'):
+                    lat_data = line[23:40].rstrip()
+                    long_data = line[40:57].rstrip()
+                    if not pattern_lat_long.match(lat_data) and not pattern_lat_long.match(long_data):
+                        latLongConsole.delete(1.0, "end")
+                        latLongConsole.insert(1.0, "Malformed lat/long data at line: " + str(line_number))
+                        latLongConsole.insert(2.0, "\n")
+                        latLongConsole.insert(2.0, "Line: " + line)
+                        return
+                line_number+=1
+            latLongConsole.delete(1.0, "end")
+            latLongConsole.insert(1.0, "No malformation within lat/long data detected.")
+        Logging.writeToLogs("End Function Call - checkMalformedLatLong()")
+    except FileNotFoundError:
+        fileNotFoundError(3)
+
+def printAllLatLongData(event=None):
+    counter = 1.0
+    total_latlong = 0
+    line_number = 1
+    try:
+        with open(download_filename, 'r') as openfile:
+            latLongConsole.delete(1.0, "end")
+            for line in openfile:
+                if line.startswith('MTX'):
+                    lat_data = line[23:40].rstrip()
+                    long_data = line[40:57].rstrip()
+                    if pattern_lat_long.match(lat_data) and pattern_lat_long.match(long_data):
+                        latLongConsole.insert(counter, str(line_number)+" "+line)
+                        latLongConsole.insert(counter+1, "\n")
+                        total_latlong+=1
+                counter+=1
+                line_number+=1
+            if total_latlong == 0:
+                latLongConsole.insert(1.0, "There was no lat/long data found.")
+    except FileNotFoundError:
+        fileNotFoundError(3)
 
 def createELFfile(event=None):
     answer = messagebox.askokcancel("Confirmation", "All possible fields will be formatted into an ELF file.\nRFF records must exist and must match a customer record.")
@@ -356,11 +360,12 @@ def createELFfile(event=None):
                         builtfile.write(elfline)
         messagebox.showinfo("ELF File Created", "ELF file successfully created in root directory of tool.")
     except FileNotFoundError:
-        fileNotFoundError3()
+        fileNotFoundError(4)
 
 def printERTs(event=None):
     try:
         with open(download_filename, 'r') as openfile:
+            advConsole.delete(1.0, "end")
             counter = 1.0
             for line in openfile:
                 if line.startswith('RFF'):
@@ -369,7 +374,7 @@ def printERTs(event=None):
                     advConsole.insert('end', '\n')
                     counter+=1
     except:
-        fileNotFoundError()
+        fileNotFoundError(2)
 
 def getCustomerRecordLength():
     try:
@@ -384,7 +389,7 @@ def getCustomerRecordLength():
                     length = (end_line-start_line)+1
                     return length
     except FileNotFoundError:
-        fileNotFoundError()       
+        fileNotFoundError(1)       
 
 def save():
     Logging.writeToLogs('Start Function Call - save()')
@@ -440,7 +445,7 @@ def populateMissingMeters(event=None):
     except FileExistsError:
         messagebox.showinfo("Error", "A populated download file already exists in the directory")
     except FileNotFoundError:
-        fileNotFoundError3()
+        fileNotFoundError(2)
 
 def openFile():
     Logging.writeToLogs('Start Function Call - openFile()')
@@ -480,17 +485,21 @@ def clearConsole(tab):
     else:
         return 
 
-def fileNotFoundError():
-    bocConsole.delete(1.0, "end")
-    bocConsole.insert(1.0, "ERROR: FILE NOT FOUND")
-
-def fileNotFoundError2():
-    latLongConsole.delete(1.0, "end")
-    latLongConsole.insert(1.0, "ERROR: FILE NOT FOUND")
-
-def fileNotFoundError3():
-    ELFConsole.delete(1.0, "end")
-    ELFConsole.insert(1.0, "ERROR: FILE NOT FOUND")
+def fileNotFoundError(tab):
+    if tab==1:
+        bocConsole.delete(1.0, "end")
+        bocConsole.insert(1.0, "ERROR: FILE NOT FOUND")
+    elif tab==2:
+        advConsole.delete(1.0, "end")
+        advConsole.insert(1.0, "ERROR: FILE NOT FOUND")
+    elif tab==3:
+        latLongConsole.delete(1.0, "end")
+        latLongConsole.insert(1.0, "ERROR: FILE NOT FOUND")
+    elif tab==4:
+        ELFConsole.delete(1.0, "end")
+        ELFConsole.insert(1.0, "ERROR: FILE NOT FOUND")
+    else:
+        return
 
 def aboutDialog():
     dialog = """ Author: Chris Sesock \n Version: 1.6.1 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2020-10-06:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
@@ -725,7 +734,7 @@ filemenu.add_command(label="Exit", accelerator='Alt+F4', command=lambda:window.d
 menubar.add_cascade(label="File", menu=filemenu)
 
 editmenu = tk.Menu(menubar, tearoff=0)
-editmenu.add_command(label="Clear Console", accelerator="Ctrl+C", command=lambda:clearBOCConsole())
+editmenu.add_command(label="Clear Console", accelerator="Ctrl+C", command=lambda:clearConsole())
 
 submenu = Menu(editmenu)
 
