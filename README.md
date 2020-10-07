@@ -1,7 +1,6 @@
 # United Systems .dat File Tool
 
-This tool combines a number of python scripts into one singular package that helps with easily parsing, testing, and modifying
-download and upload files for use with both MVRS and FCS. 
+This tool combines a number of Python scripts into a single tool that allows users to easily parse, modify, and create new data from host download and upload files for use with Itron smart metering systems. 
 
 ## Features
 Current features of this tool include:
