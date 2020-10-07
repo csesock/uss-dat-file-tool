@@ -358,22 +358,80 @@ def createELFfile(event=None):
                         ert = line[11:21]
                         elfline = ert + ',' + address + ',' + inputCity.get() + ',' + inputState.get() + ',' + inputCountry.get() + ',' + inputZip.get() + ',' + '0,0' + ',' + inputGeopointSource.get() + ',' + inputMarket.get() + ',' + '\n'
                         builtfile.write(elfline)
-        messagebox.showinfo("ELF File Created", "ELF file successfully created in root directory of tool.")
+        messagebox.showinfo("Success", "ELF file successfully created in the \\exports folder.")
     except FileNotFoundError:
         fileNotFoundError(4)
 
-def printERTs(event=None):
+def ERTsummary(event=None):
+    lengths = {}
     try:
         with open(download_filename, 'r') as openfile:
+            counter = 3.0
+            for line in openfile:
+                if line.startswith('RFF'):
+                    ert = line[11:21].strip() #max possible length of ERT
+                    length = len(ert)
+                    if length not in lengths:
+                        lengths[length]=1
+                    else:
+                        lengths[length]+=1
             advConsole.delete(1.0, "end")
-            counter = 1.0
+            advConsole.insert(1.0, "ERT Length Summary\n")
+            advConsole.insert(2.0, "-----------------\n")
+            for l in lengths:
+                advConsole.insert(counter, str(l)+". . . :\t"+str(lengths[l])+"\n")
+                counter+=1.0
+            advConsole.insert(counter, "-----------------\n")
+            #advConsole.insert(5.0, "All ERTs...\n")
+            printERTs(counter+1)
+    except FileNotFoundError:
+        fileNotFoundError(2)
+
+def printERTs(counter, event=None):
+    try:
+        with open(download_filename, 'r') as openfile:
             for line in openfile:
                 if line.startswith('RFF'):
                     ert = line[11:21]
                     advConsole.insert(counter, ert)
                     advConsole.insert('end', '\n')
-                    counter+=1
+                    counter+=1.0
     except:
+        fileNotFoundError(2)
+
+def CustomerReport():
+    confirmation = messagebox.askokcancel("Confirmation", "To build this report, CUS, MTR, and RFF records must exist for all customers or else data will be ommitted.")
+    if confirmation == None or confirmation == False:
+        return 
+    try:
+        with open(download_filename, 'r') as openfile:
+            customer = ""
+            meter = ""
+            ert = ""
+            counter = 4.0
+            advConsole.delete(1.0, "end")
+            advConsole.insert(1.0, "Customer Report\n")
+            advConsole.insert(2.0, datetime.today().strftime('%Y-%m-%d_%H-%M\n'))
+            advConsole.insert(3.0, "------------------------\n")
+            for line in openfile:
+                # (1) account number : CUS [15:34] -> [14:34]
+                # (2) meter number   : MTR [46:57] -> [45:57]
+                # (3) ERT number     : RFF [12:21] -> [11:21]
+                if line.startswith('CUS'):
+                    customer = line[14:34].strip()
+                if line.startswith('MTR'):
+                    meter = line[45:57].strip()
+                if line.startswith('RFF'):
+                    ert = line[11:21].strip()
+                    advConsole.insert(counter, "Customer. . :\t"+customer+"\n")
+                    counter+=1
+                    advConsole.insert(counter, "Meter. . . .:\t"+meter+"\n")
+                    counter+=1
+                    advConsole.insert(counter, "ERT. . . . .:\t"+ert+"\n")
+                    counter+=1
+                    advConsole.insert(counter, "\n")
+                    counter+=1
+    except FileNotFoundError:
         fileNotFoundError(2)
 
 def getCustomerRecordLength():
@@ -482,6 +540,13 @@ def clearConsole(tab):
         latLongConsole.delete(1.0, "end")
     elif tab==4:
         ELFConsole.delete(1.0, "end")
+        # these throwing 'bad index' errors??
+        # inputCity.delete(1.0, "end")
+        # inputState.delete(1.0, "end")
+        # inputCountry.delete(1.0, "end")
+        # inputZip.delete(1.0, "end")
+        # inputGeopointSource.delete(1.0, "end")
+        # inputMarket.delete(1.0, "end")
     else:
         return 
 
@@ -577,11 +642,11 @@ bocConsole.insert(3.0, "\n")
 ## Advanced Tab #
 #################
 
-btnAdvNumkey1 = ttk.Button(tabAdvanced, text="1.", width=1.5).place(x=20, y=35)
-btnPrintERTs = ttk.Button(tabAdvanced, text="Find All ERTs", width=BUTTON_WIDTH, command=lambda:printERTs()).place(x=50, y=35)
+btnAdvNumkey1 = ttk.Button(tabAdvanced, text="1.", width=1.5, command=lambda:ERTsummary()).place(x=20, y=35)
+btnPrintERTs = ttk.Button(tabAdvanced, text="Find All ERTs", width=BUTTON_WIDTH, command=lambda:ERTsummary()).place(x=50, y=35)
 
-btnAdvNumkey2 = ttk.Button(tabAdvanced, text="2.", width=1.5).place(x=20, y=76)
-btnCustomerReport = ttk.Button(tabAdvanced, text="Customer Report", width=BUTTON_WIDTH).place(x=50, y=76)
+btnAdvNumkey2 = ttk.Button(tabAdvanced, text="2.", width=1.5, command=lambda:CustomerReport()).place(x=20, y=76)
+btnCustomerReport = ttk.Button(tabAdvanced, text="Customer Report", width=BUTTON_WIDTH, command=lambda:CustomerReport()).place(x=50, y=76)
 
 label3 = ttk.Label(tabAdvanced, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
 
@@ -701,8 +766,12 @@ tab2defaultsaveentry.insert(0, '\\exports')
 tab2defaultsaveentry.place(x=155, y=78)
 
 tab2enforcebutton = ttk.Checkbutton(tabDeveloper, text="Enforce filetype imports")
-tab2enforcebutton.place(x=20, y=100)
+tab2enforcebutton.place(x=20, y=110)
 
+checkAutoExportExcel = ttk.Checkbutton(tabDeveloper, text="Automatically Export Customer Report as .csv")
+checkAutoExportExcel.place(x=20, y=130)
+
+# image
 label=ttk.Label(tabDeveloper, image=photo)
 label.image = photo
 label.place(x=650, y=180)
@@ -734,7 +803,7 @@ filemenu.add_command(label="Exit", accelerator='Alt+F4', command=lambda:window.d
 menubar.add_cascade(label="File", menu=filemenu)
 
 editmenu = tk.Menu(menubar, tearoff=0)
-editmenu.add_command(label="Clear Console", accelerator="Ctrl+C", command=lambda:clearConsole())
+editmenu.add_command(label="Clear Console", accelerator="Ctrl+C", command=lambda:clearConsole(TAB_CONTROL.index(TAB_CONTROL.select())+1))
 
 submenu = Menu(editmenu)
 
