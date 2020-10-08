@@ -409,6 +409,7 @@ def CustomerReport():
             meter = ""
             ert = ""
             counter = 4.0
+            num_customers = 0
             advConsole.delete(1.0, "end")
             advConsole.insert(1.0, "Customer Report\n")
             advConsole.insert(2.0, datetime.today().strftime('%Y-%m-%d_%H-%M\n'))
@@ -431,6 +432,8 @@ def CustomerReport():
                     counter+=1
                     advConsole.insert(counter, "\n")
                     counter+=1
+                    num_customers+=1
+            advConsole.insert(counter+1, "Customers found: "+str(num_customers)+"\n")
     except FileNotFoundError:
         fileNotFoundError(2)
 
@@ -540,13 +543,6 @@ def clearConsole(tab):
         latLongConsole.delete(1.0, "end")
     elif tab==4:
         ELFConsole.delete(1.0, "end")
-        # these throwing 'bad index' errors??
-        # inputCity.delete(1.0, "end")
-        # inputState.delete(1.0, "end")
-        # inputCountry.delete(1.0, "end")
-        # inputZip.delete(1.0, "end")
-        # inputGeopointSource.delete(1.0, "end")
-        # inputMarket.delete(1.0, "end")
     else:
         return 
 
@@ -617,14 +613,14 @@ PrintReadTypeButton = ttk.Button(tabBasicOperations, text="Read Type Codes", com
 btnReadDirectionNumkey4 = ttk.Button(tabBasicOperations, text="7.", width=1.5, command=lambda:getReadDirections()).place(x=20, y=248)
 btnReadDirection = ttk.Button(tabBasicOperations, text="Read Direction", width=BUTTON_WIDTH, command=lambda:getReadDirections()).place(x=50, y=248)
 
-currentlabel = ttk.Label(tabBasicOperations, text="Current file: ").place(x=220, y=20)
-
 text = tk.StringVar()
 if os.path.isfile('download.dat'):
     text.set('download.dat')
 else:
     text.set('None')
-label = ttk.Label(tabBasicOperations, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
+
+labelCurrentTab1 = ttk.Label(tabBasicOperations, text="Current file: ").place(x=220, y=20)
+labelFileTab1 = ttk.Label(tabBasicOperations, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
 
 btnConsoleSave = ttk.Button(tabBasicOperations, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnConsoleClear = ttk.Button(tabBasicOperations, text="clear", width=4.25, command=lambda:clearConsole(1)).place(x=717, y=6)
@@ -648,12 +644,12 @@ btnPrintERTs = ttk.Button(tabAdvanced, text="Find All ERTs", width=BUTTON_WIDTH,
 btnAdvNumkey2 = ttk.Button(tabAdvanced, text="2.", width=1.5, command=lambda:CustomerReport()).place(x=20, y=76)
 btnCustomerReport = ttk.Button(tabAdvanced, text="Customer Report", width=BUTTON_WIDTH, command=lambda:CustomerReport()).place(x=50, y=76)
 
-label3 = ttk.Label(tabAdvanced, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
-
 btnConsoleSave3 = ttk.Button(tabAdvanced, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnConsoleClear3 = ttk.Button(tabAdvanced, text="clear", width=4.25, command=lambda:clearConsole(2)).place(x=717, y=6)
 
-currentlabeladv = ttk.Label(tabAdvanced, text="Current file: ").place(x=220, y=20)
+labelCurrentTab2 = ttk.Label(tabAdvanced, text="Current file: ").place(x=220, y=20)
+labelFileTab2 = ttk.Label(tabAdvanced, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
+
 advConsole = tk.Text(tabAdvanced, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
                     insertborderwidth=7, undo=True, bd=3)
 advConsole.place(x=220, y=42)
@@ -667,8 +663,8 @@ advConsole.insert(3.0, "\n")
 ##Lat/Long Tab###
 #################
 
-labelCurrentFileLatLong = ttk.Label(tabLatLong, text="Current file: ").place(x=220, y=20)
-labelFile = ttk.Label(tabLatLong, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
+labelCurrentTab3 = ttk.Label(tabLatLong, text="Current file: ").place(x=220, y=20)
+labelFileTab3 = ttk.Label(tabLatLong, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
 
 btnNumkeyLat3 = ttk.Button(tabLatLong, text="1.", width=1.5, command=lambda:checkMalformedLatLong()).place(x=20, y=35)
 btnLatMalformed = ttk.Button(tabLatLong, text="Malformed Lat/Long", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong()).place(x=50, y=35)
@@ -733,8 +729,8 @@ inputMarket.place(x=115, y=150)
 inputMarket.insert(0, "W")
 
 #default console widgets
-labelCurrentFileELF = ttk.Label(tabELFcreation, text="Current file: ").place(x=220, y=20)
-labelELF = ttk.Label(tabELFcreation, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
+labelCurrenTab4 = ttk.Label(tabELFcreation, text="Current file: ").place(x=220, y=20)
+labelFileTab4 = ttk.Label(tabELFcreation, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
 
 btnELFsave = ttk.Button(tabELFcreation, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearConsole(4)).place(x=717, y=6)
