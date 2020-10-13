@@ -6,7 +6,7 @@ from tkinter.font import Font
 
 from collections import deque
 from datetime import datetime
-import sys, os, re, time, csv
+import sys, os, re, time, csv, shutil
 try:
     import Logging
     #import Searching
@@ -520,6 +520,13 @@ def openFile():
     text.set(os.path.basename(download_filename))
     Logging.writeToLogs('Opened new file: ' + str(filename))
        
+def backupDownloadFilef():
+    if download_filename != 'download.dat':
+            shutil.copy(download_filename, os.getcwd())
+            return
+    filename = tk.filedialog.askopenfilename(title="Open File")
+    shutil.copy(filename, os.getcwd())
+
 def resizeWindow():
     width = window.winfo_screenwidth()
     height = window.winfo_screenheight()
@@ -769,6 +776,8 @@ tab2enforcebutton.place(x=20, y=110)
 
 checkAutoExportExcel = ttk.Checkbutton(tabDeveloper, text="Automatically Export Customer Report as .csv")
 checkAutoExportExcel.place(x=20, y=130)
+
+backupDownloadFile = ttk.Button(tabDeveloper, text="Backup Download File", command=lambda:backupDownloadFilef()).place(x=20, y=250)
 
 # image
 label=ttk.Label(tabDeveloper, image=photo)
