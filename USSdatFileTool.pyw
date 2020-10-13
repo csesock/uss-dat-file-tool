@@ -382,7 +382,6 @@ def ERTsummary(event=None):
                 advConsole.insert(counter, str(l)+". . . :\t"+str(lengths[l])+"\n")
                 counter+=1.0
             advConsole.insert(counter, "-----------------\n")
-            #advConsole.insert(5.0, "All ERTs...\n")
             printERTs(counter+1)
     except FileNotFoundError:
         fileNotFoundError(2)
@@ -496,13 +495,14 @@ def populateMissingMeters(event=None):
         return 
     try:
         with open(download_filename, 'r') as openfile:
-            with open('download -- populated meters.dat', 'w') as builtfile:
+            with open('exports\\download--populated meters.dat', 'w') as builtfile:
                 for line in openfile:
                     if line.startswith('MTR'):
                         meter_record = line[45:57]
                         if pattern_missing_meters.match(meter_record):
                             line = str(line[0:49]) + "11111" + str(line[54::]) #concatenate a new line with populated record
                     builtfile.write(line)
+            messagebox.showinfo("Success", "Download file successfully created in the \\exports folder.")
     except FileExistsError:
         messagebox.showinfo("Error", "A populated download file already exists in the directory")
     except FileNotFoundError:
@@ -643,6 +643,9 @@ btnPrintERTs = ttk.Button(tabAdvanced, text="Find All ERTs", width=BUTTON_WIDTH,
 
 btnAdvNumkey2 = ttk.Button(tabAdvanced, text="2.", width=1.5, command=lambda:CustomerReport()).place(x=20, y=76)
 btnCustomerReport = ttk.Button(tabAdvanced, text="Customer Report", width=BUTTON_WIDTH, command=lambda:CustomerReport()).place(x=50, y=76)
+
+btnAdvNumkey3 = ttk.Button(tabAdvanced, text="3.", width=1.5, command=lambda:populateMissingMeters()).place(x=20, y=117)
+btnPopulate = ttk.Button(tabAdvanced, text="Populate Missing Meters", width=BUTTON_WIDTH, command=lambda:populateMissingMeters()).place(x=50, y=117)
 
 btnConsoleSave3 = ttk.Button(tabAdvanced, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnConsoleClear3 = ttk.Button(tabAdvanced, text="clear", width=4.25, command=lambda:clearConsole(2)).place(x=717, y=6)
