@@ -51,12 +51,12 @@ except:
     pass
 
 #hotkey bindings
-window.bind('2', lambda event: scanAllRecordsVerbose())
-window.bind('3', lambda event: searchRecords())
-window.bind('4', lambda event: officeRegionZone())
-window.bind('5', lambda event: missingMeters())
-window.bind('6', lambda event: printReadType())
-window.bind('7', lambda event: checkMalformedLatLong())
+# window.bind('2', lambda event: scanAllRecordsVerbose())
+# window.bind('3', lambda event: searchRecords())
+# window.bind('4', lambda event: officeRegionZone())
+# window.bind('5', lambda event: missingMeters())
+# window.bind('6', lambda event: printReadTypeVerbose())
+# window.bind('7', lambda event: checkMalformedLatLong())
 
 #menu bindings
 window.bind('<Control-o>', lambda event: openFile())
@@ -211,34 +211,6 @@ def missingMeters(event=None):
                 bocConsole.insert(1.0, "No missing meters found in ["+os.path.basename(download_filename)+"]")
                 return
         Logging.writeToLogs('End Function Call - missingMeters()')
-    except FileNotFoundError:
-        fileNotFoundError(1)
-
-def printReadType(event=None):
-    Logging.writeToLogs('Start Function Call - printReadType()')
-    user_meter_code = simpledialog.askstring("Enter Record", "Enter the record type to search:", parent=window)
-    if user_meter_code is None:
-        return
-    user_meter_code = user_meter_code.upper()
-    counter = 0
-    current_record = deque(maxlen=getCustomerRecordLength()+1)
-    try:
-        with open(download_filename, 'r') as openfile:
-            bocConsole.delete(1.0, "end")
-            for line in openfile:
-                if line.startswith('RDG'):
-                    meter_code = line[76:78]
-                    if meter_code == user_meter_code:
-                        for record in current_record:
-                            if record.startswith('CUS'):
-                                bocConsole.insert("end", "{0} {1}".format(counter, record))
-                                counter+=1
-                current_record.append(line)
-            if counter == 0:
-                bocConsole.insert("end", "No meters of that type found.")
-            elif counter != 0:
-                bocConsole.insert("end", counter)
-        Logging.writeToLogs('End Function Call - printReadType()')
     except FileNotFoundError:
         fileNotFoundError(1)
 
@@ -524,7 +496,7 @@ def backupDownloadFilef():
     if download_filename != 'download.dat':
             shutil.copy(download_filename, os.getcwd())
             return
-    filename = tk.filedialog.askopenfilename(title="Open File")
+    filename = tk.filedialog.askopenfilename(title="Choose File to Backup")
     shutil.copy(filename, os.getcwd())
 
 def resizeWindow():
@@ -570,7 +542,7 @@ def fileNotFoundError(tab):
         return
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.6.1 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2020-10-06:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
+    dialog = """ Author: Chris Sesock \n Version: 1.6.2 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2020-10-13:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
              """
     messagebox.showinfo("About", dialog)
 
@@ -636,7 +608,7 @@ bocConsole = tk.Text(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WI
                     insertborderwidth=7, undo=True, bd=3)
 bocConsole.place(x=220, y=42)
 bocConsole.configure(font=consoleFont)
-bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.1]")
+bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.2]")
 bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
@@ -664,7 +636,7 @@ advConsole = tk.Text(tabAdvanced, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, ba
                     insertborderwidth=7, undo=True, bd=3)
 advConsole.place(x=220, y=42)
 advConsole.configure(font=consoleFont)
-advConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.1]")
+advConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.2]")
 advConsole.insert(2.0, "\n")
 advConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 advConsole.insert(3.0, "\n")
@@ -692,7 +664,7 @@ latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH,
                         insertborderwidth=7, undo=True, bd=3)
 latLongConsole.place(x=220, y=42)
 latLongConsole.configure(font=consoleFont)
-latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.1]")
+latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.2]")
 latLongConsole.insert(2.0, "\n")
 latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
@@ -726,7 +698,7 @@ inputCountry.insert(0, "USA")
 labelZip = ttk.Label(tabELFcreation, text="Zip Code").place(x=20, y=106)
 inputZip = ttk.Entry(tabELFcreation, width=12)
 inputZip.place(x=115,y=106)
-inputZip.insert(0, "42001")
+inputZip.insert(0, "42025")
 
 labelGeoPointSource = ttk.Label(tabELFcreation, text="GeopointSource").place(x=20, y=128)
 inputGeopointSource = ttk.Entry(tabELFcreation, width=12)
@@ -749,7 +721,7 @@ ELFConsole = tk.Text(tabELFcreation, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH,
                     insertborderwidth=7, undo=True, bd=3)
 ELFConsole.place(x=220, y=42)
 ELFConsole.configure(font=consoleFont)
-ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.1]")
+ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.2]")
 ELFConsole.insert(2.0, "\n")
 ELFConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 ELFConsole.insert(3.0, "\n")
@@ -775,7 +747,7 @@ tab2enforcebutton = ttk.Checkbutton(tabDeveloper, text="Enforce filetype imports
 tab2enforcebutton.place(x=20, y=110)
 
 checkAutoExportExcel = ttk.Checkbutton(tabDeveloper, text="Automatically Export Customer Report as .csv")
-checkAutoExportExcel.place(x=20, y=130)
+checkAutoExportExcel.place(x=20, y=135)
 
 backupDownloadFile = ttk.Button(tabDeveloper, text="Backup Download File", command=lambda:backupDownloadFilef()).place(x=20, y=250)
 
@@ -793,7 +765,7 @@ logDeleteOldInput.place(x=490, y=53)
 logDeleteOldInput.insert(0, '10')
 
 logverbose = ttk.Checkbutton(tabDeveloper, text="Log all function calls")
-logverbose.place(x=300, y=78)
+logverbose.place(x=300, y=85)
 logverbose.state(['selected'])
 
 ########
