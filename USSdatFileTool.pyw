@@ -9,9 +9,7 @@ from datetime import datetime
 import sys, os, re, time, csv, shutil
 try:
     import Logging
-    #import Searching
 except:
-    print("something broke")
     pass
 
 #regex
@@ -50,14 +48,6 @@ try:
 except:
     pass
 
-#hotkey bindings
-# window.bind('2', lambda event: scanAllRecordsVerbose())
-# window.bind('3', lambda event: searchRecords())
-# window.bind('4', lambda event: officeRegionZone())
-# window.bind('5', lambda event: missingMeters())
-# window.bind('6', lambda event: printReadTypeVerbose())
-# window.bind('7', lambda event: checkMalformedLatLong())
-
 #menu bindings
 window.bind('<Control-o>', lambda event: openFile())
 window.bind('<Control-s>', lambda event: save())
@@ -69,9 +59,6 @@ window.bind('<F11>', lambda event: resizeWindow())
 
 ###################
 ##File Functions###
-###################
-
-# BOC tab functions
 
 def disallowedCharacters(event=None):
     Logging.writeToLogs('Start Function Call - disallowedCharacters()')
@@ -569,7 +556,6 @@ TAB_CONTROL.pack(expand=1, fill="both")
 
 ###################
 ##BOC Tab Widgets##
-###################
 
 btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:searchRecords()).place(x=20, y=20)
 btnVerboseRecordScan = ttk.Button(tabBasicOperations, text="Record Search...", command=lambda:searchRecords(), width=BUTTON_WIDTH).place(x=50, y=20)
@@ -615,7 +601,6 @@ bocConsole.insert(3.0, "\n")
 
 #################
 ## Advanced Tab #
-#################
 
 btnAdvNumkey1 = ttk.Button(tabAdvanced, text="1.", width=1.5, command=lambda:ERTsummary()).place(x=20, y=35)
 btnPrintERTs = ttk.Button(tabAdvanced, text="Find All ERTs", width=BUTTON_WIDTH, command=lambda:ERTsummary()).place(x=50, y=35)
@@ -643,7 +628,6 @@ advConsole.insert(3.0, "\n")
 
 #################
 ##Lat/Long Tab###
-#################
 
 labelCurrentTab3 = ttk.Label(tabLatLong, text="Current file: ").place(x=220, y=20)
 labelFileTab3 = ttk.Label(tabLatLong, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
@@ -674,7 +658,6 @@ btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=la
 
 ########################
 ###ELF Tab Widgets######
-########################
 
 btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=27, command=lambda:createELFfile()).place(x=20, y=180)
 
@@ -728,7 +711,6 @@ ELFConsole.insert(3.0, "\n")
 
 ########################
 ##Settings Tab Widgets##
-########################
 
 labelFileSettings = ttk.Label(tabDeveloper, text="File Settings", font=labelFont).place(x=20, y=30)
 
@@ -770,7 +752,6 @@ logverbose.state(['selected'])
 
 ########
 ##Menu##
-########
 
 menubar = tk.Menu(window)
 
