@@ -55,7 +55,7 @@ window.bind('<Control-Alt-s>', lambda event: saveAs())
 window.bind('<Control-c>', lambda event: bocConsole.delete(1.0, "end"))
 window.bind('<F1>', lambda event: aboutDialog())
 window.bind('<F10>', lambda event: resetWindow())
-window.bind('<F11>', lambda event: resizeWindow())
+window.bind('<F11>', lambda event: fullscreenWindow())
 
 ###################
 ##File Functions###
@@ -285,18 +285,24 @@ def printAllLatLongData(event=None):
     try:
         with open(download_filename, 'r') as openfile:
             latLongConsole.delete(1.0, "end")
+            latLongConsole.insert(counter, "All Lat/Long Records"+"\n")
+            counter+=1
             for line in openfile:
                 if line.startswith('MTX'):
                     lat_data = line[23:40].rstrip()
                     long_data = line[40:57].rstrip()
-                    if pattern_lat_long.match(lat_data) and pattern_lat_long.match(long_data):
-                        latLongConsole.insert(counter, str(line_number)+" "+line)
-                        latLongConsole.insert(counter+1, "\n")
-                        total_latlong+=1
+                    if not pattern_lat_long.match(lat_data) or not pattern_lat_long.match(long_data):
+                        continue
+                        
+                    #     latLongConsole.insert(counter, str(line_number)+" "+line)
+                    #     latLongConsole.insert(counter, "\n")
+                    #     total_latlong+=1
+                    latLongConsole.insert(counter, str(line_number)+"\t"+lat_data+"\t\t"+long_data+'\n')
                 counter+=1
                 line_number+=1
-            if total_latlong == 0:
-                latLongConsole.insert(1.0, "There was no lat/long data found.")
+            #latLongConsole.insert(counter, str(total_latlong)+" Lat/long records found.")
+            # if total_latlong == 0:
+            #     latLongConsole.insert(1.0, "There was no lat/long data found.")
     except FileNotFoundError:
         fileNotFoundError(3)
 
@@ -486,7 +492,7 @@ def backupDownloadFilef():
     filename = tk.filedialog.askopenfilename(title="Choose File to Backup")
     shutil.copy(filename, os.getcwd())
 
-def resizeWindow():
+def fullscreenWindow():
     width = window.winfo_screenwidth()
     height = window.winfo_screenheight()
     window.geometry('%dx%d+0+0' %(width, height))
@@ -726,10 +732,10 @@ tab2defaultsaveentry.insert(0, '\\exports')
 tab2defaultsaveentry.place(x=155, y=78)
 
 tab2enforcebutton = ttk.Checkbutton(tabDeveloper, text="Enforce filetype imports")
-tab2enforcebutton.place(x=20, y=110)
+tab2enforcebutton.place(x=20, y=100)
 
 checkAutoExportExcel = ttk.Checkbutton(tabDeveloper, text="Automatically Export Customer Report as .csv")
-checkAutoExportExcel.place(x=20, y=135)
+checkAutoExportExcel.place(x=20, y=125)
 
 backupDownloadFile = ttk.Button(tabDeveloper, text="Backup Download File", command=lambda:backupDownloadFilef()).place(x=20, y=250)
 
@@ -747,7 +753,7 @@ logDeleteOldInput.place(x=490, y=53)
 logDeleteOldInput.insert(0, '10')
 
 logverbose = ttk.Checkbutton(tabDeveloper, text="Log all function calls")
-logverbose.place(x=300, y=85)
+logverbose.place(x=300, y=75)
 logverbose.state(['selected'])
 
 ########
@@ -780,7 +786,7 @@ editmenu.add_cascade(label="Theme", menu=submenu)
 menubar.add_cascade(label="Edit", menu=editmenu)
 
 windowmenu = tk.Menu(menubar, tearoff=0)
-windowmenu.add_command(label="Full Screen", accelerator="F11", command=lambda:resizeWindow())
+windowmenu.add_command(label="Full Screen", accelerator="F11", command=lambda:fullscreenWindow())
 windowmenu.add_separator()
 windowmenu.add_command(label="Reset Window", accelerator="F10", command=lambda:resetWindow())
 menubar.add_cascade(label="Window", menu=windowmenu)
