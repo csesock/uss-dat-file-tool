@@ -596,6 +596,9 @@ labelFileTab1 = ttk.Label(tabBasicOperations, textvariable=text, foreground='dar
 btnConsoleSave = ttk.Button(tabBasicOperations, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnConsoleClear = ttk.Button(tabBasicOperations, text="clear", width=4.25, command=lambda:clearConsole(1)).place(x=717, y=6)
 
+#s = ttk.Scrollbar(tabBasicOperations, orient="horizontal", command=tree.yview)
+
+
 bocConsole = tk.Text(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
                     insertborderwidth=7, undo=True, bd=3)
 bocConsole.place(x=220, y=42)
@@ -604,6 +607,8 @@ bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.2]")
 bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
+
+#bocConsole.configure(yscrollcommand=s.set)
 
 #################
 ## Advanced Tab #
