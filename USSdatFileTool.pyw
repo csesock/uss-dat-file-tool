@@ -44,6 +44,7 @@ window.geometry('780x350+%d+%d' %(width, height))
 try:
     dirp = os.path.dirname(__file__)
     photo = PhotoImage(file="assets\\IconSmall.png")
+    photo2 = PhotoImage(file="assets\\SmartCity.png")
     window.iconphoto(False, photo)
 except:
     pass
@@ -543,13 +544,13 @@ def aboutDialog():
 TAB_CONTROL = ttk.Notebook(window)
 # Basic Operations tab
 tabBasicOperations = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tabBasicOperations, text='Basic Operations')
+TAB_CONTROL.add(tabBasicOperations, text='Basic Tools')
 # Advanced tab
 tabAdvanced = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tabAdvanced, text="Advanced Operations")
+TAB_CONTROL.add(tabAdvanced, text="Advanced Tools")
 # Lat/Long tab
 tabLatLong = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tabLatLong, text="Lat/Long Operations")
+TAB_CONTROL.add(tabLatLong, text="Lat/Long Tools")
 TAB_CONTROL.pack(expand=1, fill="both")
 # File Operations tab
 tabELFcreation = ttk.Frame(TAB_CONTROL)
@@ -742,12 +743,12 @@ tab2enforcebutton.place(x=20, y=100)
 checkAutoExportExcel = ttk.Checkbutton(tabDeveloper, text="Automatically Export Customer Report as .csv")
 checkAutoExportExcel.place(x=20, y=125)
 
-backupDownloadFile = ttk.Button(tabDeveloper, text="Backup Download File", command=lambda:backupDownloadFilef()).place(x=20, y=250)
+backupDownloadFile = ttk.Button(tabDeveloper, text="Backup Current File", command=lambda:backupDownloadFilef()).place(x=20, y=250)
 
 # image
-label=ttk.Label(tabDeveloper, image=photo)
-label.image = photo
-label.place(x=650, y=180)
+label=ttk.Label(tabDeveloper, image=photo2)
+label.image = photo2
+label.place(x=310, y=60)
 
 # log settings
 loglabel = ttk.Label(tabDeveloper, text="Log Settings", font=labelFont).place(x=300, y=30)
@@ -760,6 +761,10 @@ logDeleteOldInput.insert(0, '10')
 logverbose = ttk.Checkbutton(tabDeveloper, text="Log all function calls")
 logverbose.place(x=300, y=75)
 logverbose.state(['selected'])
+
+logwarning = ttk.Checkbutton(tabDeveloper, text="Warning before purging logs")
+logwarning.place(x=300, y=97)
+logwarning.state(['selected'])
 
 ########
 ##Menu##
@@ -798,7 +803,7 @@ menubar.add_cascade(label="Window", menu=windowmenu)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
 helpmenu.add_command(label="About This Tool", accelerator='F1', command=lambda:aboutDialog())
-helpmenu.add_command(label="Purge Log Files", command=lambda:Logging.deleteLog(int(logDeleteOldInput.get())))
+helpmenu.add_command(label="Purge Log Files", accelerator='F2', command=lambda:Logging.deleteLog(int(logDeleteOldInput.get())))
 menubar.add_cascade(label="Help", menu=helpmenu)
 
 if __name__ == "__main__":
