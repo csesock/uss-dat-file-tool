@@ -23,9 +23,9 @@ Future improvements include:
 ## User Interface
 Currently, the main focus of development is an easy-to-use UI that requires no external libraries. Written in pure python using the tkinter library. 
 
-![GUI](https://imgur.com/oIk9ejv.png)
+![GUI](https://imgur.com/hA1frpM.png)
 
-![GUI2](https://imgur.com/qm9E6Sx.png)
+![GUI2](https://imgur.com/LxNfiYw.png)
 
 ![GUI3](https://imgur.com/D0CcffL.png)
 
