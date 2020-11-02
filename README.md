@@ -27,7 +27,7 @@ Currently, the main focus of development is an easy-to-use UI that requires no e
 
 ![GUI2](https://imgur.com/qm9E6Sx.png)
 
-![GUI3](https://imgur.com/nrHMwxp.png)
+![GUI3](https://imgur.com/D0CcffL.png)
 
 ## Dependencies
 Currently, the tool has moved away from a command-line collection of scripts and towards a UI-based tool which allows for a number of more practical features. Despite this move towards verbosity, there are still no third-party depenencies within the tool -- simply install Python and double click 'USSdatFileTool.py' to get started using the tool. 
