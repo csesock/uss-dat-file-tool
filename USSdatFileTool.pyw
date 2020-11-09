@@ -373,29 +373,34 @@ def CustomerReport():
             customer = ""
             meter = ""
             ert = ""
-            counter = 4.0
+            counter = 7.0
             num_customers = 0
             advConsole.delete(1.0, "end")
-            advConsole.insert(1.0, "Customer Report\n")
-            advConsole.insert(2.0, datetime.today().strftime('%Y-%m-%d_%H-%M\n'))
-            advConsole.insert(3.0, "------------------------\n")
+            advConsole.insert(1.0, "\t\tCustomer Report\n")
+            advConsole.insert(2.0, '\t'+str(os.path.basename(download_filename))+"\n")
+            advConsole.insert(3.0, '\t\t'+datetime.today().strftime('%Y-%m-%d_%H-%M\n'))
+            advConsole.insert(4.0, "___________________________________________________\n")
+            advConsole.insert(5.0, "Account #     \tAddress    \tMeter   \tERT\n")
+            advConsole.insert(6.0, "___________________________________________________\n")
             for line in openfile:
                 # (1) account number : CUS [15:34] -> [14:34]
                 # (2) meter number   : MTR [46:57] -> [45:57]
                 # (3) ERT number     : RFF [12:21] -> [11:21]
                 if line.startswith('CUS'):
                     customer = line[14:34].strip()
+                    address = line[54:65]
                 if line.startswith('MTR'):
                     meter = line[45:57].strip()
                 if line.startswith('RFF'):
                     ert = line[11:21].strip()
-                    advConsole.insert(counter, "Customer. . :\t"+customer+"\n")
-                    counter+=1
-                    advConsole.insert(counter, "Meter. . . .:\t"+meter+"\n")
-                    counter+=1
-                    advConsole.insert(counter, "ERT. . . . .:\t"+ert+"\n")
-                    counter+=1
-                    advConsole.insert(counter, "\n")
+                    # advConsole.insert(counter, "Customer. . :\t"+customer+"\n")
+                    # counter+=1
+                    # advConsole.insert(counter, "Meter. . . .:\t"+meter+"\n")
+                    # counter+=1
+                    # advConsole.insert(counter, "ERT. . . . .:\t"+ert+"\n")
+                    # counter+=1
+                    #advConsole.insert(counter, "\n")
+                    advConsole.insert(counter, customer+'\t'+address+'\t'+meter+'\t'+ert+'\n')
                     counter+=1
                     num_customers+=1
             advConsole.insert(counter+1, "Customers found: "+str(num_customers)+"\n")
@@ -740,10 +745,11 @@ tab2defaultsaveentry.place(x=155, y=78)
 tab2enforcebutton = ttk.Checkbutton(tabDeveloper, text="Enforce filetype imports")
 tab2enforcebutton.place(x=20, y=100)
 
-checkAutoExportExcel = ttk.Checkbutton(tabDeveloper, text="Automatically Export Customer Report as .csv")
-checkAutoExportExcel.place(x=20, y=125)
+checkAutoExportExcel = ttk.Checkbutton(tabDeveloper, text="Automatically export customer report")
+checkAutoExportExcel.place(x=20, y=122)
 
-backupDownloadFile = ttk.Button(tabDeveloper, text="Backup Current File", command=lambda:backupDownloadFilef()).place(x=20, y=250)
+backupFileLabel = ttk.Label(tabDeveloper, text='Backup Download File', font=labelFont).place(x=20,y=150)
+backupDownloadFile = ttk.Button(tabDeveloper, text="Backup File", command=lambda:backupDownloadFilef()).place(x=20, y=175)
 
 # image
 label=ttk.Label(tabDeveloper, image=photo2)
