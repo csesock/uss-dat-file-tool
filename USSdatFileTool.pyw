@@ -524,6 +524,14 @@ def clearConsole(tab):
     else:
         return 
 
+def resetELF(event=None):
+    inputCity.delete(0, "end")
+    inputState.delete(0, "end")
+    inputCountry.delete(0, "end")
+    inputZip.delete(0, "end")
+    inputGeopointSource.delete(0, "end")
+    inputMarket.delete(0, "end")
+
 def fileNotFoundError(tab):
     if tab==1:
         bocConsole.delete(1.0, "end")
@@ -676,7 +684,9 @@ btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=la
 ########################
 ###ELF Tab Widgets######
 
-btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF File", width=27, command=lambda:createELFfile()).place(x=20, y=180)
+btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF", width=26, command=lambda:createELFfile()).place(x=21, y=217)
+btnAutoFill = ttk.Button(tabELFcreation, text="Auto-Fill", width=11).place(x=21, y=180)
+btnReset = ttk.Button(tabELFcreation, text="Reset", width=11, command=lambda:resetELF()).place(x=110, y=180)
 
 labelAutoPopulate = ttk.Label(tabELFcreation, text="Fields to auto-populate", font=labelFont).place(x=20, y=15)
 
@@ -782,7 +792,7 @@ filemenu.add_command(label="Open...", accelerator='Ctrl+O', command=lambda:openF
 filemenu.add_command(label="Save", accelerator='Ctrl+S', command=lambda:save())
 filemenu.add_command(label="Save As...", accelerator='Ctrl+Alt+S', command=lambda:saveAs())
 filemenu.add_separator()
-filemenu.add_command(label="Exit", accelerator='Alt+F4', command=lambda:window.destroy())
+filemenu.add_command(label="Exit", command=lambda:window.destroy())
 menubar.add_cascade(label="File", menu=filemenu)
 
 editmenu = tk.Menu(menubar, tearoff=0)
@@ -808,7 +818,7 @@ windowmenu.add_command(label="Reset Window", accelerator="F10", command=lambda:r
 menubar.add_cascade(label="Window", menu=windowmenu)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
-helpmenu.add_command(label="About This Tool", accelerator='F1', command=lambda:aboutDialog())
+helpmenu.add_command(label="About", accelerator='F1', command=lambda:aboutDialog())
 helpmenu.add_command(label="Purge Log Files", accelerator='F2', command=lambda:Logging.deleteLog(int(logDeleteOldInput.get())))
 menubar.add_cascade(label="Help", menu=helpmenu)
 
