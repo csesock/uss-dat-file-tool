@@ -8,37 +8,40 @@ def adjustReadingsPopup(download_filename):
     root.resizable(False, False)
     t = ttk.Style(root)
     t.theme_use('clam')
-    try:
-        photo = PhotoImage(file="assets\\IconSmall.png")
-        root.iconphoto(False, photo)
-    except:
-        pass
     
     def getRadioButton():
         r = radio_var.get()
         print(radio_var.get())
         print(r)
 
-    def adjustReadings():
-        # which_button_is_selected = radio_var.get()
-        # print(which_button_is_selected)
+    def adjustReadings(delta):
         correct = []
 
-        with open('corrected.txt', 'r') as cor:
-            for line in cor:
-                correct.append(line.strip().rstrip())
+        # if readings need digits added
+        if delta == "Increment":
+            with open('corrected.txt', 'r') as cor:
+                for line in cor:
+                    correct.append(line.strip().rstrip())
+            with open('upload.dat', 'r') as openfile:
+                with open('upload--corrected.dat', 'w') as builtfile:
+                    counter = 0
+                    rdg = ""
+                    rff = ""
+                    for line in openfile:
+                        if line.startswith('RDG'):
+                            line = line.replace(line[33:43], correct[counter])
+                            counter+=1
+                        builtfile.write(line)
 
-        with open('upload.dat', 'r') as openfile:
-            with open('upload--corrected.dat', 'w') as builtfile:
-                counter = 0
-                rdg = ""
-                rff = ""
+        # if readings need digits dropped
+        if delta == "Decrement":
+            with open('upload.dat', 'r') as openfile:
                 for line in openfile:
                     if line.startswith('RDG'):
-                        line = line.replace(line[33:43], correct[counter])
-                        counter+=1
-                    builtfile.write(line)
-            
+                        rdg = line[33:43]
+
+    # Test to compare readings match (only used if readings have digits added)
+    def testAdjustments():
         with open('upload--corrected.dat', 'r') as openfile:
             rdg = ""
             rff = ""
