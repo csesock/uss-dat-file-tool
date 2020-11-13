@@ -9,6 +9,7 @@ from datetime import datetime
 import sys, os, re, time, csv, shutil
 try:
     import Logging
+    import AdjustReadings
 except:
     pass
 
@@ -205,6 +206,11 @@ def missingMeters(event=None):
 def printReadTypeVerbose(event=None):
     Logging.writeToLogs("Start Function Call - printReadTypeVerbose()")
     all_reads = {}
+
+    records = [] #modification for alex help
+    p1 = ''
+    p2 = ''
+    p3 = '' 
     counter = 1.0
     try:
         with open(download_filename, 'r') as openfile:
@@ -215,6 +221,18 @@ def printReadTypeVerbose(event=None):
                         all_reads[x] = 1
                     else:
                         all_reads[x]+=1
+                    if str(x) == '02':
+                        records.append(p3)
+                        records.append(p2)
+                        records.append(p1)
+                        records.append(line)
+                        records.append('\n')
+                p3 = p2
+                p2 = p1
+                p1 = line 
+            # with open('records with 02 read type codes.txt', 'w') as builtfile:
+            #     for record in records:
+            #         builtfile.write(record)
             bocConsole.delete(counter, "end")
             bocConsole.insert(counter, "Read Type Codes")
             counter+=1
@@ -532,6 +550,15 @@ def resetELF(event=None):
     inputGeopointSource.delete(0, "end")
     inputMarket.delete(0, "end")
 
+def autoFill(event=None):
+    try:
+        with open(download_filename, 'r') as openfile:
+            for line in openfile:
+                if line.startswith('CUS'):
+                    address = line[54:74]
+    except:
+        pass
+
 def fileNotFoundError(tab):
     if tab==1:
         bocConsole.delete(1.0, "end")
@@ -547,6 +574,84 @@ def fileNotFoundError(tab):
         ELFConsole.insert(1.0, "ERROR: FILE NOT FOUND")
     else:
         return
+
+def adjustReadingsPopup(download_filename):
+    AdjustReadings.adjustReadingsPopup(download_filename, 1)
+    # root = tk.Tk()
+    # root.title("Adjust Readings Wizard")
+    # #root.resizable(False, False)
+    # t = ttk.Style(root)
+    # t.theme_use('clam')
+    # try:
+    #     photo = PhotoImage(file="assets\\IconSmall.png")
+    #     root.iconphoto(False, photo)
+    # except:
+    #     pass
+
+    # # Core functionality
+    # def adjustReadings():
+    #     which_button_is_selected = radio_var.get()
+    #     print(which_button_is_selected)
+    #     correct = []
+
+    #     with open('corrected.txt', 'r') as cor:
+    #         for line in cor:
+    #             correct.append(line.strip().rstrip())
+
+    #     with open('upload.dat', 'r') as openfile:
+    #         with open('upload--corrected.dat', 'w') as builtfile:
+    #             counter = 0
+    #             rdg = ""
+    #             rff = ""
+    #             for line in openfile:
+    #                 if line.startswith('RDG'):
+    #                     #rdg = line[33:43].strip().rstrip()
+    #                     line = line.replace(line[33:43], correct[counter])
+    #                     counter+=1
+    #                 builtfile.write(line)
+            
+    #     with open('upload--corrected.dat', 'r') as openfile:
+    #         rdg = ""
+    #         rff = ""
+    #         counter = 1
+    #         for line in openfile:
+    #             if line.startswith('RDG'):
+    #                 rdg = line[33:43]
+    #             if line.startswith('RFF'):
+    #                 rff = line[72:82]
+    #                 if rdg == rff:
+    #                     print("MATCH: " + str(counter) + " " + rdg + " " + rff)
+    #                 else:
+    #                     print("DOES NOT MATCH: " + str(counter) + " " + rdg + " " + rff)
+    #             counter+=1
+    # End of function
+
+    # sw = root.winfo_screenwidth()
+    # sh = root.winfo_screenheight()
+    # x = (sw - 380)/2
+    # y = (sh - 240)/2
+    # root.geometry('%dx%d+%d+%d' % (380, 240, x, y))
+
+    # Label(root, text="File:").place(x=50, y=20)
+    # Label(root, text=download_filename[-40:]).place(x=80, y=20)
+    # Label(root, text="This window will create a new download file by pulling \n the raw read and adjusting the numbers accordingly. \n Specify below how to adjust the readings.").place(x=50, y=50)
+
+    # v = tk.StringVar()
+    # radio_var = IntVar()    
+    # Radiobutton(root,text='Config1', value=1,variable = radio_var).place(x=100, y=110)
+    # #Radiobutton(root, text="Increment", variable=v, value='1').place(x=100, y=110)
+    # Radiobutton(root, text="Decrement", variable=v, value='2').place(x=185, y=110)
+
+    # Label(root, text="Digits to change:").place(x=105, y=140)
+    # numToDrop = ttk.Combobox(root, width=6, values = ["0", "1", "2", "3", "4"])
+    # numToDrop.place(x=200, y=140)
+    # numToDrop.state(['readonly'])
+    # numToDrop.set("1")
+
+    # ttk.Button(root, text="Execute", width=10, command=lambda:adjustReadings()).place(x=100, y=180)
+    # ttk.Button(root, text="Exit", command=root.destroy, width=10).place(x=190, y=180)
+
+    # mainloop()
 
 def aboutDialog():
     dialog = """ Author: Chris Sesock \n Version: 1.6.2 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2020-10-13:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
@@ -635,6 +740,9 @@ btnCustomerReport = ttk.Button(tabAdvanced, text="Customer Report", width=BUTTON
 
 btnAdvNumkey3 = ttk.Button(tabAdvanced, text="3.", width=1.5, command=lambda:populateMissingMeters()).place(x=20, y=117)
 btnPopulate = ttk.Button(tabAdvanced, text="Populate Missing Meters", width=BUTTON_WIDTH, command=lambda:populateMissingMeters()).place(x=50, y=117)
+
+btnAdvNumkey4 = ttk.Button(tabAdvanced, text="4.", width=1.5).place(x=20, y=158)
+btnAdjustReadings = ttk.Button(tabAdvanced, text="Adjust Readings", width=BUTTON_WIDTH, command=lambda:adjustReadingsPopup(download_filename)).place(x=50, y=158)
 
 btnConsoleSave3 = ttk.Button(tabAdvanced, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnConsoleClear3 = ttk.Button(tabAdvanced, text="clear", width=4.25, command=lambda:clearConsole(2)).place(x=717, y=6)
