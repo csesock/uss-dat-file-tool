@@ -197,7 +197,7 @@ def missingMeters(event=None):
                                 counter+=1
                         previous_line=line
                         line_number +=1
-            exportMeters(meters)
+            #exportMeters(meters)
             if counter == 0:
                 bocConsole.delete(1.0, "end")
                 bocConsole.insert(1.0, "No missing meters found in ["+os.path.basename(download_filename)+"]")
