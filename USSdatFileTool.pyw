@@ -179,6 +179,7 @@ def scanAllRecordsVerbose(event=None):
         fileNotFoundError(1)
 
 def missingMeters(event=None):
+    meters = []
     Logging.writeToLogs('Start Function Call - missingMeters()')
     counter = 0
     line_number = 1
@@ -189,12 +190,14 @@ def missingMeters(event=None):
             for line in openfile:
                         if line.startswith('MTR'):
                             meter_record = line[45:57] #46-57
+                            meters.append(meter_record)
                             if pattern_missing_meters.match(meter_record):
                                 bocConsole.insert("end", str(line_number) + " " + previous_line)
                                 bocConsole.insert("end", "\n")
                                 counter+=1
                         previous_line=line
                         line_number +=1
+            exportMeters(meters)
             if counter == 0:
                 bocConsole.delete(1.0, "end")
                 bocConsole.insert(1.0, "No missing meters found in ["+os.path.basename(download_filename)+"]")
@@ -202,6 +205,11 @@ def missingMeters(event=None):
         Logging.writeToLogs('End Function Call - missingMeters()')
     except FileNotFoundError:
         fileNotFoundError(1)
+
+def exportMeters(meters):
+    with open('builtfile.txt', 'w') as builtfile:
+        for meter in meters:
+            builtfile.write(meter+'\n')
 
 def printReadTypeVerbose(event=None):
     Logging.writeToLogs("Start Function Call - printReadTypeVerbose()")
@@ -306,22 +314,23 @@ def printAllLatLongData(event=None):
             latLongConsole.delete(1.0, "end")
             latLongConsole.insert(counter, "All Lat/Long Records"+"\n")
             counter+=1
+            latLongConsole.insert(counter, "Line"+"\t"+"Latitude"+"\t\t"+"Longitude"+"\n")
+            counter+=1
+            latLongConsole.insert(counter, "---------------------------------------"+"\n")
+            counter+=1
             for line in openfile:
                 if line.startswith('MTX'):
                     lat_data = line[23:40].rstrip()
                     long_data = line[40:57].rstrip()
                     if not pattern_lat_long.match(lat_data) or not pattern_lat_long.match(long_data):
                         continue
-                        
-                    #     latLongConsole.insert(counter, str(line_number)+" "+line)
-                    #     latLongConsole.insert(counter, "\n")
-                    #     total_latlong+=1
                     latLongConsole.insert(counter, str(line_number)+"\t"+lat_data+"\t\t"+long_data+'\n')
+                    total_latlong+=1
                 counter+=1
                 line_number+=1
-            #latLongConsole.insert(counter, str(total_latlong)+" Lat/long records found.")
-            # if total_latlong == 0:
-            #     latLongConsole.insert(1.0, "There was no lat/long data found.")
+            if total_latlong == 0:
+                latLongConsole.delete(1.0, "end")
+                latLongConsole.insert(1.0, "There was no lat/long data found.")
     except FileNotFoundError:
         fileNotFoundError(3)
 

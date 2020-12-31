@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk 
+import os
 
 def adjustReadingsPopup(download_filename):
     root = tk.Tk()
@@ -64,8 +65,8 @@ def adjustReadingsPopup(download_filename):
     root.geometry('%dx%d+%d+%d' % (380, 240, x, y))
 
     Label(root, text="File:").place(x=50, y=20)
-    Label(root, text=download_filename[-40:]).place(x=80, y=20)
-    Label(root, text="This window will create a new download file by pulling \n the raw read and adjusting the numbers accordingly. \n Specify below how to adjust the readings.").place(x=50, y=50)
+    Label(root, text=os.path.basename(download_filename)).place(x=80, y=20)
+    Label(root, text="This tool will create a new download file by pulling \n the raw read and adjusting the numbers accordingly. \n Specify below how to adjust the readings.").place(x=50, y=50)
 
     radio_var = IntVar()    
     Radiobutton(root,text='Increment', value=5, variable=radio_var).place(x=100, y=110)
