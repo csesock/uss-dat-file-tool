@@ -206,6 +206,7 @@ def missingMeters(event=None):
     except FileNotFoundError:
         fileNotFoundError(1)
 
+#helper function for writing stored meter numbers to a text file in root directory
 def exportMeters(meters):
     with open('builtfile.txt', 'w') as builtfile:
         for meter in meters:
@@ -854,8 +855,14 @@ editmenu.add_cascade(label="Theme", menu=submenu)
 menubar.add_cascade(label="Edit", menu=editmenu)
 
 windowmenu = tk.Menu(menubar, tearoff=0)
-windowmenu.add_command(label="Full Screen", accelerator="F11", command=lambda:fullscreenWindow())
+
+window_submenu = Menu(windowmenu)
+window_submenu.add_command(label="780x350")
+window_submenu.add_command(label="1540x700")
+windowmenu.add_cascade(label="Window Size", menu=window_submenu)
+
 windowmenu.add_separator()
+windowmenu.add_command(label="Full Screen", accelerator="F11", command=lambda:fullscreenWindow())
 windowmenu.add_command(label="Reset Window", accelerator="F10", command=lambda:resetWindow())
 menubar.add_cascade(label="Window", menu=windowmenu)
 
