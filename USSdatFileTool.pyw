@@ -1,30 +1,30 @@
-import tkinter as tk
+import tkinter as tk #for building the UI
 from tkinter import *
 from tkinter import messagebox, simpledialog, ttk
 from tkinter.filedialog import asksaveasfile
 from tkinter.font import Font
 
-from collections import deque
-from datetime import datetime
-import sys, os, re, time, csv, shutil
+from collections import deque #to efficiently store data stream
+from datetime import datetime #for writing timestamped files
+import sys, os, re, time, csv, shutil #default library utilities
 try:
-    import Logging
-    import AdjustReadings
+    import Logging #logging system
+    import AdjustReadings #manually adjust readings
 except:
     pass
 
-#regex
+#regular expressions for pattern matching
 pattern_missing_meters = re.compile(r'[^\S\n\t]{11}')
 pattern_lat_long = re.compile(r'-?[0-9]{2}\.\d{1,13}$')
 pattern_space_nonewline = re.compile(r'\t|[ ]{2,}') #test
 
 #file configurations
 download_filename = 'download.dat'
-ELF_filename = "Generated ELF File " + datetime.today().strftime('%Y-%m-%d_%H-%M') + '.csv'
+ELF_filename = "Generated ELF File " + datetime.today().strftime('%Y-%m-%d_%H-%M') + '.csv' #endpoint location file naming scheme
 defaut_file_extension = '.txt'
 window = tk.Tk()
 s = ttk.Style()
-s.theme_use('clam')
+s.theme_use('clam') #default UI style 
 
 #default UI sizes
 DEFAULT_FONT_SIZE = 10
@@ -61,7 +61,9 @@ window.bind('<F11>', lambda event: fullscreenWindow())
 
 ###################
 ##File Functions###
+###################
 
+#search through the current file, find any characters that FCS does not allow
 def disallowedCharacters(event=None):
     Logging.writeToLogs('Start Function Call - disallowedCharacters()')
     counter = 0
@@ -87,6 +89,8 @@ def disallowedCharacters(event=None):
     except FileNotFoundError:
         fileNotFoundError(1)
 
+#dynamic record searching by parsing with regex
+#default is to parse entire file if no input 
 def searchRecords(event=None):
     Logging.writeToLogs('Start Function Call - searchRecords()')
     records = []
@@ -117,8 +121,9 @@ def searchRecords(event=None):
     except FileNotFoundError:
         fileNotFoundError(1)
         
+#find office region zone instance in file
 def officeRegionZone(event=None):
-    # region then zone then office
+    #region then zone then office
     Logging.writeToLogs('Start Function Call - officeRegionZone()')
     try:
         with open(download_filename, 'r') as openfile:
@@ -178,6 +183,7 @@ def scanAllRecordsVerbose(event=None):
     except FileNotFoundError:
         fileNotFoundError(1)
 
+#search for missing meter numbers in MTR record
 def missingMeters(event=None):
     meters = []
     Logging.writeToLogs('Start Function Call - missingMeters()')
@@ -192,12 +198,12 @@ def missingMeters(event=None):
                             meter_record = line[45:57] #46-57
                             meters.append(meter_record)
                             if pattern_missing_meters.match(meter_record):
-                                bocConsole.insert("end", str(line_number) + " " + previous_line)
+                                bocConsole.insert("end", str(line_number) + " " + line)
                                 bocConsole.insert("end", "\n")
                                 counter+=1
                         previous_line=line
                         line_number +=1
-            #exportMeters(meters)
+            #exportMeters(meters) #helper function call -- turned off by default
             if counter == 0:
                 bocConsole.delete(1.0, "end")
                 bocConsole.insert(1.0, "No missing meters found in ["+os.path.basename(download_filename)+"]")
@@ -212,6 +218,7 @@ def exportMeters(meters):
         for meter in meters:
             builtfile.write(meter+'\n')
 
+#find and print read type codes to console
 def printReadTypeVerbose(event=None):
     Logging.writeToLogs("Start Function Call - printReadTypeVerbose()")
     all_reads = {}
@@ -258,6 +265,7 @@ def printReadTypeVerbose(event=None):
     except FileNotFoundError:
         fileNotFoundError(1)
 
+#find and print current read direction for routes
 def getReadDirections(event=None):
     cc = {}
     counter = 3.0
@@ -282,8 +290,11 @@ def getReadDirections(event=None):
     except FileNotFoundError:
         fileNotFoundError(1)
 
-# Lat/Long tab functions
+##########################
+# Lat/Long tab functions #
+##########################
 
+#find malformed lat/long using regex
 def checkMalformedLatLong(event=None):
     Logging.writeToLogs("Start Function Call - checkMalformedLatLong()")
     line_number = 1
@@ -306,6 +317,7 @@ def checkMalformedLatLong(event=None):
     except FileNotFoundError:
         fileNotFoundError(3)
 
+#finds and prints all lat/long records to console 
 def printAllLatLongData(event=None):
     counter = 1.0
     total_latlong = 0
@@ -335,6 +347,7 @@ def printAllLatLongData(event=None):
     except FileNotFoundError:
         fileNotFoundError(3)
 
+#creates endpoint location file in /exports
 def createELFfile(event=None):
     answer = messagebox.askokcancel("Confirmation", "All possible fields will be formatted into an ELF file.\nRFF records must exist and must match a customer record.")
     if answer == None or answer == False:
@@ -589,7 +602,7 @@ def adjustReadingsPopup(download_filename):
     AdjustReadings.adjustReadingsPopup(download_filename)
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.6.2 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2020-10-13:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
+    dialog = """ Author: Chris Sesock \n Version: 1.6.5 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2020-10-13:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
              """
     messagebox.showinfo("About", dialog)
 
@@ -615,7 +628,8 @@ TAB_CONTROL.add(tabDeveloper, text="Settings")
 TAB_CONTROL.pack(expand=1, fill="both")
 
 ###################
-##BOC Tab Widgets##
+# BOC Tab Widgets #
+###################
 
 btnNumkey1 = ttk.Button(tabBasicOperations, text="1.", width=1.5, command=lambda:searchRecords()).place(x=20, y=20)
 btnVerboseRecordScan = ttk.Button(tabBasicOperations, text="Record Search...", command=lambda:searchRecords(), width=BUTTON_WIDTH).place(x=50, y=20)
@@ -650,22 +664,29 @@ labelFileTab1 = ttk.Label(tabBasicOperations, textvariable=text, foreground='dar
 btnConsoleSave = ttk.Button(tabBasicOperations, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnConsoleClear = ttk.Button(tabBasicOperations, text="clear", width=4.25, command=lambda:clearConsole(1)).place(x=717, y=6)
 
-#s = ttk.Scrollbar(tabBasicOperations, orient="horizontal", command=tree.yview)
-
-
 bocConsole = tk.Text(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
                     insertborderwidth=7, undo=True, bd=3)
 bocConsole.place(x=220, y=42)
 bocConsole.configure(font=consoleFont)
-bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.2]")
+bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.5]")
 bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
 
-#bocConsole.configure(yscrollcommand=s.set)
+debug = tk.StringVar()
+debug.set("Ln 1, Col 1")
 
-#################
-## Advanced Tab #
+bocDebug = ttk.Label(tabBasicOperations, textvariable=debug)
+bocDebug.place(x=700, y=275)
+# print(bocDebug.index(INSERT))
+# temp = bocDebug.get()
+# length = len(temp)
+# cursor_pos = bocDebug.index(INSERT)
+#print(cursor_pos)
+
+#########################
+## Advanced Tab Widgets #
+#########################
 
 btnAdvNumkey1 = ttk.Button(tabAdvanced, text="1.", width=1.5, command=lambda:ERTsummary()).place(x=20, y=35)
 btnPrintERTs = ttk.Button(tabAdvanced, text="Find All ERTs", width=BUTTON_WIDTH, command=lambda:ERTsummary()).place(x=50, y=35)
@@ -689,13 +710,14 @@ advConsole = tk.Text(tabAdvanced, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, ba
                     insertborderwidth=7, undo=True, bd=3)
 advConsole.place(x=220, y=42)
 advConsole.configure(font=consoleFont)
-advConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.2]")
+advConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.5]")
 advConsole.insert(2.0, "\n")
 advConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 advConsole.insert(3.0, "\n")
 
-#################
-##Lat/Long Tab###
+#######################
+# Lat/Long Tab Widgets#
+#######################
 
 labelCurrentTab3 = ttk.Label(tabLatLong, text="Current file: ").place(x=220, y=20)
 labelFileTab3 = ttk.Label(tabLatLong, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
@@ -716,7 +738,7 @@ latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH,
                         insertborderwidth=7, undo=True, bd=3)
 latLongConsole.place(x=220, y=42)
 latLongConsole.configure(font=consoleFont)
-latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.2]")
+latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.5]")
 latLongConsole.insert(2.0, "\n")
 latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
@@ -725,7 +747,8 @@ btnConsoleSave = ttk.Button(tabLatLong, text="save", width=4.25, command=lambda:
 btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=lambda:clearConsole(3)).place(x=717, y=6)
 
 ########################
-###ELF Tab Widgets######
+##  ELF Tab Widgets ####
+########################
 
 btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF", width=26, command=lambda:createELFfile()).place(x=21, y=217)
 btnAutoFill = ttk.Button(tabELFcreation, text="Auto-Fill", width=11).place(x=21, y=180)
@@ -774,13 +797,14 @@ ELFConsole = tk.Text(tabELFcreation, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH,
                     insertborderwidth=7, undo=True, bd=3)
 ELFConsole.place(x=220, y=42)
 ELFConsole.configure(font=consoleFont)
-ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.2]")
+ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.5]")
 ELFConsole.insert(2.0, "\n")
 ELFConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 ELFConsole.insert(3.0, "\n")
 
 ########################
-##Settings Tab Widgets##
+# Settings Tab Widgets #
+########################
 
 labelFileSettings = ttk.Label(tabDeveloper, text="File Settings", font=labelFont).place(x=20, y=30)
 
@@ -826,7 +850,8 @@ logwarning.place(x=300, y=97)
 logwarning.state(['selected'])
 
 ########
-##Menu##
+# Menu #
+########
 
 menubar = tk.Menu(window)
 
