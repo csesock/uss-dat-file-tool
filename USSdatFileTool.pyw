@@ -16,6 +16,7 @@ except:
 #regular expressions for pattern matching
 pattern_missing_meters = re.compile(r'[^\S\n\t]{11}')
 pattern_lat_long = re.compile(r'-?[0-9]{2}\.\d{1,13}$')
+pattern_lat_long2 = re.compile(r'(-?[0-9]{2})(\.)([0-9]{1,13})') #improved lat/long regular expression with grouping
 pattern_space_nonewline = re.compile(r'\t|[ ]{2,}') #test
 
 #file configurations
@@ -298,21 +299,27 @@ def getReadDirections(event=None):
 def checkMalformedLatLong(event=None):
     Logging.writeToLogs("Start Function Call - checkMalformedLatLong()")
     line_number = 1
+    malformed = []
     try:
         with open(download_filename, 'r') as openfile:
             for line in openfile:
                 if line.startswith('MTX'):
                     lat_data = line[23:40].rstrip()
                     long_data = line[40:57].rstrip()
-                    if not pattern_lat_long.match(lat_data) and not pattern_lat_long.match(long_data):
+                    if not pattern_lat_long2.match(lat_data) or not pattern_lat_long2.match(long_data):
                         latLongConsole.delete(1.0, "end")
                         latLongConsole.insert(1.0, "Malformed lat/long data at line: " + str(line_number))
                         latLongConsole.insert(2.0, "\n")
                         latLongConsole.insert(2.0, "Line: " + line)
-                        return
+                        malformed.append(line)
                 line_number+=1
             latLongConsole.delete(1.0, "end")
-            latLongConsole.insert(1.0, "No malformation within lat/long data detected.")
+            counter = 1.0
+            for i in malformed:
+                latLongConsole.insert(counter, i+'\n')
+                counter+=1.0
+            if counter == 1.0:
+                latLongConsole.insert(1.0, "No malformation within lat/long data detected.")
         Logging.writeToLogs("End Function Call - checkMalformedLatLong()")
     except FileNotFoundError:
         fileNotFoundError(3)
@@ -673,11 +680,11 @@ bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
 
-debug = tk.StringVar()
-debug.set("Ln 1, Col 1")
+# debug = tk.StringVar()
+# debug.set("Ln 1, Col 1")
 
-bocDebug = ttk.Label(tabBasicOperations, textvariable=debug)
-bocDebug.place(x=700, y=275)
+# bocDebug = ttk.Label(tabBasicOperations, textvariable=debug)
+# bocDebug.place(x=700, y=275)
 # print(bocDebug.index(INSERT))
 # temp = bocDebug.get()
 # length = len(temp)
