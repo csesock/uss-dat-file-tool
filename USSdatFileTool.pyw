@@ -9,7 +9,7 @@ from datetime import datetime #for writing timestamped files
 import sys, os, re, time, csv, shutil #default library utilities
 try:
     import Logging #logging system
-    import AdjustReadings #manually adjust readings
+    import Adjust.py #manually adjust readings
 except:
     pass
 
@@ -400,6 +400,7 @@ def ERTsummary(event=None):
     except FileNotFoundError:
         fileNotFoundError(2)
 
+#finds all instances of ERT serial numbers and prints them to the console
 def printERTs(counter, event=None):
     try:
         with open(download_filename, 'r') as openfile:
@@ -412,6 +413,8 @@ def printERTs(counter, event=None):
     except:
         fileNotFoundError(2)
 
+#built by request of John Krumenacker
+#creates a formatted "report" that contains different customer and meter information
 def CustomerReport():
     confirmation = messagebox.askokcancel("Confirmation", "To build this report, CUS, MTR, and RFF records must exist for all customers or else data will be ommitted.")
     if confirmation == None or confirmation == False:
@@ -421,39 +424,47 @@ def CustomerReport():
             customer = ""
             meter = ""
             ert = ""
-            counter = 7.0
-            num_customers = 0
+            counter = 8.0
+            num = getNumCustomers()
+
             advConsole.delete(1.0, "end")
-            advConsole.insert(1.0, "\t\tCustomer Report\n")
-            advConsole.insert(2.0, '\t'+str(os.path.basename(download_filename))+"\n")
-            advConsole.insert(3.0, '\t\t'+datetime.today().strftime('%Y-%m-%d_%H-%M\n'))
-            advConsole.insert(4.0, "___________________________________________________\n")
-            advConsole.insert(5.0, "Account #     \tAddress    \tMeter   \tERT\n")
-            advConsole.insert(6.0, "___________________________________________________\n")
+
+            advConsole.insert(1.0, "\t\t|Customer Report\n")
+            advConsole.insert(2.0, '\t\t|'+str(os.path.basename(download_filename))+"\n")
+            advConsole.insert(3.0, '\t\t|'+datetime.today().strftime('%Y/%m/%d_%H:%M\n'))
+            advConsole.insert(4.0, "\t\t|Customers Found: "+str(num)+"\n")
+            advConsole.insert(5.0, "_________________________________________________________\n")
+            advConsole.insert(6.0, "Account#    \tAddress        \tMeter          \tERT#\n")
+            advConsole.insert(7.0, "_________________________________________________________\n")
+            
             for line in openfile:
                 # (1) account number : CUS [15:34] -> [14:34]
                 # (2) meter number   : MTR [46:57] -> [45:57]
                 # (3) ERT number     : RFF [12:21] -> [11:21]
                 if line.startswith('CUS'):
-                    customer = line[14:34].strip()
-                    address = line[54:65]
+                    customer = line[14:34].strip().ljust(12)
+                    address = line[54:67].strip().ljust(15)
                 if line.startswith('MTR'):
-                    meter = line[45:57].strip()
+                    meter = line[45:57].strip().ljust(15)
                 if line.startswith('RFF'):
-                    ert = line[11:21].strip()
-                    # advConsole.insert(counter, "Customer. . :\t"+customer+"\n")
-                    # counter+=1
-                    # advConsole.insert(counter, "Meter. . . .:\t"+meter+"\n")
-                    # counter+=1
-                    # advConsole.insert(counter, "ERT. . . . .:\t"+ert+"\n")
-                    # counter+=1
-                    #advConsole.insert(counter, "\n")
+                    ert = line[11:21].strip().ljust(15)
                     advConsole.insert(counter, customer+'\t'+address+'\t'+meter+'\t'+ert+'\n')
                     counter+=1
-                    num_customers+=1
-            advConsole.insert(counter+1, "Customers found: "+str(num_customers)+"\n")
     except FileNotFoundError:
         fileNotFoundError(2)
+
+def getNumCustomers():
+    num = 0
+    try:
+        with open(download_filename, 'r') as openfile:
+            for line in openfile:
+                if line.startswith('CUS'):
+                    num+=1
+                else:
+                    continue
+        return num 
+    except FileNotFoundError:
+        FileNotFoundError(2)
 
 def getCustomerRecordLength():
     try:
@@ -469,6 +480,7 @@ def getCustomerRecordLength():
                     return length
     except FileNotFoundError:
         fileNotFoundError(1)       
+
 
 def save():
     Logging.writeToLogs('Start Function Call - save()')
@@ -486,6 +498,7 @@ def save():
 def saveAs():
     Logging.writeToLogs('Start Function Call - saveAs()')
     files = [('Text Files', '*.txt'),
+             ('Rich Text Files', '*.rtf'),
              ('All Files', '*.*'),
              ('CSV Files', '*.csv')]
     f = asksaveasfile(mode='w', defaultextension='.txt', filetypes=files)
@@ -680,16 +693,25 @@ bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
 
-# debug = tk.StringVar()
-# debug.set("Ln 1, Col 1")
+text2 = tk.StringVar()
+text2.set('Line: 0 Column: 0')
+labelFooter = ttk.Label(tabBasicOperations, textvariable=text2, foreground='black').place(x=655, y=275)
 
-# bocDebug = ttk.Label(tabBasicOperations, textvariable=debug)
-# bocDebug.place(x=700, y=275)
-# print(bocDebug.index(INSERT))
-# temp = bocDebug.get()
-# length = len(temp)
-# cursor_pos = bocDebug.index(INSERT)
-#print(cursor_pos)
+def check_pos(event):
+    if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
+        text2.set("Line: " + bocConsole.index(tk.INSERT).split('.')[0] + " Column: " + bocConsole.index(tk.INSERT).split('.')[1])
+    elif TAB_CONTROL.index(TAB_CONTROL.select()) == 1:
+        text2.set("Line: " + advConsole.index(tk.INSERT).split('.')[0] + " Column: " + advConsole.index(tk.INSERT).split('.')[1])
+    elif TAB_CONTROL.index(TAB_CONTROL.select()) == 2:
+        text2.set("Line: " + latLongConsole.index(tk.INSERT).split('.')[0] + " Column: " + latLongConsole.index(tk.INSERT).split('.')[1])
+    else:
+        text2.set("Line: " + ELFConsole.index(tk.INSERT).split('.')[0] + " Column: " + ELFConsole.index(tk.INSERT).split('.')[1])
+    
+
+
+bocConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
+bocConsole.bind_class("post-class-bindings", "<KeyPress>", check_pos)
+bocConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
 
 #########################
 ## Advanced Tab Widgets #
@@ -712,6 +734,7 @@ btnConsoleClear3 = ttk.Button(tabAdvanced, text="clear", width=4.25, command=lam
 
 labelCurrentTab2 = ttk.Label(tabAdvanced, text="Current file: ").place(x=220, y=20)
 labelFileTab2 = ttk.Label(tabAdvanced, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
+labelFooter2 = ttk.Label(tabAdvanced, textvariable=text2, foreground='black').place(x=655, y=275)
 
 advConsole = tk.Text(tabAdvanced, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
                     insertborderwidth=7, undo=True, bd=3)
@@ -722,12 +745,17 @@ advConsole.insert(2.0, "\n")
 advConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 advConsole.insert(3.0, "\n")
 
+advConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
+advConsole.bind_class("post-class-bindings", "<KeyPress>", check_pos)
+advConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
+
 #######################
 # Lat/Long Tab Widgets#
 #######################
 
 labelCurrentTab3 = ttk.Label(tabLatLong, text="Current file: ").place(x=220, y=20)
 labelFileTab3 = ttk.Label(tabLatLong, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
+labelFooter3 = ttk.Label(tabLatLong, textvariable=text2, foreground='black').place(x=655, y=275)
 
 btnNumkeyLat3 = ttk.Button(tabLatLong, text="1.", width=1.5, command=lambda:checkMalformedLatLong()).place(x=20, y=35)
 btnLatMalformed = ttk.Button(tabLatLong, text="Malformed Lat/Long", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong()).place(x=50, y=35)
@@ -749,6 +777,10 @@ latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.5]")
 latLongConsole.insert(2.0, "\n")
 latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
+
+latLongConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
+latLongConsole.bind_class("post-class-bindings", "<KeyPress>", check_pos)
+latLongConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
 
 btnConsoleSave = ttk.Button(tabLatLong, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=lambda:clearConsole(3)).place(x=717, y=6)
@@ -796,6 +828,7 @@ inputMarket.insert(0, "W")
 #default console widgets
 labelCurrenTab4 = ttk.Label(tabELFcreation, text="Current file: ").place(x=220, y=20)
 labelFileTab4 = ttk.Label(tabELFcreation, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
+labelFooter4 = ttk.Label(tabELFcreation, textvariable=text2, foreground='black').place(x=655, y=275)
 
 btnELFsave = ttk.Button(tabELFcreation, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearConsole(4)).place(x=717, y=6)
@@ -808,6 +841,10 @@ ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.5]")
 ELFConsole.insert(2.0, "\n")
 ELFConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
 ELFConsole.insert(3.0, "\n")
+
+ELFConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
+ELFConsole.bind_class("post-class-bindings", "<KeyPress>", check_pos)
+ELFConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
 
 ########################
 # Settings Tab Widgets #
