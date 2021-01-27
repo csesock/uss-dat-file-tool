@@ -622,7 +622,7 @@ def adjustReadingsPopup(download_filename):
     AdjustReadings.adjustReadingsPopup(download_filename)
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.6.5 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2020-10-13:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
+    dialog = """ Author: Chris Sesock \n Version: 1.6.7 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2021-10-13:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
              """
     messagebox.showinfo("About", dialog)
 
@@ -688,27 +688,25 @@ bocConsole = tk.Text(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WI
                     insertborderwidth=7, undo=True, bd=3)
 bocConsole.place(x=220, y=42)
 bocConsole.configure(font=consoleFont)
-bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.5]")
+bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.7]")
 bocConsole.insert(2.0, "\n")
-bocConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
+bocConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
 
 text2 = tk.StringVar()
-text2.set('Line: 0 Column: 0')
-labelFooter = ttk.Label(tabBasicOperations, textvariable=text2, foreground='black').place(x=655, y=275)
+text2.set('Ln: 0 Col: 0')
+labelFooter = ttk.Label(tabBasicOperations, textvariable=text2, foreground='black').place(x=690, y=278)
 
 def check_pos(event):
     if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
-        text2.set("Line: " + bocConsole.index(tk.INSERT).split('.')[0] + " Column: " + bocConsole.index(tk.INSERT).split('.')[1])
+        text2.set("Ln: " + bocConsole.index(tk.INSERT).split('.')[0] + " Col: " + bocConsole.index(tk.INSERT).split('.')[1])
     elif TAB_CONTROL.index(TAB_CONTROL.select()) == 1:
-        text2.set("Line: " + advConsole.index(tk.INSERT).split('.')[0] + " Column: " + advConsole.index(tk.INSERT).split('.')[1])
+        text2.set("Ln: " + advConsole.index(tk.INSERT).split('.')[0] + " Col: " + advConsole.index(tk.INSERT).split('.')[1])
     elif TAB_CONTROL.index(TAB_CONTROL.select()) == 2:
-        text2.set("Line: " + latLongConsole.index(tk.INSERT).split('.')[0] + " Column: " + latLongConsole.index(tk.INSERT).split('.')[1])
+        text2.set("Ln: " + latLongConsole.index(tk.INSERT).split('.')[0] + " Col: " + latLongConsole.index(tk.INSERT).split('.')[1])
     else:
-        text2.set("Line: " + ELFConsole.index(tk.INSERT).split('.')[0] + " Column: " + ELFConsole.index(tk.INSERT).split('.')[1])
+        text2.set("Ln: " + ELFConsole.index(tk.INSERT).split('.')[0] + " Col: " + ELFConsole.index(tk.INSERT).split('.')[1])
     
-
-
 bocConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
 bocConsole.bind_class("post-class-bindings", "<KeyPress>", check_pos)
 bocConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
@@ -734,15 +732,15 @@ btnConsoleClear3 = ttk.Button(tabAdvanced, text="clear", width=4.25, command=lam
 
 labelCurrentTab2 = ttk.Label(tabAdvanced, text="Current file: ").place(x=220, y=20)
 labelFileTab2 = ttk.Label(tabAdvanced, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
-labelFooter2 = ttk.Label(tabAdvanced, textvariable=text2, foreground='black').place(x=655, y=275)
+labelFooter2 = ttk.Label(tabAdvanced, textvariable=text2, foreground='black').place(x=690, y=278)
 
 advConsole = tk.Text(tabAdvanced, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
                     insertborderwidth=7, undo=True, bd=3)
 advConsole.place(x=220, y=42)
 advConsole.configure(font=consoleFont)
-advConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.5]")
+advConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.7]")
 advConsole.insert(2.0, "\n")
-advConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
+advConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 advConsole.insert(3.0, "\n")
 
 advConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
@@ -755,7 +753,7 @@ advConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
 
 labelCurrentTab3 = ttk.Label(tabLatLong, text="Current file: ").place(x=220, y=20)
 labelFileTab3 = ttk.Label(tabLatLong, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
-labelFooter3 = ttk.Label(tabLatLong, textvariable=text2, foreground='black').place(x=655, y=275)
+labelFooter3 = ttk.Label(tabLatLong, textvariable=text2, foreground='black').place(x=690, y=278)
 
 btnNumkeyLat3 = ttk.Button(tabLatLong, text="1.", width=1.5, command=lambda:checkMalformedLatLong()).place(x=20, y=35)
 btnLatMalformed = ttk.Button(tabLatLong, text="Malformed Lat/Long", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong()).place(x=50, y=35)
@@ -773,9 +771,9 @@ latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH,
                         insertborderwidth=7, undo=True, bd=3)
 latLongConsole.place(x=220, y=42)
 latLongConsole.configure(font=consoleFont)
-latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.5]")
+latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.7]")
 latLongConsole.insert(2.0, "\n")
-latLongConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
+latLongConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
 
 latLongConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
@@ -828,7 +826,7 @@ inputMarket.insert(0, "W")
 #default console widgets
 labelCurrenTab4 = ttk.Label(tabELFcreation, text="Current file: ").place(x=220, y=20)
 labelFileTab4 = ttk.Label(tabELFcreation, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
-labelFooter4 = ttk.Label(tabELFcreation, textvariable=text2, foreground='black').place(x=655, y=275)
+labelFooter4 = ttk.Label(tabELFcreation, textvariable=text2, foreground='black').place(x=690, y=278)
 
 btnELFsave = ttk.Button(tabELFcreation, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearConsole(4)).place(x=717, y=6)
@@ -837,9 +835,9 @@ ELFConsole = tk.Text(tabELFcreation, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH,
                     insertborderwidth=7, undo=True, bd=3)
 ELFConsole.place(x=220, y=42)
 ELFConsole.configure(font=consoleFont)
-ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.5]")
+ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.7]")
 ELFConsole.insert(2.0, "\n")
-ELFConsole.insert(2.0, "(c) 2020 United Systems and Software, Inc.")
+ELFConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 ELFConsole.insert(3.0, "\n")
 
 ELFConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
