@@ -8,8 +8,8 @@ from collections import deque #to efficiently store data stream
 from datetime import datetime #for writing timestamped files
 import sys, os, re, time, csv, shutil #default library utilities
 try:
-    import Logging #logging system
-    import Adjust.py #manually adjust readings
+    import datlogging #logging system
+    #import AdjustReadings #manually adjust readings
 except:
     pass
 
@@ -36,7 +36,7 @@ BUTTON_WIDTH = 22
 #default tkk configuration
 consoleFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
 labelFont = Font(size=10, weight='bold')
-window.title("United System .dat File Tool")
+window.title("United Systems .dat File Tool")
 window.resizable(False, False)
 height = window.winfo_screenheight()/3
 width = window.winfo_screenwidth()/3
@@ -622,7 +622,7 @@ def adjustReadingsPopup(download_filename):
     AdjustReadings.adjustReadingsPopup(download_filename)
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.6.7 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2021-10-13:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
+    dialog = """ Author: Chris Sesock \n Version: 1.6.7 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2021-01-28:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
              """
     messagebox.showinfo("About", dialog)
 
@@ -695,7 +695,7 @@ bocConsole.insert(3.0, "\n")
 
 text2 = tk.StringVar()
 text2.set('Ln: 0 Col: 0')
-labelFooter = ttk.Label(tabBasicOperations, textvariable=text2, foreground='black').place(x=690, y=278)
+labelFooter = ttk.Label(tabBasicOperations, textvariable=text2, relief='sunken').place(x=690, y=278)
 
 def check_pos(event):
     if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
@@ -732,7 +732,7 @@ btnConsoleClear3 = ttk.Button(tabAdvanced, text="clear", width=4.25, command=lam
 
 labelCurrentTab2 = ttk.Label(tabAdvanced, text="Current file: ").place(x=220, y=20)
 labelFileTab2 = ttk.Label(tabAdvanced, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
-labelFooter2 = ttk.Label(tabAdvanced, textvariable=text2, foreground='black').place(x=690, y=278)
+labelFooter2 = ttk.Label(tabAdvanced, textvariable=text2, foreground='black', relief='sunken').place(x=690, y=278)
 
 advConsole = tk.Text(tabAdvanced, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
                     insertborderwidth=7, undo=True, bd=3)
@@ -753,7 +753,7 @@ advConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
 
 labelCurrentTab3 = ttk.Label(tabLatLong, text="Current file: ").place(x=220, y=20)
 labelFileTab3 = ttk.Label(tabLatLong, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
-labelFooter3 = ttk.Label(tabLatLong, textvariable=text2, foreground='black').place(x=690, y=278)
+labelFooter3 = ttk.Label(tabLatLong, textvariable=text2, foreground='black', relief='sunken').place(x=690, y=278)
 
 btnNumkeyLat3 = ttk.Button(tabLatLong, text="1.", width=1.5, command=lambda:checkMalformedLatLong()).place(x=20, y=35)
 btnLatMalformed = ttk.Button(tabLatLong, text="Malformed Lat/Long", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong()).place(x=50, y=35)
@@ -826,7 +826,7 @@ inputMarket.insert(0, "W")
 #default console widgets
 labelCurrenTab4 = ttk.Label(tabELFcreation, text="Current file: ").place(x=220, y=20)
 labelFileTab4 = ttk.Label(tabELFcreation, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
-labelFooter4 = ttk.Label(tabELFcreation, textvariable=text2, foreground='black').place(x=690, y=278)
+labelFooter4 = ttk.Label(tabELFcreation, textvariable=text2, foreground='black', relief='sunken').place(x=690, y=278)
 
 btnELFsave = ttk.Button(tabELFcreation, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearConsole(4)).place(x=717, y=6)
@@ -867,8 +867,8 @@ tab2enforcebutton.place(x=20, y=100)
 checkAutoExportExcel = ttk.Checkbutton(tabDeveloper, text="Automatically export customer report")
 checkAutoExportExcel.place(x=20, y=122)
 
-backupFileLabel = ttk.Label(tabDeveloper, text='Backup Download File', font=labelFont).place(x=20,y=150)
-backupDownloadFile = ttk.Button(tabDeveloper, text="Backup File", command=lambda:backupDownloadFilef()).place(x=20, y=175)
+backupFileLabel = ttk.Label(tabDeveloper, text='Backup Current File', font=labelFont).place(x=20,y=170)
+backupDownloadFile = ttk.Button(tabDeveloper, text="Backup File", command=lambda:backupDownloadFilef()).place(x=20, y=195)
 
 # image
 label=ttk.Label(tabDeveloper, image=photo2)
@@ -935,10 +935,10 @@ menubar.add_cascade(label="Window", menu=windowmenu)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
 helpmenu.add_command(label="About", accelerator='F1', command=lambda:aboutDialog())
-helpmenu.add_command(label="Purge Log Files", accelerator='F2', command=lambda:Logging.deleteLog(int(logDeleteOldInput.get())))
+helpmenu.add_command(label="Purge Log Files", accelerator='F2', command=lambda:datlogging.deleteLog(int(logDeleteOldInput.get())))
 menubar.add_cascade(label="Help", menu=helpmenu)
 
 if __name__ == "__main__":
-    Logging.createLogFile(int(logDeleteOldInput.get()))
+    datlogging.createLogFile(int(logDeleteOldInput.get()))
     window.config(menu=menubar)
     window.mainloop()
