@@ -1,3 +1,7 @@
+"""
+    
+"""
+
 import tkinter as tk #for building the UI
 from tkinter import *
 from tkinter import messagebox, simpledialog, ttk
@@ -7,10 +11,15 @@ from tkinter.font import Font
 from collections import deque #to efficiently store data stream
 from datetime import datetime #for writing timestamped files
 import sys, os, re, time, csv, shutil #default library utilities
+
+extension_path = os.getcwd().replace('\\', '/')+'/extensions'
+sys.path.append(extension_path)
+
 try:
-    import datlogging #logging system
-    #import AdjustReadings #manually adjust readings
+    import Logging #logging system
+    import AdjustReadings #manually adjust readings
 except:
+    print("import failure")
     pass
 
 #regular expressions for pattern matching
@@ -30,6 +39,7 @@ s.theme_use('clam') #default UI style
 #default UI sizes
 DEFAULT_FONT_SIZE = 10
 CONSOLE_WIDTH = 76
+#CONSOLE_WIDTH = 126
 CONSOLE_HEIGHT = 15
 BUTTON_WIDTH = 22
 
@@ -41,6 +51,7 @@ window.resizable(False, False)
 height = window.winfo_screenheight()/3
 width = window.winfo_screenwidth()/3
 window.geometry('780x350+%d+%d' %(width, height))
+#window.geometry('1150x700+%d+%d' %(width, height))
 
 #build window icons
 try:
@@ -291,6 +302,35 @@ def getReadDirections(event=None):
     except FileNotFoundError:
         fileNotFoundError(1)
 
+def getHighLowValues(event=None):
+    highs = {}
+    lows = {}
+    counter = 3.0
+    try:
+        with open(download_filename, 'r') as openfile:
+            for line in openfile:
+                if line.startswith('RDG'):
+                    high_val = line[41:51]
+                    low_val = line[51:61]
+                    #build data structure of highs
+                    if high_val not in highs:
+                        highs[high_val] = 1
+                    else:
+                        highs[high_val]+=1
+                    #build data structures of lows
+                    if low_val not in lows:
+                        lows[low_val] = 1
+                    else:
+                        lows[low_val]+=1
+            bocConsole.delete(1.0, "end")
+            bocConsole.insert(2.0, "High Values\n")
+            for x in highs:
+                bocConsole.insert(str(counter), str(x)+"\t. . . :\t"+str(highs[x])+"\n")
+                counter+=1
+            print(highs, lows)
+    except FileNotFoundError:
+        fileNotFoundError(1)
+                    
 ##########################
 # Lat/Long tab functions #
 ##########################
@@ -622,7 +662,7 @@ def adjustReadingsPopup(download_filename):
     AdjustReadings.adjustReadingsPopup(download_filename)
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.6.7 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2021-01-28:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
+    dialog = """ Author: Chris Sesock \n Version: 1.7.0 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2021-01-28:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
              """
     messagebox.showinfo("About", dialog)
 
@@ -671,6 +711,7 @@ PrintReadTypeButton = ttk.Button(tabBasicOperations, text="Read Type Codes", com
 
 btnReadDirectionNumkey4 = ttk.Button(tabBasicOperations, text="7.", width=1.5, command=lambda:getReadDirections()).place(x=20, y=248)
 btnReadDirection = ttk.Button(tabBasicOperations, text="Read Direction", width=BUTTON_WIDTH, command=lambda:getReadDirections()).place(x=50, y=248)
+#btnReadDirection = ttk.Button(tabBasicOperations, text="Read Direction", width=BUTTON_WIDTH, command=lambda:getHighLowValues()).place(x=50, y=248)
 
 text = tk.StringVar()
 if os.path.isfile('download.dat'):
@@ -688,7 +729,7 @@ bocConsole = tk.Text(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WI
                     insertborderwidth=7, undo=True, bd=3)
 bocConsole.place(x=220, y=42)
 bocConsole.configure(font=consoleFont)
-bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.7]")
+bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.7.0]")
 bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
@@ -738,7 +779,7 @@ advConsole = tk.Text(tabAdvanced, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, ba
                     insertborderwidth=7, undo=True, bd=3)
 advConsole.place(x=220, y=42)
 advConsole.configure(font=consoleFont)
-advConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.7]")
+advConsole.insert(1.0, "United Systems dat File Tool [Version 1.7.0]")
 advConsole.insert(2.0, "\n")
 advConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 advConsole.insert(3.0, "\n")
@@ -771,7 +812,7 @@ latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH,
                         insertborderwidth=7, undo=True, bd=3)
 latLongConsole.place(x=220, y=42)
 latLongConsole.configure(font=consoleFont)
-latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.7]")
+latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.7.0]")
 latLongConsole.insert(2.0, "\n")
 latLongConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
@@ -835,7 +876,7 @@ ELFConsole = tk.Text(tabELFcreation, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH,
                     insertborderwidth=7, undo=True, bd=3)
 ELFConsole.place(x=220, y=42)
 ELFConsole.configure(font=consoleFont)
-ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.6.7]")
+ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.7.0]")
 ELFConsole.insert(2.0, "\n")
 ELFConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 ELFConsole.insert(3.0, "\n")
@@ -939,6 +980,6 @@ helpmenu.add_command(label="Purge Log Files", accelerator='F2', command=lambda:d
 menubar.add_cascade(label="Help", menu=helpmenu)
 
 if __name__ == "__main__":
-    datlogging.createLogFile(int(logDeleteOldInput.get()))
+    Logging.createLogFile(int(logDeleteOldInput.get()))
     window.config(menu=menubar)
     window.mainloop()
