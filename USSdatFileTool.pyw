@@ -35,6 +35,9 @@ defaut_file_extension = '.txt'
 window = tk.Tk()
 s = ttk.Style()
 s.theme_use('clam') #default UI style 
+# style = ttk.Style(window)
+# window.tk.call('source', 'azure.tcl')
+# style.theme_use('azure')
 
 #default UI sizes
 DEFAULT_FONT_SIZE = 10
