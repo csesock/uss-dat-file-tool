@@ -15,9 +15,11 @@ import sys, os, re, time, csv, shutil #default library utilities
 extension_path = os.getcwd().replace('\\', '/')+'/extensions'
 sys.path.append(extension_path)
 
+#internal tool extensions
+#found in /extensions/...
 try:
-    import Logging #logging system
-    import AdjustReadings #manually adjust readings
+    import extensions.Logging as Logging #logging system
+    import extensions.AdjustReadings as AdjustReadings #manually adjust readings
 except:
     print("import failure")
     pass
