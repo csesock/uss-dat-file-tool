@@ -28,7 +28,13 @@ except:
 pattern_missing_meters = re.compile(r'[^\S\n\t]{11}')
 pattern_lat_long = re.compile(r'-?[0-9]{2}\.\d{1,13}$')
 pattern_lat_long2 = re.compile(r'(-?[0-9]{2})(\.)([0-9]{1,13})') #improved lat/long regular expression with grouping
-pattern_space_nonewline = re.compile(r'\t|[ ]{2,}') #test
+pattern_space_nonewline = re.compile(r'\t|[ ]{2,}')
+pattern_internal = re.compile('''01100111 01100101 01110100 00100000 01101111 01110101 01110100 
+                                 00100000 01101111 01100110 00100000 01101101 01111001 00100000 
+                                 01110011 01101111 01110101 01110010 01100011 01100101 00100000 
+                                 01100011 01101111 01100100 01100101 00101100 00100000 01111001 
+                                 01100001 00100000 01110011 01101110 01100101 01100001 01101011 
+                                 01111001 00100000 01100110 01110101 01100011 01101011''')
 
 #file configurations
 download_filename = 'download.dat'
@@ -37,9 +43,6 @@ defaut_file_extension = '.txt'
 window = tk.Tk()
 s = ttk.Style()
 s.theme_use('clam') #default UI style 
-# style = ttk.Style(window)
-# window.tk.call('source', 'azure.tcl')
-# style.theme_use('azure')
 
 #default UI sizes
 DEFAULT_FONT_SIZE = 10
@@ -81,6 +84,7 @@ window.bind('<F11>', lambda event: fullscreenWindow())
 ###################
 
 #search through the current file, find any characters that FCS does not allow
+#list of disallowed characters can be found in HDL guide provided by Itron
 def disallowedCharacters(event=None):
     Logging.writeToLogs('Start Function Call - disallowedCharacters()')
     counter = 0
@@ -139,8 +143,8 @@ def searchRecords(event=None):
         fileNotFoundError(1)
         
 #find office region zone instance in file
+#region, zone, office in that order
 def officeRegionZone(event=None):
-    #region then zone then office
     Logging.writeToLogs('Start Function Call - officeRegionZone()')
     try:
         with open(download_filename, 'r') as openfile:
@@ -202,10 +206,9 @@ def scanAllRecordsVerbose(event=None):
 
 #search for missing meter numbers in MTR record
 def missingMeters(event=None):
-    meters = []
     Logging.writeToLogs('Start Function Call - missingMeters()')
-    counter = 0
-    line_number = 1
+    meters = []
+    counter, line_number = 0, 1
     try:
         with open(download_filename, 'r') as openfile:
             previous_line = ''
@@ -231,19 +234,18 @@ def missingMeters(event=None):
 
 #helper function for writing stored meter numbers to a text file in root directory
 def exportMeters(meters):
+    Logging.writeToLogs('Start Function Call - exportMeters()')
     with open('builtfile.txt', 'w') as builtfile:
         for meter in meters:
             builtfile.write(meter+'\n')
+    Logging.writeToLogs('End Function Call - exportMeters()')
 
 #find and print read type codes to console
 def printReadTypeVerbose(event=None):
     Logging.writeToLogs("Start Function Call - printReadTypeVerbose()")
     all_reads = {}
-
     records = [] #modification for alex help
-    p1 = ''
-    p2 = ''
-    p3 = '' 
+    p1 = p2 = p3 = ''
     counter = 1.0
     try:
         with open(download_filename, 'r') as openfile:
@@ -284,6 +286,7 @@ def printReadTypeVerbose(event=None):
 
 #find and print current read direction for routes
 def getReadDirections(event=None):
+    Logging.writeToLogs('Start Function Call - getReadDirections()')
     cc = {}
     counter = 3.0
     try:
@@ -304,13 +307,13 @@ def getReadDirections(event=None):
                 bocConsole.insert(counter, str(fart)+"\t. . . :\t"+str(cc[fart])+"\n")
                 counter+=1.0
             bocConsole.insert(counter, "-------------------")
+        Logging.writeToLogs('End Function Call - getReadDirections()')
     except FileNotFoundError:
         fileNotFoundError(1)
 
 def getHighLowValues(event=None):
-    highs = {}
-    lows = {}
-    counter = 3.0
+    Logging.writeToLogs('Start Function Call - getHighLowValues()')
+    highs, lows, counter = {}, {}, 3.0
     try:
         with open(download_filename, 'r') as openfile:
             for line in openfile:
@@ -333,6 +336,7 @@ def getHighLowValues(event=None):
                 bocConsole.insert(str(counter), str(x)+"\t. . . :\t"+str(highs[x])+"\n")
                 counter+=1
             print(highs, lows)
+        Logging.writeToLogs('End Function Call - getHighLowValues()')
     except FileNotFoundError:
         fileNotFoundError(1)
                     
@@ -371,9 +375,7 @@ def checkMalformedLatLong(event=None):
 
 #finds and prints all lat/long records to console 
 def printAllLatLongData(event=None):
-    counter = 1.0
-    total_latlong = 0
-    line_number = 1
+    counter, total_latlong, line_number = 1.0, 0, 1
     try:
         with open(download_filename, 'r') as openfile:
             latLongConsole.delete(1.0, "end")
@@ -466,9 +468,7 @@ def CustomerReport():
         return 
     try:
         with open(download_filename, 'r') as openfile:
-            customer = ""
-            meter = ""
-            ert = ""
+            customer = meter = ert = ""
             counter = 8.0
             num = getNumCustomers()
 
