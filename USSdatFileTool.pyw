@@ -53,6 +53,7 @@ BUTTON_WIDTH = 22
 
 #default tkk configuration
 consoleFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
+#consoleFont = Font(family="Lucida Console", size=DEFAULT_FONT_SIZE)
 labelFont = Font(size=10, weight='bold')
 window.title("United Systems .dat File Tool")
 window.resizable(False, False)
@@ -228,6 +229,11 @@ def missingMeters(event=None):
                 bocConsole.delete(1.0, "end")
                 bocConsole.insert(1.0, "No missing meters found in ["+os.path.basename(download_filename)+"]")
                 return
+            elif counter > 0:
+                answer = messagebox.askokcancel("Confirmation", "There were "+str(counter)+" blank meters found.\nCreate new download file with temp data?")
+                if answer == None or answer == False:
+                    return 
+                populateMissingMeters()
         Logging.writeToLogs('End Function Call - missingMeters()')
     except FileNotFoundError:
         fileNotFoundError(1)
@@ -725,7 +731,7 @@ else:
     text.set('None')
 
 labelCurrentTab1 = ttk.Label(tabBasicOperations, text="Current file: ").place(x=220, y=20)
-labelFileTab1 = ttk.Label(tabBasicOperations, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
+labelFileTab1 = ttk.Label(tabBasicOperations, textvariable=text, foreground='#0074c8').place(x=287, y=20)
 
 btnConsoleSave = ttk.Button(tabBasicOperations, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnConsoleClear = ttk.Button(tabBasicOperations, text="clear", width=4.25, command=lambda:clearConsole(1)).place(x=717, y=6)
@@ -767,8 +773,8 @@ btnPrintERTs = ttk.Button(tabAdvanced, text="Find All ERTs", width=BUTTON_WIDTH,
 btnAdvNumkey2 = ttk.Button(tabAdvanced, text="2.", width=1.5, command=lambda:CustomerReport()).place(x=20, y=76)
 btnCustomerReport = ttk.Button(tabAdvanced, text="Customer Report", width=BUTTON_WIDTH, command=lambda:CustomerReport()).place(x=50, y=76)
 
-btnAdvNumkey3 = ttk.Button(tabAdvanced, text="3.", width=1.5, command=lambda:populateMissingMeters()).place(x=20, y=117)
-btnPopulate = ttk.Button(tabAdvanced, text="Populate Missing Meters", width=BUTTON_WIDTH, command=lambda:populateMissingMeters()).place(x=50, y=117)
+#btnAdvNumkey3 = ttk.Button(tabAdvanced, text="3.", width=1.5, command=lambda:populateMissingMeters()).place(x=20, y=117)
+#btnPopulate = ttk.Button(tabAdvanced, text="Populate Missing Meters", width=BUTTON_WIDTH, command=lambda:populateMissingMeters()).place(x=50, y=117)
 
 btnAdvNumkey4 = ttk.Button(tabAdvanced, text="4.", width=1.5).place(x=20, y=158)
 btnAdjustReadings = ttk.Button(tabAdvanced, text="Adjust Readings", width=BUTTON_WIDTH, command=lambda:adjustReadingsPopup(download_filename)).place(x=50, y=158)
@@ -777,7 +783,7 @@ btnConsoleSave3 = ttk.Button(tabAdvanced, text="save", width=4.25, command=lambd
 btnConsoleClear3 = ttk.Button(tabAdvanced, text="clear", width=4.25, command=lambda:clearConsole(2)).place(x=717, y=6)
 
 labelCurrentTab2 = ttk.Label(tabAdvanced, text="Current file: ").place(x=220, y=20)
-labelFileTab2 = ttk.Label(tabAdvanced, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
+labelFileTab2 = ttk.Label(tabAdvanced, textvariable=text, foreground='#0074c8').place(x=287, y=20)
 labelFooter2 = ttk.Label(tabAdvanced, textvariable=text2, foreground='black', relief='sunken').place(x=690, y=278)
 
 advConsole = tk.Text(tabAdvanced, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
@@ -798,7 +804,7 @@ advConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
 #######################
 
 labelCurrentTab3 = ttk.Label(tabLatLong, text="Current file: ").place(x=220, y=20)
-labelFileTab3 = ttk.Label(tabLatLong, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
+labelFileTab3 = ttk.Label(tabLatLong, textvariable=text, foreground='#0074c8').place(x=287, y=20)
 labelFooter3 = ttk.Label(tabLatLong, textvariable=text2, foreground='black', relief='sunken').place(x=690, y=278)
 
 btnNumkeyLat3 = ttk.Button(tabLatLong, text="1.", width=1.5, command=lambda:checkMalformedLatLong()).place(x=20, y=35)
@@ -871,7 +877,7 @@ inputMarket.insert(0, "W")
 
 #default console widgets
 labelCurrenTab4 = ttk.Label(tabELFcreation, text="Current file: ").place(x=220, y=20)
-labelFileTab4 = ttk.Label(tabELFcreation, textvariable=text, foreground='dark slate gray').place(x=287, y=20)
+labelFileTab4 = ttk.Label(tabELFcreation, textvariable=text, foreground='#0074c8').place(x=287, y=20)
 labelFooter4 = ttk.Label(tabELFcreation, textvariable=text2, foreground='black', relief='sunken').place(x=690, y=278)
 
 btnELFsave = ttk.Button(tabELFcreation, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
