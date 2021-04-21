@@ -647,9 +647,13 @@ def resetELF(event=None):
 def autoFill(event=None):
     try:
         with open(download_filename, 'r') as openfile:
+            ELFConsole.delete(1.0, "end")
+            ELFConsole.insert(1.0, "Populating fields found in "+str(download_filename[-30::])+"\n")
             for line in openfile:
                 if line.startswith('CUS'):
                     address = line[54:74]
+                    inputCity.insert(1.0, str(address))
+                    return
     except:
         pass
 
@@ -776,8 +780,8 @@ btnCustomerReport = ttk.Button(tabAdvanced, text="Customer Report", width=BUTTON
 #btnAdvNumkey3 = ttk.Button(tabAdvanced, text="3.", width=1.5, command=lambda:populateMissingMeters()).place(x=20, y=117)
 #btnPopulate = ttk.Button(tabAdvanced, text="Populate Missing Meters", width=BUTTON_WIDTH, command=lambda:populateMissingMeters()).place(x=50, y=117)
 
-btnAdvNumkey4 = ttk.Button(tabAdvanced, text="4.", width=1.5).place(x=20, y=158)
-btnAdjustReadings = ttk.Button(tabAdvanced, text="Adjust Readings", width=BUTTON_WIDTH, command=lambda:adjustReadingsPopup(download_filename)).place(x=50, y=158)
+btnAdvNumkey4 = ttk.Button(tabAdvanced, text="3.", width=1.5).place(x=20, y=117)
+btnAdjustReadings = ttk.Button(tabAdvanced, text="Adjust Readings", width=BUTTON_WIDTH, command=lambda:adjustReadingsPopup(download_filename)).place(x=50, y=117)
 
 btnConsoleSave3 = ttk.Button(tabAdvanced, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnConsoleClear3 = ttk.Button(tabAdvanced, text="clear", width=4.25, command=lambda:clearConsole(2)).place(x=717, y=6)
@@ -840,7 +844,7 @@ btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=la
 ########################
 
 btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF", width=26, command=lambda:createELFfile()).place(x=21, y=217)
-btnAutoFill = ttk.Button(tabELFcreation, text="Auto-Fill", width=11).place(x=21, y=180)
+btnAutoFill = ttk.Button(tabELFcreation, text="Auto-Fill", width=11, command=lambda:autoFill()).place(x=21, y=180)
 btnReset = ttk.Button(tabELFcreation, text="Reset", width=11, command=lambda:resetELF()).place(x=110, y=180)
 
 labelAutoPopulate = ttk.Label(tabELFcreation, text="Fields to auto-populate", font=labelFont).place(x=20, y=15)
@@ -919,8 +923,12 @@ tab2enforcebutton.place(x=20, y=100)
 checkAutoExportExcel = ttk.Checkbutton(tabDeveloper, text="Automatically export customer report")
 checkAutoExportExcel.place(x=20, y=122)
 
-backupFileLabel = ttk.Label(tabDeveloper, text='Backup Current File', font=labelFont).place(x=20,y=170)
-backupDownloadFile = ttk.Button(tabDeveloper, text="Backup File", command=lambda:backupDownloadFilef()).place(x=20, y=195)
+#backupFileLabel = ttk.Label(tabDeveloper, text='Backup Current File', font=labelFont).place(x=300,y=150)
+#backupDownloadFile = ttk.Button(tabDeveloper, text="Backup File", command=lambda:backupDownloadFilef()).place(x=300, y=170)
+
+#console settings
+labelConsoleSettings = ttk.Label(tabDeveloper, text="Console Settings", font=labelFont).place(x=20, y=150)
+
 
 # image
 label=ttk.Label(tabDeveloper, image=photo2)
@@ -941,7 +949,7 @@ logverbose.state(['selected'])
 
 logwarning = ttk.Checkbutton(tabDeveloper, text="Warning before purging logs")
 logwarning.place(x=300, y=97)
-logwarning.state(['selected'])
+#logwarning.state(['selected']) does not currently warn
 
 ########
 # Menu #

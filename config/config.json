@@ -1,0 +1,17 @@
+{
+	"consolesettings":{
+		"foreground":"green",
+		"background":"black",
+		"font":"Consolas"
+	},
+	"filesettings":{
+		"filetype":".txt",
+		"filelocation":"\\exports",
+		"enforceimports":"True"
+	},
+	"logsettings":{
+		"maxlogs":"10",
+		"logallcalls":"True",
+		"purgewarning":"False"
+	}
+}
