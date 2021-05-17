@@ -104,7 +104,7 @@ def disallowedCharacters(event=None):
                 line_number+=1
             if counter == 0:
                 bocConsole.delete(1.0, 'end')
-                bocConsole.insert(1.0, 'No disallowed characters found in download file.')
+                bocConsole.insert(1.0, 'No disallowed characters found in ['+os.path.basename(download_filename)+']')
                 bocConsole.insert('end', '\n')
                 bocConsole.insert('end', "Disallowed characters include: * < > \\ / \"")
         Logging.writeToLogs('End Function Call - disallowedCharacters()')
@@ -158,6 +158,29 @@ def officeRegionZone(event=None):
                     if zone == "  ":
                         zone = "BLANK"
                     office = line[75:77]
+                    if office == "  ":
+                        office = "BLANK"
+                    bocConsole.delete(1.0, "end")
+                    bocConsole.insert(1.0, "Region-Zone-Office Fields")
+                    bocConsole.insert(2.0, "\n")
+                    bocConsole.insert(2.0, "------------------------")
+                    bocConsole.insert(3.0, "\n")
+                    bocConsole.insert(3.0, "Region . . . . : \t" + str(region))
+                    bocConsole.insert(4.0, "\n")
+                    bocConsole.insert(4.0, "Zone . . . . . : \t" + str(zone))
+                    bocConsole.insert(5.0, "\n")
+                    bocConsole.insert(5.0, "Office . . . . : \t" + str(office))
+                    bocConsole.insert(6.0, "\n")
+                    bocConsole.insert(6.0, "------------------------")
+                    return
+                if line.startswith('ERH'): #accounts for Extended Route Header record
+                    region = line[83:85]
+                    if region == "  ":
+                        region = "BLANK"
+                    zone = line[85:87]
+                    if zone == "  ":
+                        zone = "BLANK"
+                    office = line[87:89]
                     if office == "  ":
                         office = "BLANK"
                     bocConsole.delete(1.0, "end")
@@ -466,7 +489,7 @@ def printERTs(counter, event=None):
     except:
         fileNotFoundError(2)
 
-#built by request of John Krumenacker
+#requested by John Krumenacker
 #creates a formatted "report" that contains different customer and meter information
 def CustomerReport():
     confirmation = messagebox.askokcancel("Confirmation", "To build this report, CUS, MTR, and RFF records must exist for all customers or else data will be ommitted.")
@@ -677,7 +700,7 @@ def adjustReadingsPopup(download_filename):
     AdjustReadings.adjustReadingsPopup(download_filename)
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.7.0 \n Commit: 2ac9feb25cc00538655de983b095eec73dfc0353 \n Date: 2021-05-07:12:00:00 \n Python: 3.8.5 \n OS: Windows_NT x64 10.0.18363.1379
+    dialog = """ Author: Chris Sesock \n Version: 1.7.1 \n Commit: 2ac9feb25cc00538655de983b095eec73dfc0353 \n Date: 2021-05-07:12:00:00 \n Python: 3.8.5 \n OS: Windows_NT x64 10.0.18363.1379
              """
     messagebox.showinfo("About", dialog)
 
@@ -744,7 +767,7 @@ bocConsole = tk.Text(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WI
                     insertborderwidth=7, undo=True, bd=3)
 bocConsole.place(x=220, y=42)
 bocConsole.configure(font=consoleFont)
-bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.7.0]")
+bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.7.1]")
 bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
@@ -794,7 +817,7 @@ advConsole = tk.Text(tabAdvanced, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, ba
                     insertborderwidth=7, undo=True, bd=3)
 advConsole.place(x=220, y=42)
 advConsole.configure(font=consoleFont)
-advConsole.insert(1.0, "United Systems dat File Tool [Version 1.7.0]")
+advConsole.insert(1.0, "United Systems dat File Tool [Version 1.7.1]")
 advConsole.insert(2.0, "\n")
 advConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 advConsole.insert(3.0, "\n")
@@ -827,7 +850,7 @@ latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH,
                         insertborderwidth=7, undo=True, bd=3)
 latLongConsole.place(x=220, y=42)
 latLongConsole.configure(font=consoleFont)
-latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.7.0]")
+latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.7.1]")
 latLongConsole.insert(2.0, "\n")
 latLongConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
@@ -891,7 +914,7 @@ ELFConsole = tk.Text(tabELFcreation, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH,
                     insertborderwidth=7, undo=True, bd=3)
 ELFConsole.place(x=220, y=42)
 ELFConsole.configure(font=consoleFont)
-ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.7.0]")
+ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.7.1]")
 ELFConsole.insert(2.0, "\n")
 ELFConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 ELFConsole.insert(3.0, "\n")
