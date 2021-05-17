@@ -219,8 +219,8 @@ def missingMeters(event=None):
                             meter_record = line[45:57] #46-57
                             meters.append(meter_record)
                             if pattern_missing_meters.match(meter_record):
-                                bocConsole.insert("end", str(line_number) + " " + line)
-                                bocConsole.insert("end", "\n")
+                                bocConsole.insert("end", str(line_number) + " " + previous_line)    #inserts customer name
+                                bocConsole.insert("end", str(line_number) + " " + line+"\n")        #inserts meter number
                                 counter+=1
                         previous_line=line
                         line_number +=1
@@ -677,7 +677,7 @@ def adjustReadingsPopup(download_filename):
     AdjustReadings.adjustReadingsPopup(download_filename)
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.7.0 \n Commit: 077788d6166f5d69c9b660454aa264dd62956fb6 \n Date: 2021-01-28:12:00:00 \n Python: 3.8.3 \n OS: Windows_NT x64 10.0.10363
+    dialog = """ Author: Chris Sesock \n Version: 1.7.0 \n Commit: 2ac9feb25cc00538655de983b095eec73dfc0353 \n Date: 2021-05-07:12:00:00 \n Python: 3.8.5 \n OS: Windows_NT x64 10.0.18363.1379
              """
     messagebox.showinfo("About", dialog)
 
