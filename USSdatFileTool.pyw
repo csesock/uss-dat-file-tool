@@ -704,6 +704,11 @@ def aboutDialog():
              """
     messagebox.showinfo("About", dialog)
 
+def on_closing():
+    #if messagebox.askokcancel("Quit", "Do you want to quit?"):
+    Logging.writeToLogs("Program successfully closed")
+    window.destroy()
+
 # Create Tab Control
 TAB_CONTROL = ttk.Notebook(window)
 # Basic Operations tab
@@ -1024,4 +1029,5 @@ menubar.add_cascade(label="Help", menu=helpmenu)
 if __name__ == "__main__":
     Logging.createLogFile(int(logDeleteOldInput.get()))
     window.config(menu=menubar)
+    window.protocol('WM_DELETE_WINDOW', on_closing)
     window.mainloop()
