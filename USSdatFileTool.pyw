@@ -5,6 +5,7 @@
 import tkinter as tk #for building the UI
 from tkinter import *
 from tkinter import messagebox, simpledialog, ttk
+import tkinter.scrolledtext as tkscrolled
 from tkinter.filedialog import asksaveasfile
 from tkinter.font import Font
 
@@ -59,7 +60,7 @@ window.title("United Systems .dat File Tool")
 window.resizable(False, False)
 height = window.winfo_screenheight()/3
 width = window.winfo_screenwidth()/3
-window.geometry('780x350+%d+%d' %(width, height))
+window.geometry('790x350+%d+%d' %(width, height))
 #window.geometry('1150x700+%d+%d' %(width, height))
 
 #build window icons
@@ -768,7 +769,7 @@ labelFileTab1 = ttk.Label(tabBasicOperations, textvariable=text, foreground='#00
 btnConsoleSave = ttk.Button(tabBasicOperations, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnConsoleClear = ttk.Button(tabBasicOperations, text="clear", width=4.25, command=lambda:clearConsole(1)).place(x=717, y=6)
 
-bocConsole = tk.Text(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
+bocConsole = tkscrolled.ScrolledText(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
                     insertborderwidth=7, undo=True, bd=3)
 bocConsole.place(x=220, y=42)
 bocConsole.configure(font=consoleFont)
@@ -776,6 +777,10 @@ bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.7.1]")
 bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
+
+# scrollb = ttk.Scrollbar(tabBasicOperations, command=bocConsole.yview)
+# bocConsole['yscrollcommand']=scrollb.set 
+
 
 text2 = tk.StringVar()
 text2.set('Ln: 0 Col: 0')
@@ -818,7 +823,7 @@ labelCurrentTab2 = ttk.Label(tabAdvanced, text="Current file: ").place(x=220, y=
 labelFileTab2 = ttk.Label(tabAdvanced, textvariable=text, foreground='#0074c8').place(x=287, y=20)
 labelFooter2 = ttk.Label(tabAdvanced, textvariable=text2, foreground='black', relief='sunken').place(x=690, y=278)
 
-advConsole = tk.Text(tabAdvanced, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
+advConsole = tkscrolled.ScrolledText(tabAdvanced, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
                     insertborderwidth=7, undo=True, bd=3)
 advConsole.place(x=220, y=42)
 advConsole.configure(font=consoleFont)
@@ -851,7 +856,7 @@ dropdownRegion.place(x=22, y=140)
 dropdownRegion.state(['readonly'])
 dropdownRegion.set("Central US (default)")
 
-latLongConsole = tk.Text(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green',
+latLongConsole = tkscrolled.ScrolledText(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green',
                         insertborderwidth=7, undo=True, bd=3)
 latLongConsole.place(x=220, y=42)
 latLongConsole.configure(font=consoleFont)
@@ -915,7 +920,7 @@ labelFooter4 = ttk.Label(tabELFcreation, textvariable=text2, foreground='black',
 btnELFsave = ttk.Button(tabELFcreation, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearConsole(4)).place(x=717, y=6)
 
-ELFConsole = tk.Text(tabELFcreation, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
+ELFConsole = tkscrolled.ScrolledText(tabELFcreation, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
                     insertborderwidth=7, undo=True, bd=3)
 ELFConsole.place(x=220, y=42)
 ELFConsole.configure(font=consoleFont)
