@@ -786,18 +786,18 @@ bocConsole.insert(3.0, "\n")
 
 
 text2 = tk.StringVar()
-text2.set('Ln: 0 Col: 0')
-labelFooter = ttk.Label(tabBasicOperations, textvariable=text2, relief='sunken').place(x=690, y=278)
+text2.set('Ln: 0   Col: 0   ')
+labelFooter = ttk.Label(tabBasicOperations, textvariable=text2, relief='sunken').place(x=683, y=278)
 
 def check_pos(event):
     if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
-        text2.set("Ln: " + bocConsole.index(tk.INSERT).split('.')[0] + " Col: " + bocConsole.index(tk.INSERT).split('.')[1])
+        text2.set("Ln:  " + bocConsole.index(tk.INSERT).split('.')[0] + " Col:  " + bocConsole.index(tk.INSERT).split('.')[1])
     # elif TAB_CONTROL.index(TAB_CONTROL.select()) == 1:
     #     text2.set("Ln: " + advConsole.index(tk.INSERT).split('.')[0] + " Col: " + advConsole.index(tk.INSERT).split('.')[1])
     elif TAB_CONTROL.index(TAB_CONTROL.select()) == 2:
-        text2.set("Ln: " + latLongConsole.index(tk.INSERT).split('.')[0] + " Col: " + latLongConsole.index(tk.INSERT).split('.')[1])
+        text2.set("Ln:  " + latLongConsole.index(tk.INSERT).split('.')[0] + " Col:  " + latLongConsole.index(tk.INSERT).split('.')[1])
     else:
-        text2.set("Ln: " + ELFConsole.index(tk.INSERT).split('.')[0] + " Col: " + ELFConsole.index(tk.INSERT).split('.')[1])
+        text2.set("Ln:  " + ELFConsole.index(tk.INSERT).split('.')[0] + " Col:  " + ELFConsole.index(tk.INSERT).split('.')[1])
     
 bocConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
 bocConsole.bind_class("post-class-bindings", "<KeyPress>", check_pos)
