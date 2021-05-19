@@ -76,7 +76,7 @@ except:
 window.bind('<Control-o>', lambda event: openFile())
 window.bind('<Control-s>', lambda event: save())
 window.bind('<Control-Alt-s>', lambda event: saveAs())
-window.bind('<Control-c>', lambda event: bocConsole.delete(1.0, "end"))
+window.bind('<Control-x>', lambda event: clearConsole(TAB_CONTROL.index(TAB_CONTROL.select())+1))
 window.bind('<F1>', lambda event: aboutDialog())
 window.bind('<F10>', lambda event: resetWindow())
 window.bind('<F11>', lambda event: fullscreenWindow())
@@ -117,10 +117,13 @@ def disallowedCharacters(event=None):
 def searchRecords(event=None):
     Logging.writeToLogs('Start Function Call - searchRecords()')
     records = []
-    record_type = simpledialog.askstring("Record Search", '    Enter the record types to search \n\n (Separate record types by comma) \n               (ex. cus, mtr, rff)  ', parent=window)
+    record_type = simpledialog.askstring("Record Search", '    Enter the record types to search \n\n (Separate record types by comma) \n               (ex. cus, mtr, rff)  \n\n You can also enter ERT to print all ERTs', parent=window)
     if record_type is None:
         return
     record_type = record_type.upper()
+    if 'ERT' in record_type:
+        ERTsummary()
+        return
     if ',' in record_type:
         #multiple records to search
         records = record_type.split(',')
@@ -466,16 +469,16 @@ def ERTsummary(event=None):
                         lengths[length]=1
                     else:
                         lengths[length]+=1
-            advConsole.delete(1.0, "end")
-            advConsole.insert(1.0, "ERT Length Summary\n")
-            advConsole.insert(2.0, "-----------------\n")
+            bocConsole.delete(1.0, "end")
+            bocConsole.insert(1.0, "ERT Summary\n")
+            bocConsole.insert(2.0, "-----------------\n")
             for l in lengths:
-                advConsole.insert(counter, str(l)+". . . :\t"+str(lengths[l])+"\n")
+                bocConsole.insert(counter, str(l)+". . . :\t"+str(lengths[l])+"\n")
                 counter+=1.0
-            advConsole.insert(counter, "-----------------\n")
+            bocConsole.insert(counter, "-----------------\n")
             printERTs(counter+1)
     except FileNotFoundError:
-        fileNotFoundError(2)
+        fileNotFoundError(1)
 
 #finds all instances of ERT serial numbers and prints them to the console
 def printERTs(counter, event=None):
@@ -484,11 +487,11 @@ def printERTs(counter, event=None):
             for line in openfile:
                 if line.startswith('RFF'):
                     ert = line[11:21]
-                    advConsole.insert(counter, ert)
-                    advConsole.insert('end', '\n')
+                    bocConsole.insert(counter, ert)
+                    bocConsole.insert('end', '\n')
                     counter+=1.0
     except:
-        fileNotFoundError(2)
+        fileNotFoundError(1)
 
 #requested by John Krumenacker
 #creates a formatted "report" that contains different customer and meter information
@@ -701,7 +704,7 @@ def adjustReadingsPopup(download_filename):
     AdjustReadings.adjustReadingsPopup(download_filename)
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.7.1 \n Commit: 2ac9feb25cc00538655de983b095eec73dfc0353 \n Date: 2021-05-07:12:00:00 \n Python: 3.8.5 \n OS: Windows_NT x64 10.0.18363.1379
+    dialog = """ Author: Chris Sesock \n Version: 1.8.0 \n Commit: 2ac9feb25cc00538655de983b095eec73dfc0353 \n Date: 2021-05-07:12:00:00 \n Python: 3.8.5 \n OS: Windows_NT x64 10.0.18363.1379
              """
     messagebox.showinfo("About", dialog)
 
@@ -716,8 +719,8 @@ TAB_CONTROL = ttk.Notebook(window)
 tabBasicOperations = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tabBasicOperations, text='Basic Tools')
 # Advanced tab
-tabAdvanced = ttk.Frame(TAB_CONTROL)
-TAB_CONTROL.add(tabAdvanced, text="Advanced Tools")
+# tabAdvanced = ttk.Frame(TAB_CONTROL)
+# TAB_CONTROL.add(tabAdvanced, text="Advanced Tools")
 # Lat/Long tab
 tabLatLong = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tabLatLong, text="Lat/Long Tools")
@@ -773,7 +776,7 @@ bocConsole = tkscrolled.ScrolledText(tabBasicOperations, height=CONSOLE_HEIGHT, 
                     insertborderwidth=7, undo=True, bd=3)
 bocConsole.place(x=220, y=42)
 bocConsole.configure(font=consoleFont)
-bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.7.1]")
+bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.8.0]")
 bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
@@ -804,37 +807,37 @@ bocConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
 ## Advanced Tab Widgets #
 #########################
 
-btnAdvNumkey1 = ttk.Button(tabAdvanced, text="1.", width=1.5, command=lambda:ERTsummary()).place(x=20, y=35)
-btnPrintERTs = ttk.Button(tabAdvanced, text="Find All ERTs", width=BUTTON_WIDTH, command=lambda:ERTsummary()).place(x=50, y=35)
+# btnAdvNumkey1 = ttk.Button(tabAdvanced, text="1.", width=1.5, command=lambda:ERTsummary()).place(x=20, y=35)
+# btnPrintERTs = ttk.Button(tabAdvanced, text="Find All ERTs", width=BUTTON_WIDTH, command=lambda:ERTsummary()).place(x=50, y=35)
 
-btnAdvNumkey2 = ttk.Button(tabAdvanced, text="2.", width=1.5, command=lambda:CustomerReport()).place(x=20, y=76)
-btnCustomerReport = ttk.Button(tabAdvanced, text="Customer Report", width=BUTTON_WIDTH, command=lambda:CustomerReport()).place(x=50, y=76)
+# btnAdvNumkey2 = ttk.Button(tabAdvanced, text="2.", width=1.5, command=lambda:CustomerReport()).place(x=20, y=76)
+# btnCustomerReport = ttk.Button(tabAdvanced, text="Customer Report", width=BUTTON_WIDTH, command=lambda:CustomerReport()).place(x=50, y=76)
 
-#btnAdvNumkey3 = ttk.Button(tabAdvanced, text="3.", width=1.5, command=lambda:populateMissingMeters()).place(x=20, y=117)
-#btnPopulate = ttk.Button(tabAdvanced, text="Populate Missing Meters", width=BUTTON_WIDTH, command=lambda:populateMissingMeters()).place(x=50, y=117)
+# #btnAdvNumkey3 = ttk.Button(tabAdvanced, text="3.", width=1.5, command=lambda:populateMissingMeters()).place(x=20, y=117)
+# #btnPopulate = ttk.Button(tabAdvanced, text="Populate Missing Meters", width=BUTTON_WIDTH, command=lambda:populateMissingMeters()).place(x=50, y=117)
 
-btnAdvNumkey4 = ttk.Button(tabAdvanced, text="3.", width=1.5).place(x=20, y=117)
-btnAdjustReadings = ttk.Button(tabAdvanced, text="Adjust Readings", width=BUTTON_WIDTH, command=lambda:adjustReadingsPopup(download_filename)).place(x=50, y=117)
+# btnAdvNumkey4 = ttk.Button(tabAdvanced, text="3.", width=1.5).place(x=20, y=117)
+# btnAdjustReadings = ttk.Button(tabAdvanced, text="Adjust Readings", width=BUTTON_WIDTH, command=lambda:adjustReadingsPopup(download_filename)).place(x=50, y=117)
 
-btnConsoleSave3 = ttk.Button(tabAdvanced, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
-btnConsoleClear3 = ttk.Button(tabAdvanced, text="clear", width=4.25, command=lambda:clearConsole(2)).place(x=717, y=6)
+# btnConsoleSave3 = ttk.Button(tabAdvanced, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
+# btnConsoleClear3 = ttk.Button(tabAdvanced, text="clear", width=4.25, command=lambda:clearConsole(2)).place(x=717, y=6)
 
-labelCurrentTab2 = ttk.Label(tabAdvanced, text="Current file: ").place(x=220, y=20)
-labelFileTab2 = ttk.Label(tabAdvanced, textvariable=text, foreground='#0074c8').place(x=287, y=20)
-labelFooter2 = ttk.Label(tabAdvanced, textvariable=text2, foreground='black', relief='sunken').place(x=690, y=278)
+# labelCurrentTab2 = ttk.Label(tabAdvanced, text="Current file: ").place(x=220, y=20)
+# labelFileTab2 = ttk.Label(tabAdvanced, textvariable=text, foreground='#0074c8').place(x=287, y=20)
+# labelFooter2 = ttk.Label(tabAdvanced, textvariable=text2, foreground='black', relief='sunken').place(x=690, y=278)
 
-advConsole = tkscrolled.ScrolledText(tabAdvanced, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
-                    insertborderwidth=7, undo=True, bd=3)
-advConsole.place(x=220, y=42)
-advConsole.configure(font=consoleFont)
-advConsole.insert(1.0, "United Systems dat File Tool [Version 1.7.1]")
-advConsole.insert(2.0, "\n")
-advConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
-advConsole.insert(3.0, "\n")
+# advConsole = tkscrolled.ScrolledText(tabAdvanced, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
+#                     insertborderwidth=7, undo=True, bd=3)
+# advConsole.place(x=220, y=42)
+# advConsole.configure(font=consoleFont)
+# advConsole.insert(1.0, "United Systems dat File Tool [Version 1.8.0]")
+# advConsole.insert(2.0, "\n")
+# advConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
+# advConsole.insert(3.0, "\n")
 
-advConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
-advConsole.bind_class("post-class-bindings", "<KeyPress>", check_pos)
-advConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
+# advConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
+# advConsole.bind_class("post-class-bindings", "<KeyPress>", check_pos)
+# advConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
 
 #######################
 # Lat/Long Tab Widgets#
@@ -860,7 +863,7 @@ latLongConsole = tkscrolled.ScrolledText(tabLatLong, height=CONSOLE_HEIGHT, widt
                         insertborderwidth=7, undo=True, bd=3)
 latLongConsole.place(x=220, y=42)
 latLongConsole.configure(font=consoleFont)
-latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.7.1]")
+latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.8.0]")
 latLongConsole.insert(2.0, "\n")
 latLongConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
@@ -924,7 +927,7 @@ ELFConsole = tkscrolled.ScrolledText(tabELFcreation, height=CONSOLE_HEIGHT, widt
                     insertborderwidth=7, undo=True, bd=3)
 ELFConsole.place(x=220, y=42)
 ELFConsole.configure(font=consoleFont)
-ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.7.1]")
+ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.8.0]")
 ELFConsole.insert(2.0, "\n")
 ELFConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 ELFConsole.insert(3.0, "\n")
@@ -999,7 +1002,7 @@ filemenu.add_command(label="Exit", command=lambda:window.destroy())
 menubar.add_cascade(label="File", menu=filemenu)
 
 editmenu = tk.Menu(menubar, tearoff=0)
-editmenu.add_command(label="Clear Console", accelerator="Ctrl+C", command=lambda:clearConsole(TAB_CONTROL.index(TAB_CONTROL.select())+1))
+editmenu.add_command(label="Clear Console", accelerator="Ctrl+X", command=lambda:clearConsole(TAB_CONTROL.index(TAB_CONTROL.select())+1))
 
 submenu = Menu(editmenu)
 
@@ -1028,7 +1031,7 @@ menubar.add_cascade(label="Window", menu=windowmenu)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
 helpmenu.add_command(label="About", accelerator='F1', command=lambda:aboutDialog())
-helpmenu.add_command(label="Purge Log Files", accelerator='F2', command=lambda:datlogging.deleteLog(int(logDeleteOldInput.get())))
+helpmenu.add_command(label="Purge Log Files", accelerator='F2', command=lambda:Logging.deleteLog(int(logDeleteOldInput.get())))
 menubar.add_cascade(label="Help", menu=helpmenu)
 
 if __name__ == "__main__":
