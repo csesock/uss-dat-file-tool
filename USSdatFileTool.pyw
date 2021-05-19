@@ -566,8 +566,8 @@ def save():
     with open("exports\\"+export_filename, 'w') as openfile:
         if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
             text2save = str(bocConsole.get(1.0, "end"))
-        elif TAB_CONTROL.index(TAB_CONTROL.select()) == 1:
-            text2save = str(advConsole.get(1.0, "end"))
+        # elif TAB_CONTROL.index(TAB_CONTROL.select()) == 1:
+        #     text2save = str(advConsole.get(1.0, "end"))
         else:
             text2save = str(latLongConsole.get(1.0, "end"))
         openfile.write(text2save)
@@ -584,8 +584,8 @@ def saveAs():
         return
     if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
         text2save = str(bocConsole.get(1.0, "end"))
-    elif TAB_CONTROL.index(TAB_CONTROL.select()) == 1:
-        text2save = str(advConsole.get(1.0, "end"))
+    # elif TAB_CONTROL.index(TAB_CONTROL.select()) == 1:
+    #     text2save = str(advConsole.get(1.0, "end"))
     else:
         text2save = str(latLongConsole.get(1.0, "end"))
     if f.name.endswith('.csv'):
@@ -654,8 +654,8 @@ def changeTheme(theme):
 def clearConsole(tab):
     if tab==1:
         bocConsole.delete(1.0, "end")
-    elif tab==2:
-        advConsole.delete(1.0, "end")
+    # elif tab==2:
+    #     advConsole.delete(1.0, "end")
     elif tab==3:
         latLongConsole.delete(1.0, "end")
     elif tab==4:
@@ -688,9 +688,9 @@ def fileNotFoundError(tab):
     if tab==1:
         bocConsole.delete(1.0, "end")
         bocConsole.insert(1.0, "ERROR: FILE NOT FOUND")
-    elif tab==2:
-        advConsole.delete(1.0, "end")
-        advConsole.insert(1.0, "ERROR: FILE NOT FOUND")
+    # elif tab==2:
+    #     advConsole.delete(1.0, "end")
+    #     advConsole.insert(1.0, "ERROR: FILE NOT FOUND")
     elif tab==3:
         latLongConsole.delete(1.0, "end")
         latLongConsole.insert(1.0, "ERROR: FILE NOT FOUND")
@@ -792,8 +792,8 @@ labelFooter = ttk.Label(tabBasicOperations, textvariable=text2, relief='sunken')
 def check_pos(event):
     if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
         text2.set("Ln: " + bocConsole.index(tk.INSERT).split('.')[0] + " Col: " + bocConsole.index(tk.INSERT).split('.')[1])
-    elif TAB_CONTROL.index(TAB_CONTROL.select()) == 1:
-        text2.set("Ln: " + advConsole.index(tk.INSERT).split('.')[0] + " Col: " + advConsole.index(tk.INSERT).split('.')[1])
+    # elif TAB_CONTROL.index(TAB_CONTROL.select()) == 1:
+    #     text2.set("Ln: " + advConsole.index(tk.INSERT).split('.')[0] + " Col: " + advConsole.index(tk.INSERT).split('.')[1])
     elif TAB_CONTROL.index(TAB_CONTROL.select()) == 2:
         text2.set("Ln: " + latLongConsole.index(tk.INSERT).split('.')[0] + " Col: " + latLongConsole.index(tk.INSERT).split('.')[1])
     else:
