@@ -422,8 +422,6 @@ def printAllLatLongData(event=None):
                 if line.startswith('MTX'):
                     lat_data = line[23:40].rstrip()
                     long_data = line[40:57].rstrip()
-                    if not pattern_lat_long.match(lat_data) or not pattern_lat_long.match(long_data):
-                        continue
                     latLongConsole.insert(counter, str(line_number)+"\t"+lat_data+"\t\t"+long_data+'\n')
                     total_latlong+=1
                 counter+=1
@@ -433,6 +431,40 @@ def printAllLatLongData(event=None):
                 latLongConsole.insert(1.0, "There was no lat/long data found.")
     except FileNotFoundError:
         fileNotFoundError(3)
+
+def checkRegion(event=None):
+    counter = 4.0
+    try:
+        with open(download_filename, 'r') as openfile:
+            latLongConsole.delete(1.0, "end")
+            latLongConsole.insert(1.0, "Lat/Long Regions"+"\n")
+            latLongConsole.insert(2.0, "Latitude"+"\t\t"+"Longitude"+"\t\t"+"Is Valid"+"\n")
+            latLongConsole.insert(3.0, "----------------------------------------"+"\n")
+            isValid = 'Beans'
+            for line in openfile:
+                if line.startswith('MTX'):
+                    lat_data = line[23:40].rstrip()
+                    long_data = line[40:57].rstrip()
+                    isValid = validRegion(lat_data, long_data)
+                    latLongConsole.insert(counter, lat_data+"\t\t"+long_data+"\t\t"+isValid+"\n")
+                counter+=1
+    except FileNotFoundError:
+        fileNotFoundError(3)
+
+#simply returns a boolean value corresponding to the validity of the lat/long region
+def validRegion(lat, long):
+    region = 'Valid'
+    long = float(long)
+    lat = float(lat)
+    if long < -96.8 or long > -75.8:
+        region = 'Invalid'
+    elif lat > 49 or lat < 29:
+        region = 'Invalid'
+    return region 
+
+#############################
+# ELF Creator tab functions #
+#############################
 
 #creates endpoint location file in /exports
 def createELFfile(event=None):
@@ -853,9 +885,12 @@ btnLatMalformed = ttk.Button(tabLatLong, text="Malformed Lat/Long", width=BUTTON
 btnNumkeyLat4 = ttk.Button(tabLatLong, text="2.", width=1.5, command=lambda:printAllLatLongData()).place(x=20, y=76)
 btnLatAllMalformed = ttk.Button(tabLatLong, text="All Lat/Long", width=BUTTON_WIDTH, command=lambda:printAllLatLongData()).place(x=50, y=76)
 
-labelRegion = ttk.Label(tabLatLong, text="Region:").place(x=22, y=120)
+btnNumKeyLat5 = ttk.Button(tabLatLong, text="3. ", width=1.5, command=lambda:checkRegion()).place(x=20, y=117)
+btnCheckRegion = ttk.Button(tabLatLong, text="Check Region", width=BUTTON_WIDTH, command=lambda:checkRegion()).place(x=50, y=117)
+
+labelRegion = ttk.Label(tabLatLong, text="Region:").place(x=22, y=160)
 dropdownRegion = ttk.Combobox(tabLatLong, width=26, values = ["Central US", "Eastern US", "Western US"])
-dropdownRegion.place(x=22, y=140)
+dropdownRegion.place(x=22, y=180)
 dropdownRegion.state(['readonly'])
 dropdownRegion.set("Central US (default)")
 
@@ -963,7 +998,7 @@ checkAutoExportExcel.place(x=20, y=122)
 #backupDownloadFile = ttk.Button(tabDeveloper, text="Backup File", command=lambda:backupDownloadFilef()).place(x=300, y=170)
 
 #console settings
-labelConsoleSettings = ttk.Label(tabDeveloper, text="Console Settings", font=labelFont).place(x=20, y=150)
+#labelConsoleSettings = ttk.Label(tabDeveloper, text="Console Settings", font=labelFont).place(x=20, y=150)
 
 
 # image
