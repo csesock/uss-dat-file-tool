@@ -277,24 +277,27 @@ def exportMeters(meters):
 def printReadTypeVerbose(event=None):
     Logging.writeToLogs("Start Function Call - printReadTypeVerbose()")
     all_reads = {}
-    records = [] #modification for alex help
+    #records = [] #modification for alex help
     p1 = p2 = p3 = ''
     counter = 1.0
     try:
         with open(download_filename, 'r') as openfile:
             for line in openfile:
+                if line.startswith('MTR'):
+                    commodity = line[101:102]
                 if line.startswith('RDG'):
-                    x = line[76:78]
+                    read_type_code = line[76:78]
+                    x = str(commodity) + " " + str(read_type_code)
                     if x not in all_reads:
                         all_reads[x] = 1
                     else:
                         all_reads[x]+=1
-                    if str(x) == '02':
-                        records.append(p3)
-                        records.append(p2)
-                        records.append(p1)
-                        records.append(line)
-                        records.append('\n')
+                    # if str(x) == '02':
+                    #     records.append(p3)
+                    #     records.append(p2)
+                    #     records.append(p1)
+                    #     records.append(line)
+                    #     records.append('\n')
                 p3 = p2
                 p2 = p1
                 p1 = line 
@@ -302,17 +305,17 @@ def printReadTypeVerbose(event=None):
             #     for record in records:
             #         builtfile.write(record)
             bocConsole.delete(counter, "end")
-            bocConsole.insert(counter, "Read Type Codes")
+            bocConsole.insert(counter, "Commodity | Read Type Codes")
             counter+=1
             bocConsole.insert(counter, "\n")
-            bocConsole.insert(counter, "----------------------")
+            bocConsole.insert(counter, "-----------------------------")
             counter+=1
             bocConsole.insert(counter, "\n")
             for record in all_reads:
                 bocConsole.insert(counter, str(record) + " . . . :\t" + f"{all_reads[record]:,d} ")
                 counter+=1
                 bocConsole.insert(counter, "\n")
-            bocConsole.insert(counter, "----------------------")
+            bocConsole.insert(counter, "-----------------------------")
         Logging.writeToLogs("End Function Call - printReadTypeVerbose()")
     except FileNotFoundError:
         fileNotFoundError(1)
