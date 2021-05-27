@@ -1,8 +1,4 @@
-"""
-    
-"""
-
-import tkinter as tk #for building the UI
+import tkinter as tk 
 from tkinter import *
 from tkinter import messagebox, simpledialog, ttk
 import tkinter.scrolledtext as tkscrolled
@@ -30,12 +26,6 @@ pattern_missing_meters = re.compile(r'[^\S\n\t]{11}')
 pattern_lat_long = re.compile(r'-?[0-9]{2}\.\d{1,13}$')
 pattern_lat_long2 = re.compile(r'(-?[0-9]{2})(\.)([0-9]{1,13})') #improved lat/long regular expression with grouping
 pattern_space_nonewline = re.compile(r'\t|[ ]{2,}')
-pattern_internal = re.compile('''01100111 01100101 01110100 00100000 01101111 01110101 01110100 
-                                 00100000 01101111 01100110 00100000 01101101 01111001 00100000 
-                                 01110011 01101111 01110101 01110010 01100011 01100101 00100000 
-                                 01100011 01101111 01100100 01100101 00101100 00100000 01111001 
-                                 01100001 00100000 01110011 01101110 01100101 01100001 01101011 
-                                 01111001 00100000 01100110 01110101 01100011 01101011''')
 
 #file configurations
 download_filename = 'download.dat'
@@ -54,14 +44,12 @@ BUTTON_WIDTH = 22
 
 #default tkk configuration
 consoleFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
-#consoleFont = Font(family="Lucida Console", size=DEFAULT_FONT_SIZE)
 labelFont = Font(size=10, weight='bold')
 window.title("United Systems .dat File Tool")
 window.resizable(False, False)
 height = window.winfo_screenheight()/3
 width = window.winfo_screenwidth()/3
 window.geometry('790x350+%d+%d' %(width, height))
-#window.geometry('1150x700+%d+%d' %(width, height))
 
 #build window icons
 try:
@@ -277,7 +265,6 @@ def exportMeters(meters):
 def printReadTypeVerbose(event=None):
     Logging.writeToLogs("Start Function Call - printReadTypeVerbose()")
     all_reads = {}
-    #records = [] #modification for alex help
     p1 = p2 = p3 = ''
     counter = 1.0
     try:
@@ -292,18 +279,9 @@ def printReadTypeVerbose(event=None):
                         all_reads[x] = 1
                     else:
                         all_reads[x]+=1
-                    # if str(x) == '02':
-                    #     records.append(p3)
-                    #     records.append(p2)
-                    #     records.append(p1)
-                    #     records.append(line)
-                    #     records.append('\n')
                 p3 = p2
                 p2 = p1
                 p1 = line 
-            # with open('records with 02 read type codes.txt', 'w') as builtfile:
-            #     for record in records:
-            #         builtfile.write(record)
             bocConsole.delete(counter, "end")
             bocConsole.insert(counter, "Commodity | Read Type Codes")
             counter+=1
@@ -436,7 +414,7 @@ def printAllLatLongData(event=None):
         fileNotFoundError(3)
 
 def checkRegion(event=None):
-    counter = 4.0
+    counter, total_latlong = 4.0, 0
     try:
         with open(download_filename, 'r') as openfile:
             latLongConsole.delete(1.0, "end")
@@ -450,7 +428,11 @@ def checkRegion(event=None):
                     long_data = line[40:57].rstrip()
                     isValid = validRegion(lat_data, long_data)
                     latLongConsole.insert(counter, lat_data+"\t\t"+long_data+"\t\t"+isValid+"\n")
+                    total_latlong+=1
                 counter+=1
+            if total_latlong == 0:
+                latLongConsole.delete(1.0, "end")
+                latLongConsole.insert(1.0, "There was no lat/long data found.")
     except FileNotFoundError:
         fileNotFoundError(3)
 
@@ -601,8 +583,6 @@ def save():
     with open("exports\\"+export_filename, 'w') as openfile:
         if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
             text2save = str(bocConsole.get(1.0, "end"))
-        # elif TAB_CONTROL.index(TAB_CONTROL.select()) == 1:
-        #     text2save = str(advConsole.get(1.0, "end"))
         else:
             text2save = str(latLongConsole.get(1.0, "end"))
         openfile.write(text2save)
@@ -619,8 +599,6 @@ def saveAs():
         return
     if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
         text2save = str(bocConsole.get(1.0, "end"))
-    # elif TAB_CONTROL.index(TAB_CONTROL.select()) == 1:
-    #     text2save = str(advConsole.get(1.0, "end"))
     else:
         text2save = str(latLongConsole.get(1.0, "end"))
     if f.name.endswith('.csv'):
@@ -689,8 +667,6 @@ def changeTheme(theme):
 def clearConsole(tab):
     if tab==1:
         bocConsole.delete(1.0, "end")
-    # elif tab==2:
-    #     advConsole.delete(1.0, "end")
     elif tab==3:
         latLongConsole.delete(1.0, "end")
     elif tab==4:
@@ -706,26 +682,10 @@ def resetELF(event=None):
     inputGeopointSource.delete(0, "end")
     inputMarket.delete(0, "end")
 
-def autoFill(event=None):
-    try:
-        with open(download_filename, 'r') as openfile:
-            ELFConsole.delete(1.0, "end")
-            ELFConsole.insert(1.0, "Populating fields found in "+str(download_filename[-30::])+"\n")
-            for line in openfile:
-                if line.startswith('CUS'):
-                    address = line[54:74]
-                    inputCity.insert(1.0, str(address))
-                    return
-    except:
-        pass
-
 def fileNotFoundError(tab):
     if tab==1:
         bocConsole.delete(1.0, "end")
         bocConsole.insert(1.0, "ERROR: FILE NOT FOUND")
-    # elif tab==2:
-    #     advConsole.delete(1.0, "end")
-    #     advConsole.insert(1.0, "ERROR: FILE NOT FOUND")
     elif tab==3:
         latLongConsole.delete(1.0, "end")
         latLongConsole.insert(1.0, "ERROR: FILE NOT FOUND")
@@ -753,10 +713,7 @@ TAB_CONTROL = ttk.Notebook(window)
 # Basic Operations tab
 tabBasicOperations = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tabBasicOperations, text='Basic Tools')
-# Advanced tab
-# tabAdvanced = ttk.Frame(TAB_CONTROL)
-# TAB_CONTROL.add(tabAdvanced, text="Advanced Tools")
-# Lat/Long tab
+# Lat/long tab
 tabLatLong = ttk.Frame(TAB_CONTROL)
 TAB_CONTROL.add(tabLatLong, text="Lat/Long Tools")
 TAB_CONTROL.pack(expand=1, fill="both")
@@ -793,7 +750,6 @@ PrintReadTypeButton = ttk.Button(tabBasicOperations, text="Read Type Codes", com
 
 btnReadDirectionNumkey4 = ttk.Button(tabBasicOperations, text="7.", width=1.5, command=lambda:getReadDirections()).place(x=20, y=248)
 btnReadDirection = ttk.Button(tabBasicOperations, text="Read Direction", width=BUTTON_WIDTH, command=lambda:getReadDirections()).place(x=50, y=248)
-#btnReadDirection = ttk.Button(tabBasicOperations, text="Read Direction", width=BUTTON_WIDTH, command=lambda:getHighLowValues()).place(x=50, y=248)
 
 text = tk.StringVar()
 if os.path.isfile('download.dat'):
@@ -816,63 +772,23 @@ bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
 
-# scrollb = ttk.Scrollbar(tabBasicOperations, command=bocConsole.yview)
-# bocConsole['yscrollcommand']=scrollb.set 
-
-
 text2 = tk.StringVar()
-text2.set('Ln: 0   Col: 0   ')
-labelFooter = ttk.Label(tabBasicOperations, textvariable=text2, relief='sunken').place(x=683, y=278)
+text2.set('Ln : 0   Col : 0  ')
+labelFooter = ttk.Label(tabBasicOperations, textvariable=text2, relief='sunken', background='#ffffff').place(x=675, y=278)
 
 def check_pos(event):
     if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
-        text2.set("Ln:  " + bocConsole.index(tk.INSERT).split('.')[0] + " Col:  " + bocConsole.index(tk.INSERT).split('.')[1])
-    # elif TAB_CONTROL.index(TAB_CONTROL.select()) == 1:
-    #     text2.set("Ln: " + advConsole.index(tk.INSERT).split('.')[0] + " Col: " + advConsole.index(tk.INSERT).split('.')[1])
+        footer1 = "Ln : " + bocConsole.index(tk.INSERT).split('.')[0].ljust(4)
+        footer2 = " Col : " + bocConsole.index(tk.INSERT).split('.')[1].ljust(5)
+        text2.set(footer1+footer2)
     elif TAB_CONTROL.index(TAB_CONTROL.select()) == 2:
-        text2.set("Ln:  " + latLongConsole.index(tk.INSERT).split('.')[0] + " Col:  " + latLongConsole.index(tk.INSERT).split('.')[1])
+        text2.set("Ln : " + latLongConsole.index(tk.INSERT).split('.')[0] + " Col : " + latLongConsole.index(tk.INSERT).split('.')[1])
     else:
-        text2.set("Ln:  " + ELFConsole.index(tk.INSERT).split('.')[0] + " Col:  " + ELFConsole.index(tk.INSERT).split('.')[1])
+        text2.set("Ln : " + ELFConsole.index(tk.INSERT).split('.')[0] + " Col : " + ELFConsole.index(tk.INSERT).split('.')[1])
     
 bocConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
 bocConsole.bind_class("post-class-bindings", "<KeyPress>", check_pos)
 bocConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
-
-#########################
-## Advanced Tab Widgets #
-#########################
-
-# btnAdvNumkey1 = ttk.Button(tabAdvanced, text="1.", width=1.5, command=lambda:ERTsummary()).place(x=20, y=35)
-# btnPrintERTs = ttk.Button(tabAdvanced, text="Find All ERTs", width=BUTTON_WIDTH, command=lambda:ERTsummary()).place(x=50, y=35)
-
-# btnAdvNumkey2 = ttk.Button(tabAdvanced, text="2.", width=1.5, command=lambda:CustomerReport()).place(x=20, y=76)
-# btnCustomerReport = ttk.Button(tabAdvanced, text="Customer Report", width=BUTTON_WIDTH, command=lambda:CustomerReport()).place(x=50, y=76)
-
-# #btnAdvNumkey3 = ttk.Button(tabAdvanced, text="3.", width=1.5, command=lambda:populateMissingMeters()).place(x=20, y=117)
-# #btnPopulate = ttk.Button(tabAdvanced, text="Populate Missing Meters", width=BUTTON_WIDTH, command=lambda:populateMissingMeters()).place(x=50, y=117)
-
-# btnAdvNumkey4 = ttk.Button(tabAdvanced, text="3.", width=1.5).place(x=20, y=117)
-# btnAdjustReadings = ttk.Button(tabAdvanced, text="Adjust Readings", width=BUTTON_WIDTH, command=lambda:adjustReadingsPopup(download_filename)).place(x=50, y=117)
-
-# btnConsoleSave3 = ttk.Button(tabAdvanced, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
-# btnConsoleClear3 = ttk.Button(tabAdvanced, text="clear", width=4.25, command=lambda:clearConsole(2)).place(x=717, y=6)
-
-# labelCurrentTab2 = ttk.Label(tabAdvanced, text="Current file: ").place(x=220, y=20)
-# labelFileTab2 = ttk.Label(tabAdvanced, textvariable=text, foreground='#0074c8').place(x=287, y=20)
-# labelFooter2 = ttk.Label(tabAdvanced, textvariable=text2, foreground='black', relief='sunken').place(x=690, y=278)
-
-# advConsole = tkscrolled.ScrolledText(tabAdvanced, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
-#                     insertborderwidth=7, undo=True, bd=3)
-# advConsole.place(x=220, y=42)
-# advConsole.configure(font=consoleFont)
-# advConsole.insert(1.0, "United Systems dat File Tool [Version 1.8.0]")
-# advConsole.insert(2.0, "\n")
-# advConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
-# advConsole.insert(3.0, "\n")
-
-# advConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
-# advConsole.bind_class("post-class-bindings", "<KeyPress>", check_pos)
-# advConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
 
 #######################
 # Lat/Long Tab Widgets#
@@ -917,9 +833,8 @@ btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=la
 ##  ELF Tab Widgets ####
 ########################
 
-btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF", width=26, command=lambda:createELFfile()).place(x=21, y=217)
-btnAutoFill = ttk.Button(tabELFcreation, text="Auto-Fill", width=11, command=lambda:autoFill()).place(x=21, y=180)
-btnReset = ttk.Button(tabELFcreation, text="Reset", width=11, command=lambda:resetELF()).place(x=110, y=180)
+btnCreateELFfile = ttk.Button(tabELFcreation, text="Create ELF", width=11, command=lambda:createELFfile()).place(x=21, y=180)
+btnReset = ttk.Button(tabELFcreation, text="Clear", width=11, command=lambda:resetELF()).place(x=110, y=180)
 
 labelAutoPopulate = ttk.Label(tabELFcreation, text="Fields to auto-populate", font=labelFont).place(x=20, y=15)
 
@@ -997,13 +912,6 @@ tab2enforcebutton.place(x=20, y=100)
 checkAutoExportExcel = ttk.Checkbutton(tabDeveloper, text="Automatically export customer report")
 checkAutoExportExcel.place(x=20, y=122)
 
-#backupFileLabel = ttk.Label(tabDeveloper, text='Backup Current File', font=labelFont).place(x=300,y=150)
-#backupDownloadFile = ttk.Button(tabDeveloper, text="Backup File", command=lambda:backupDownloadFilef()).place(x=300, y=170)
-
-#console settings
-#labelConsoleSettings = ttk.Label(tabDeveloper, text="Console Settings", font=labelFont).place(x=20, y=150)
-
-
 # image
 label=ttk.Label(tabDeveloper, image=photo2)
 label.image = photo2
@@ -1023,7 +931,6 @@ logverbose.state(['selected'])
 
 logwarning = ttk.Checkbutton(tabDeveloper, text="Warning before purging logs")
 logwarning.place(x=300, y=97)
-#logwarning.state(['selected']) does not currently warn
 
 ########
 # Menu #
