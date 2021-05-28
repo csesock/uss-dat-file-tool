@@ -804,7 +804,7 @@ btnLatMalformed = ttk.Button(tabLatLong, text="Malformed Lat/Long", width=BUTTON
 btnNumkeyLat4 = ttk.Button(tabLatLong, text="2.", width=1.5, command=lambda:printAllLatLongData()).place(x=20, y=76)
 btnLatAllMalformed = ttk.Button(tabLatLong, text="All Lat/Long", width=BUTTON_WIDTH, command=lambda:printAllLatLongData()).place(x=50, y=76)
 
-btnNumKeyLat5 = ttk.Button(tabLatLong, text="3. ", width=1.5, command=lambda:checkRegion()).place(x=20, y=117)
+btnNumKeyLat5 = ttk.Button(tabLatLong, text="3.", width=1.5, command=lambda:checkRegion()).place(x=20, y=117)
 btnCheckRegion = ttk.Button(tabLatLong, text="Check Region", width=BUTTON_WIDTH, command=lambda:checkRegion()).place(x=50, y=117)
 
 labelRegion = ttk.Label(tabLatLong, text="Region:").place(x=22, y=160)
