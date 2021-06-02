@@ -248,7 +248,7 @@ def missingMeters(event=None):
                 answer = messagebox.askokcancel("Confirmation", "There were "+str(counter)+" blank meters found.\nCreate new download file with temp data?")
                 if answer == None or answer == False:
                     return 
-                populateMissingMeters()
+                populateMissingMeters(False)
         Logging.writeToLogs('End Function Call - missingMeters()')
     except FileNotFoundError:
         fileNotFoundError(1)
@@ -574,10 +574,11 @@ def saveAs():
 def parseCSV(text):
     return re.sub(pattern_space_nonewline, ',', text.strip())
 
-def populateMissingMeters(event=None):
-    answer = messagebox.askokcancel("Confirmation", "A new download file will be created\n with populated meter records.")
-    if answer == None or answer == False:
-        return 
+def populateMissingMeters(warn, event=None):
+    if warn == True:
+        answer = messagebox.askokcancel("Confirmation", "A new download file will be created\n with populated meter records.")
+        if answer == None or answer == False:
+            return 
     try:
         with open(download_filename, 'r') as openfile:
             with open('exports\\download--populated meters.dat', 'w') as builtfile:
@@ -661,7 +662,7 @@ def adjustReadingsPopup(download_filename):
     AdjustReadings.adjustReadingsPopup(download_filename)
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.8.0 \n Commit: 2ac9feb25cc00538655de983b095eec73dfc0353 \n Date: 2021-05-07:12:00:00 \n Python: 3.8.5 \n OS: Windows_NT x64 10.0.18363.1379
+    dialog = """ Author: Chris Sesock \n Version: 1.8.1 \n Commit: 02cf7a47a05c00db8883f650998e72d60527168d \n Date: 2021-06-02:09:21:00 \n Python: 3.8.5 \n OS: Windows_NT x64 10.0.18363.1379
              """
     messagebox.showinfo("About", dialog)
 
@@ -729,7 +730,7 @@ bocConsole = tkscrolled.ScrolledText(tabBasicOperations, height=CONSOLE_HEIGHT, 
                     insertborderwidth=7, undo=True, bd=3)
 bocConsole.place(x=220, y=42)
 bocConsole.configure(font=consoleFont)
-bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.8.0]")
+bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.8.1]")
 bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
@@ -784,7 +785,7 @@ latLongConsole = tkscrolled.ScrolledText(tabLatLong, height=CONSOLE_HEIGHT, widt
                         insertborderwidth=7, undo=True, bd=3)
 latLongConsole.place(x=220, y=42)
 latLongConsole.configure(font=consoleFont)
-latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.8.0]")
+latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.8.1]")
 latLongConsole.insert(2.0, "\n")
 latLongConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
@@ -849,7 +850,7 @@ ELFConsole = tkscrolled.ScrolledText(tabELFcreation, height=CONSOLE_HEIGHT, widt
                     insertborderwidth=7, undo=True, bd=3)
 ELFConsole.place(x=220, y=42)
 ELFConsole.configure(font=consoleFont)
-ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.8.0]")
+ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.8.1]")
 ELFConsole.insert(2.0, "\n")
 ELFConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 ELFConsole.insert(3.0, "\n")
