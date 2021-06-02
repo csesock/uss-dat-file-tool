@@ -510,44 +510,6 @@ def printERTs(counter, event=None):
     except:
         fileNotFoundError(1)
 
-#requested by John Krumenacker
-#creates a formatted "report" that contains different customer and meter information
-def CustomerReport():
-    confirmation = messagebox.askokcancel("Confirmation", "To build this report, CUS, MTR, and RFF records must exist for all customers or else data will be ommitted.")
-    if confirmation == None or confirmation == False:
-        return 
-    try:
-        with open(download_filename, 'r') as openfile:
-            customer = meter = ert = ""
-            counter = 8.0
-            num = getNumCustomers()
-
-            advConsole.delete(1.0, "end")
-
-            advConsole.insert(1.0, "\t\t|Customer Report\n")
-            advConsole.insert(2.0, '\t\t|'+str(os.path.basename(download_filename))+"\n")
-            advConsole.insert(3.0, '\t\t|'+datetime.today().strftime('%Y/%m/%d_%H:%M\n'))
-            advConsole.insert(4.0, "\t\t|Customers Found: "+str(num)+"\n")
-            advConsole.insert(5.0, "_________________________________________________________\n")
-            advConsole.insert(6.0, "Account#    \tAddress        \tMeter          \tERT#\n")
-            advConsole.insert(7.0, "_________________________________________________________\n")
-            
-            for line in openfile:
-                # (1) account number : CUS [15:34] -> [14:34]
-                # (2) meter number   : MTR [46:57] -> [45:57]
-                # (3) ERT number     : RFF [12:21] -> [11:21]
-                if line.startswith('CUS'):
-                    customer = line[14:34].strip().ljust(12)
-                    address = line[54:67].strip().ljust(15)
-                if line.startswith('MTR'):
-                    meter = line[45:57].strip().ljust(15)
-                if line.startswith('RFF'):
-                    ert = line[11:21].strip().ljust(15)
-                    advConsole.insert(counter, customer+'\t'+address+'\t'+meter+'\t'+ert+'\n')
-                    counter+=1
-    except FileNotFoundError:
-        fileNotFoundError(2)
-
 def getNumCustomers():
     num = 0
     try:
@@ -773,18 +735,24 @@ bocConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
 
 text2 = tk.StringVar()
-text2.set('Ln : 0   Col : 0  ')
-labelFooter = ttk.Label(tabBasicOperations, textvariable=text2, relief='sunken', background='#ffffff').place(x=675, y=278)
+text2.set('Ln : 0 Col : 0')
+labelFooter = ttk.Label(tabBasicOperations, textvariable=text2).place(x=220, y=278)
+
+text3 = tk.StringVar()
+text3.set('Ln : 0 Col : 0')
+
+text4 = tk.StringVar()
+text4.set('Ln : 0 Col : 0')
 
 def check_pos(event):
     if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
-        footer1 = "Ln : " + bocConsole.index(tk.INSERT).split('.')[0].ljust(4)
-        footer2 = " Col : " + bocConsole.index(tk.INSERT).split('.')[1].ljust(5)
+        footer1 = "Ln : " + bocConsole.index(tk.INSERT).split('.')[0]
+        footer2 = " Col : " + bocConsole.index(tk.INSERT).split('.')[1]
         text2.set(footer1+footer2)
-    elif TAB_CONTROL.index(TAB_CONTROL.select()) == 2:
-        text2.set("Ln : " + latLongConsole.index(tk.INSERT).split('.')[0] + " Col : " + latLongConsole.index(tk.INSERT).split('.')[1])
+    elif TAB_CONTROL.index(TAB_CONTROL.select()) == 1:
+        text3.set("Ln : " + latLongConsole.index(tk.INSERT).split('.')[0] + " Col : " + latLongConsole.index(tk.INSERT).split('.')[1])
     else:
-        text2.set("Ln : " + ELFConsole.index(tk.INSERT).split('.')[0] + " Col : " + ELFConsole.index(tk.INSERT).split('.')[1])
+        text4.set("Ln : " + ELFConsole.index(tk.INSERT).split('.')[0] + " Col : " + ELFConsole.index(tk.INSERT).split('.')[1])
     
 bocConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
 bocConsole.bind_class("post-class-bindings", "<KeyPress>", check_pos)
@@ -796,7 +764,6 @@ bocConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
 
 labelCurrentTab3 = ttk.Label(tabLatLong, text="Current file: ").place(x=220, y=20)
 labelFileTab3 = ttk.Label(tabLatLong, textvariable=text, foreground='#0074c8').place(x=287, y=20)
-labelFooter3 = ttk.Label(tabLatLong, textvariable=text2, foreground='black', relief='sunken').place(x=690, y=278)
 
 btnNumkeyLat3 = ttk.Button(tabLatLong, text="1.", width=1.5, command=lambda:checkMalformedLatLong()).place(x=20, y=35)
 btnLatMalformed = ttk.Button(tabLatLong, text="Malformed Lat/Long", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong()).place(x=50, y=35)
@@ -825,6 +792,8 @@ latLongConsole.insert(3.0, "\n")
 latLongConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
 latLongConsole.bind_class("post-class-bindings", "<KeyPress>", check_pos)
 latLongConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
+
+labelFooter3 = ttk.Label(tabLatLong, textvariable=text3).place(x=220, y=278)
 
 btnConsoleSave = ttk.Button(tabLatLong, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=lambda:clearConsole(3)).place(x=717, y=6)
@@ -871,7 +840,7 @@ inputMarket.insert(0, "W")
 #default console widgets
 labelCurrenTab4 = ttk.Label(tabELFcreation, text="Current file: ").place(x=220, y=20)
 labelFileTab4 = ttk.Label(tabELFcreation, textvariable=text, foreground='#0074c8').place(x=287, y=20)
-labelFooter4 = ttk.Label(tabELFcreation, textvariable=text2, foreground='black', relief='sunken').place(x=690, y=278)
+labelFooter4 = ttk.Label(tabELFcreation, textvariable=text4, foreground='black').place(x=220, y=278)
 
 btnELFsave = ttk.Button(tabELFcreation, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearConsole(4)).place(x=717, y=6)
