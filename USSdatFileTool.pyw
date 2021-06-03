@@ -49,7 +49,7 @@ window.title("United Systems .dat File Tool")
 window.resizable(False, False)
 height = window.winfo_screenheight()/3
 width = window.winfo_screenwidth()/3
-window.geometry('790x350+%d+%d' %(width, height))
+window.geometry('790x347+%d+%d' %(width, height))
 
 #build window icons
 try:
@@ -737,7 +737,13 @@ bocConsole.insert(3.0, "\n")
 
 text2 = tk.StringVar()
 text2.set('Ln : 0 Col : 0')
-labelFooter = ttk.Label(tabBasicOperations, textvariable=text2).place(x=220, y=278)
+labelFooter = ttk.Label(tabBasicOperations, textvariable=text2).place(x=225, y=278)
+boc_separator_left = ttk.Separator(tabBasicOperations, orient="vertical").place(x=220, y=275, relheight=11)
+boc_separator_middle = ttk.Separator(tabBasicOperations, orient="vertical").place(x=400, y=275, relheight=11)
+boc_separator_right = ttk.Separator(tabBasicOperations, orient="vertical").place(x=759, y=275, relheight=11)
+
+label_windows = ttk.Label(text="Windows (CR LF)  ::  UTF-8").place(x=408, y=305)
+#label_footer = ttk.Label(text=".:").place(x=700, y=305)
 
 text3 = tk.StringVar()
 text3.set('Ln : 0 Col : 0')
@@ -794,7 +800,10 @@ latLongConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
 latLongConsole.bind_class("post-class-bindings", "<KeyPress>", check_pos)
 latLongConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
 
-labelFooter3 = ttk.Label(tabLatLong, textvariable=text3).place(x=220, y=278)
+labelFooter3 = ttk.Label(tabLatLong, textvariable=text3).place(x=225, y=278)
+latlong_separator_left = ttk.Separator(tabLatLong, orient="vertical").place(x=220, y=275, relheight=11)
+latlong_separator_middle = ttk.Separator(tabLatLong, orient="vertical").place(x=400, y=275, relheight=11)
+latlong_separator_right = ttk.Separator(tabLatLong, orient="vertical").place(x=759, y=275, relheight=11)
 
 btnConsoleSave = ttk.Button(tabLatLong, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=lambda:clearConsole(3)).place(x=717, y=6)
@@ -841,7 +850,12 @@ inputMarket.insert(0, "W")
 #default console widgets
 labelCurrenTab4 = ttk.Label(tabELFcreation, text="Current file: ").place(x=220, y=20)
 labelFileTab4 = ttk.Label(tabELFcreation, textvariable=text, foreground='#3baf29').place(x=287, y=20)
-labelFooter4 = ttk.Label(tabELFcreation, textvariable=text4, foreground='black').place(x=220, y=278)
+
+labelFooter4 = ttk.Label(tabELFcreation, textvariable=text4, foreground='black').place(x=225, y=278)
+
+elf_separator_left = ttk.Separator(tabELFcreation, orient="vertical").place(x=220, y=275, relheight=11)
+elf_separator_middle = ttk.Separator(tabELFcreation, orient="vertical").place(x=400, y=275, relheight=11)
+elf_separator_right = ttk.Separator(tabELFcreation, orient="vertical").place(x=759, y=275, relheight=11)
 
 btnELFsave = ttk.Button(tabELFcreation, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearConsole(4)).place(x=717, y=6)
