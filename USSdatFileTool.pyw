@@ -316,11 +316,11 @@ def getReadDirections(event=None):
                         cc[c]+=1
             bocConsole.delete(1.0, "end")
             bocConsole.insert(1.0, "Read Directions\n")
-            bocConsole.insert(2.0, "-------------------\n")
+            bocConsole.insert(2.0, "-----------------------\n")
             for fart in cc:
                 bocConsole.insert(counter, str(fart)+"\t. . . :\t"+str(cc[fart])+"\n")
                 counter+=1.0
-            bocConsole.insert(counter, "-------------------")
+            bocConsole.insert(counter, "-----------------------")
         Logging.writeToLogs('End Function Call - getReadDirections()')
     except FileNotFoundError:
         fileNotFoundError(1)
@@ -721,12 +721,12 @@ else:
     text.set('None')
 
 labelCurrentTab1 = ttk.Label(tabBasicOperations, text="Current file: ").place(x=220, y=20)
-labelFileTab1 = ttk.Label(tabBasicOperations, textvariable=text, foreground='#0074c8').place(x=287, y=20)
+labelFileTab1 = ttk.Label(tabBasicOperations, textvariable=text, foreground='#3baf29').place(x=287, y=20)
 
 btnConsoleSave = ttk.Button(tabBasicOperations, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnConsoleClear = ttk.Button(tabBasicOperations, text="clear", width=4.25, command=lambda:clearConsole(1)).place(x=717, y=6)
 
-bocConsole = tkscrolled.ScrolledText(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
+bocConsole = tkscrolled.ScrolledText(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='white', 
                     insertborderwidth=7, undo=True, bd=3)
 bocConsole.place(x=220, y=42)
 bocConsole.configure(font=consoleFont)
@@ -764,7 +764,7 @@ bocConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
 #######################
 
 labelCurrentTab3 = ttk.Label(tabLatLong, text="Current file: ").place(x=220, y=20)
-labelFileTab3 = ttk.Label(tabLatLong, textvariable=text, foreground='#0074c8').place(x=287, y=20)
+labelFileTab3 = ttk.Label(tabLatLong, textvariable=text, foreground='#3baf29').place(x=287, y=20)
 
 btnNumkeyLat3 = ttk.Button(tabLatLong, text="1.", width=1.5, command=lambda:checkMalformedLatLong()).place(x=20, y=35)
 btnLatMalformed = ttk.Button(tabLatLong, text="Malformed Lat/Long", width=BUTTON_WIDTH, command=lambda:checkMalformedLatLong()).place(x=50, y=35)
@@ -781,7 +781,7 @@ dropdownRegion.place(x=22, y=200)
 dropdownRegion.state(['readonly'])
 dropdownRegion.set("Central US (default)")
 
-latLongConsole = tkscrolled.ScrolledText(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green',
+latLongConsole = tkscrolled.ScrolledText(tabLatLong, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='white',
                         insertborderwidth=7, undo=True, bd=3)
 latLongConsole.place(x=220, y=42)
 latLongConsole.configure(font=consoleFont)
@@ -840,13 +840,13 @@ inputMarket.insert(0, "W")
 
 #default console widgets
 labelCurrenTab4 = ttk.Label(tabELFcreation, text="Current file: ").place(x=220, y=20)
-labelFileTab4 = ttk.Label(tabELFcreation, textvariable=text, foreground='#0074c8').place(x=287, y=20)
+labelFileTab4 = ttk.Label(tabELFcreation, textvariable=text, foreground='#3baf29').place(x=287, y=20)
 labelFooter4 = ttk.Label(tabELFcreation, textvariable=text4, foreground='black').place(x=220, y=278)
 
 btnELFsave = ttk.Button(tabELFcreation, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearConsole(4)).place(x=717, y=6)
 
-ELFConsole = tkscrolled.ScrolledText(tabELFcreation, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='lawn green', 
+ELFConsole = tkscrolled.ScrolledText(tabELFcreation, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='white', 
                     insertborderwidth=7, undo=True, bd=3)
 ELFConsole.place(x=220, y=42)
 ELFConsole.configure(font=consoleFont)
@@ -917,19 +917,12 @@ filemenu.add_command(label="Exit", command=lambda:window.destroy())
 menubar.add_cascade(label="File", menu=filemenu)
 
 editmenu = tk.Menu(menubar, tearoff=0)
+editmenu.add_command(label="Copy", accelerator="Ctrl+C")
+editmenu.add_command(label="Paste", accelerator="Ctrl+V")
+editmenu.add_separator()
 editmenu.add_command(label="Clear Console", accelerator="Ctrl+X", command=lambda:clearConsole(TAB_CONTROL.index(TAB_CONTROL.select())+1))
 
-submenu = Menu(editmenu)
-
-submenu.add_command(label="clam", command=lambda:changeTheme('clam'))
-submenu.add_command(label="winnative", command=lambda:changeTheme('winnative'))
-submenu.add_command(label="alt", command=lambda:changeTheme('alt'))
-submenu.add_command(label="xpnative", command=lambda:changeTheme('xpnative'))
-submenu.add_command(label="default", command=lambda:changeTheme('default'))
-submenu.add_command(label="classic", command=lambda:changeTheme('classic'))
-submenu.add_command(label="vista", command=lambda:changeTheme('vista'))
-
-editmenu.add_cascade(label="Theme", menu=submenu)
+#editmenu.add_cascade(label="Theme", menu=submenu)
 menubar.add_cascade(label="Edit", menu=editmenu)
 
 windowmenu = tk.Menu(menubar, tearoff=0)
@@ -942,11 +935,24 @@ windowmenu.add_cascade(label="Window Size", menu=window_submenu)
 windowmenu.add_separator()
 windowmenu.add_command(label="Full Screen", accelerator="F11", command=lambda:fullscreenWindow())
 windowmenu.add_command(label="Reset Window", accelerator="F10", command=lambda:resetWindow())
+
+submenu = Menu(windowmenu)
+
+submenu.add_command(label="clam", command=lambda:changeTheme('clam'))
+submenu.add_command(label="winnative", command=lambda:changeTheme('winnative'))
+submenu.add_command(label="alt", command=lambda:changeTheme('alt'))
+submenu.add_command(label="xpnative", command=lambda:changeTheme('xpnative'))
+submenu.add_command(label="default", command=lambda:changeTheme('default'))
+submenu.add_command(label="classic", command=lambda:changeTheme('classic'))
+submenu.add_command(label="vista", command=lambda:changeTheme('vista'))
+
+windowmenu.add_cascade(label="Theme", menu=submenu)
 menubar.add_cascade(label="Window", menu=windowmenu)
 
 helpmenu = tk.Menu(menubar, tearoff=0)
 helpmenu.add_command(label="About", accelerator='F1', command=lambda:aboutDialog())
 helpmenu.add_command(label="Purge Log Files", accelerator='F2', command=lambda:Logging.deleteLog(int(logDeleteOldInput.get())))
+helpmenu.add_command(label="Check for Updates...")
 menubar.add_cascade(label="Help", menu=helpmenu)
 
 if __name__ == "__main__":
