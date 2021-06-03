@@ -538,6 +538,17 @@ def getCustomerRecordLength():
     except FileNotFoundError:
         fileNotFoundError(1)       
 
+def getFileCharLength():
+    try:
+        with open(download_filename, 'r') as openfile:
+            counter = 0
+            #data = openfile.read()
+            #return len(data)
+            for line in openfile:
+                counter+=1
+            return counter
+    except FileNotFoundError:
+        fileNotFoundError(1)
 
 def save():
     Logging.writeToLogs('Start Function Call - save()')
@@ -604,6 +615,7 @@ def openFile():
     global download_filename
     download_filename = filename
     text.set(os.path.basename(download_filename))
+    length_text.set(str(getFileCharLength()))
     Logging.writeToLogs('Opened new file: ' + str(filename))
        
 def backupDownloadFilef():
@@ -742,7 +754,7 @@ boc_separator_left = ttk.Separator(tabBasicOperations, orient="vertical").place(
 boc_separator_middle = ttk.Separator(tabBasicOperations, orient="vertical").place(x=400, y=275, relheight=11)
 boc_separator_right = ttk.Separator(tabBasicOperations, orient="vertical").place(x=759, y=275, relheight=11)
 
-label_windows = ttk.Label(text="Windows (CR LF)  ::  UTF-8").place(x=408, y=305)
+label_windows = ttk.Label(text="UTF-8").place(x=720, y=305)
 #label_footer = ttk.Label(text=".:").place(x=700, y=305)
 
 text3 = tk.StringVar()
@@ -764,6 +776,11 @@ def check_pos(event):
 bocConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
 bocConsole.bind_class("post-class-bindings", "<KeyPress>", check_pos)
 bocConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
+
+length_label1 = ttk.Label(text="Length: ").place(x=408, y=305)
+length_text = tk.StringVar()
+length_text.set("0")
+length_label = ttk.Label(textvariable=length_text).place(x=452, y=305)
 
 #######################
 # Lat/Long Tab Widgets#
