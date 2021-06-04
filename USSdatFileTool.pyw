@@ -37,7 +37,7 @@ s.theme_use('clam') #default UI style
 
 #default UI sizes
 DEFAULT_FONT_SIZE = 10
-CONSOLE_WIDTH = 76
+CONSOLE_WIDTH = 82
 #CONSOLE_WIDTH = 126
 CONSOLE_HEIGHT = 15
 BUTTON_WIDTH = 22
@@ -49,7 +49,7 @@ window.title("United Systems .dat File Tool")
 window.resizable(False, False)
 height = window.winfo_screenheight()/3
 width = window.winfo_screenwidth()/3
-window.geometry('790x347+%d+%d' %(width, height))
+window.geometry('825x347+%d+%d' %(width, height))
 
 #build window icons
 try:
@@ -683,7 +683,7 @@ def adjustReadingsPopup(download_filename):
     AdjustReadings.adjustReadingsPopup(download_filename)
 
 def aboutDialog():
-    dialog = """ Author: Chris Sesock \n Version: 1.8.1 \n Commit: 02cf7a47a05c00db8883f650998e72d60527168d \n Date: 2021-06-02:09:21:00 \n Python: 3.8.5 \n OS: Windows_NT x64 10.0.18363.1379
+    dialog = """ Author: Chris Sesock \n Version: 1.8.2 \n Commit: 02cf7a47a05c00db8883f650998e72d60527168d \n Date: 2021-06-02:09:21:00 \n Python: 3.8.5 \n OS: Windows_NT x64 10.0.18363.1379
              """
     messagebox.showinfo("About", dialog)
 
@@ -744,14 +744,14 @@ else:
 labelCurrentTab1 = ttk.Label(tabBasicOperations, text="Current file: ").place(x=220, y=20)
 labelFileTab1 = ttk.Label(tabBasicOperations, textvariable=text, foreground='#3baf29').place(x=287, y=20)
 
-btnConsoleSave = ttk.Button(tabBasicOperations, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
-btnConsoleClear = ttk.Button(tabBasicOperations, text="clear", width=4.25, command=lambda:clearConsole(1)).place(x=717, y=6)
+btnConsoleSave = ttk.Button(tabBasicOperations, text="Save", width=4.25, command=lambda:save()).place(x=717, y=6)
+btnConsoleClear = ttk.Button(tabBasicOperations, text="Clear", width=4.25, command=lambda:clearConsole(1)).place(x=760, y=6)
 
 bocConsole = tkscrolled.ScrolledText(tabBasicOperations, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='white', 
                     insertborderwidth=7, undo=True, bd=3)
 bocConsole.place(x=220, y=42)
 bocConsole.configure(font=consoleFont)
-bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.8.1]")
+bocConsole.insert(1.0, "United Systems dat File Tool [Version 1.8.2]")
 bocConsole.insert(2.0, "\n")
 bocConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 bocConsole.insert(3.0, "\n")
@@ -822,7 +822,7 @@ latLongConsole = tkscrolled.ScrolledText(tabLatLong, height=CONSOLE_HEIGHT, widt
                         insertborderwidth=7, undo=True, bd=3)
 latLongConsole.place(x=220, y=42)
 latLongConsole.configure(font=consoleFont)
-latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.8.1]")
+latLongConsole.insert(1.0, "United Systems dat File Tool [Version 1.8.2]")
 latLongConsole.insert(2.0, "\n")
 latLongConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 latLongConsole.insert(3.0, "\n")
@@ -837,8 +837,8 @@ latlong_separator_middle = ttk.Separator(tabLatLong, orient="vertical").place(x=
 latlong_separator_right = ttk.Separator(tabLatLong, orient="vertical").place(x=759, y=275, relheight=11)
 latlong_separator_right2 = ttk.Separator(tabLatLong, orient="vertical").place(x=710, y=275, relheight=11)
 
-btnConsoleSave = ttk.Button(tabLatLong, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
-btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=lambda:clearConsole(3)).place(x=717, y=6)
+btnConsoleSave = ttk.Button(tabLatLong, text="Save", width=4.25, command=lambda:save()).place(x=717, y=6)
+btnLatConsoleClear = ttk.Button(tabLatLong, text="Clear", width=4.25, command=lambda:clearConsole(3)).place(x=760, y=6)
 
 ########################
 ##  ELF Tab Widgets ####
@@ -890,14 +890,14 @@ elf_separator_middle = ttk.Separator(tabELFcreation, orient="vertical").place(x=
 elf_separator_right = ttk.Separator(tabELFcreation, orient="vertical").place(x=759, y=275, relheight=11)
 elf_separator_right2 = ttk.Separator(tabELFcreation, orient="vertical").place(x=710, y=275, relheight=11)
 
-btnELFsave = ttk.Button(tabELFcreation, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
-btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearConsole(4)).place(x=717, y=6)
+btnELFsave = ttk.Button(tabELFcreation, text="Save", width=4.25, command=lambda:save()).place(x=717, y=6)
+btnELFclear = ttk.Button(tabELFcreation, text="Clear", width=4.25, command=lambda:clearConsole(4)).place(x=760, y=6)
 
 ELFConsole = tkscrolled.ScrolledText(tabELFcreation, height=CONSOLE_HEIGHT, width=CONSOLE_WIDTH, background='black', foreground='white', 
                     insertborderwidth=7, undo=True, bd=3)
 ELFConsole.place(x=220, y=42)
 ELFConsole.configure(font=consoleFont)
-ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.8.1]")
+ELFConsole.insert(1.0, "United Systems dat File Tool [Version 1.8.2]")
 ELFConsole.insert(2.0, "\n")
 ELFConsole.insert(2.0, "(c) 2021 United Systems and Software, Inc.")
 ELFConsole.insert(3.0, "\n")
