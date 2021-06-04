@@ -153,7 +153,7 @@ def officeRegionZone(event=None):
                     if office == "  ":
                         office = "BLANK"
                     bocConsole.delete(1.0, "end")
-                    bocConsole.insert(1.0, "Region-Zone-Office Fields")
+                    bocConsole.insert(1.0, "Region-Zone-Office")
                     bocConsole.insert(2.0, "\n")
                     bocConsole.insert(2.0, "------------------------")
                     bocConsole.insert(3.0, "\n")
@@ -176,7 +176,7 @@ def officeRegionZone(event=None):
                     if office == "  ":
                         office = "BLANK"
                     bocConsole.delete(1.0, "end")
-                    bocConsole.insert(1.0, "Region-Zone-Office Fields")
+                    bocConsole.insert(1.0, "Region-Zone-Office")
                     bocConsole.insert(2.0, "\n")
                     bocConsole.insert(2.0, "------------------------")
                     bocConsole.insert(3.0, "\n")
@@ -550,6 +550,14 @@ def getFileCharLength():
     except FileNotFoundError:
         fileNotFoundError(1)
 
+def getFileCharLength2():
+    try:
+        with open(download_filename, 'r') as openfile:
+            data = openfile.read()
+            return len(data)
+    except FileNotFoundError:
+        fileNotFoundError(1)
+
 def save():
     Logging.writeToLogs('Start Function Call - save()')
     export_filename = "DatFileToolExport " + str(datetime.today().strftime('%Y-%m-%d_%H-%M')) + ".txt"
@@ -616,6 +624,7 @@ def openFile():
     download_filename = filename
     text.set(os.path.basename(download_filename))
     length_text.set(str(getFileCharLength()))
+    length_text2.set(str(getFileCharLength2()))
     Logging.writeToLogs('Opened new file: ' + str(filename))
        
 def backupDownloadFilef():
@@ -753,9 +762,9 @@ labelFooter = ttk.Label(tabBasicOperations, textvariable=text2, foreground='#525
 boc_separator_left = ttk.Separator(tabBasicOperations, orient="vertical").place(x=220, y=275, relheight=11)
 boc_separator_middle = ttk.Separator(tabBasicOperations, orient="vertical").place(x=400, y=275, relheight=11)
 boc_separator_right = ttk.Separator(tabBasicOperations, orient="vertical").place(x=759, y=275, relheight=11)
+boc_separator_right2 = ttk.Separator(tabBasicOperations, orient="vertical").place(x=710, y=275, relheight=11)
 
 label_windows = ttk.Label(text="UTF-8", foreground='#52565e').place(x=720, y=305)
-#label_footer = ttk.Label(text=".:").place(x=700, y=305)
 
 text3 = tk.StringVar()
 text3.set('Ln : 0 Col : 0')
@@ -777,10 +786,15 @@ bocConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
 bocConsole.bind_class("post-class-bindings", "<KeyPress>", check_pos)
 bocConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
 
-length_label1 = ttk.Label(text="Length : ", foreground='#52565e').place(x=408, y=305)
+length_label1 = ttk.Label(text="Lines : ", foreground='#52565e').place(x=408, y=305)
 length_text = tk.StringVar()
 length_text.set("0")
-length_label = ttk.Label(textvariable=length_text, foreground='#52565e').place(x=455, y=305)
+length_label = ttk.Label(textvariable=length_text, foreground='#52565e').place(x=445, y=305)
+
+length_label2 = ttk.Label(text="Length : ", foreground='#52565e').place(x=490, y=305)
+length_text2 = tk.StringVar()
+length_text2.set("0")
+length_label2 = ttk.Label(textvariable=length_text2, foreground='#52565e').place(x=537, y=305)
 
 #######################
 # Lat/Long Tab Widgets#
@@ -821,6 +835,7 @@ labelFooter3 = ttk.Label(tabLatLong, textvariable=text3, foreground='#52565e').p
 latlong_separator_left = ttk.Separator(tabLatLong, orient="vertical").place(x=220, y=275, relheight=11)
 latlong_separator_middle = ttk.Separator(tabLatLong, orient="vertical").place(x=400, y=275, relheight=11)
 latlong_separator_right = ttk.Separator(tabLatLong, orient="vertical").place(x=759, y=275, relheight=11)
+latlong_separator_right2 = ttk.Separator(tabLatLong, orient="vertical").place(x=710, y=275, relheight=11)
 
 btnConsoleSave = ttk.Button(tabLatLong, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnLatConsoleClear = ttk.Button(tabLatLong, text="clear", width=4.25, command=lambda:clearConsole(3)).place(x=717, y=6)
@@ -873,6 +888,7 @@ labelFooter4 = ttk.Label(tabELFcreation, textvariable=text4, foreground='#52565e
 elf_separator_left = ttk.Separator(tabELFcreation, orient="vertical").place(x=220, y=275, relheight=11)
 elf_separator_middle = ttk.Separator(tabELFcreation, orient="vertical").place(x=400, y=275, relheight=11)
 elf_separator_right = ttk.Separator(tabELFcreation, orient="vertical").place(x=759, y=275, relheight=11)
+elf_separator_right2 = ttk.Separator(tabELFcreation, orient="vertical").place(x=710, y=275, relheight=11)
 
 btnELFsave = ttk.Button(tabELFcreation, text="save", width=4.25, command=lambda:save()).place(x=673, y=6)
 btnELFclear = ttk.Button(tabELFcreation, text="clear", width=4.25, command=lambda:clearConsole(4)).place(x=717, y=6)
