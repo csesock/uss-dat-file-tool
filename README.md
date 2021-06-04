@@ -23,11 +23,11 @@ Future improvements include:
 ## User Interface
 Currently, the main focus of development is an easy-to-use UI that requires no external libraries. Written in pure python using the tkinter library. 
 
-![GUI](https://imgur.com/0fMgM0x.png)
+![GUI](https://imgur.com/hlK8BwQ.png)
 
-![GUI2](https://imgur.com/5mkPCxo.png)
+![GUI2](https://imgur.com/yVHVLLO.png)
 
-![GUI3](https://imgur.com/tbFYdue.png)
+![GUI3](https://imgur.com/a9MyATH.png)
 
 ## Dependencies
 Currently, the tool has moved away from a command-line collection of scripts and towards a UI-based tool which allows for a number of more practical features. Despite this move towards verbosity, there are still no third-party depenencies within the tool -- simply install Python and double click 'USSdatFileTool.py' to get started using the tool. 
