@@ -749,12 +749,12 @@ bocConsole.insert(3.0, "\n")
 
 text2 = tk.StringVar()
 text2.set('Ln : 0 Col : 0')
-labelFooter = ttk.Label(tabBasicOperations, textvariable=text2).place(x=225, y=278)
+labelFooter = ttk.Label(tabBasicOperations, textvariable=text2, foreground='#52565e').place(x=225, y=278)
 boc_separator_left = ttk.Separator(tabBasicOperations, orient="vertical").place(x=220, y=275, relheight=11)
 boc_separator_middle = ttk.Separator(tabBasicOperations, orient="vertical").place(x=400, y=275, relheight=11)
 boc_separator_right = ttk.Separator(tabBasicOperations, orient="vertical").place(x=759, y=275, relheight=11)
 
-label_windows = ttk.Label(text="UTF-8").place(x=720, y=305)
+label_windows = ttk.Label(text="UTF-8", foreground='#52565e').place(x=720, y=305)
 #label_footer = ttk.Label(text=".:").place(x=700, y=305)
 
 text3 = tk.StringVar()
@@ -777,10 +777,10 @@ bocConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
 bocConsole.bind_class("post-class-bindings", "<KeyPress>", check_pos)
 bocConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
 
-length_label1 = ttk.Label(text="Length: ").place(x=408, y=305)
+length_label1 = ttk.Label(text="Length : ", foreground='#52565e').place(x=408, y=305)
 length_text = tk.StringVar()
 length_text.set("0")
-length_label = ttk.Label(textvariable=length_text).place(x=452, y=305)
+length_label = ttk.Label(textvariable=length_text, foreground='#52565e').place(x=455, y=305)
 
 #######################
 # Lat/Long Tab Widgets#
@@ -795,12 +795,12 @@ btnLatMalformed = ttk.Button(tabLatLong, text="Malformed Lat/Long", width=BUTTON
 btnNumkeyLat4 = ttk.Button(tabLatLong, text="2.", width=1.5, command=lambda:printAllLatLongData()).place(x=20, y=76)
 btnLatAllMalformed = ttk.Button(tabLatLong, text="All Lat/Long", width=BUTTON_WIDTH, command=lambda:printAllLatLongData()).place(x=50, y=76)
 
-btnNumKeyLat5 = ttk.Button(tabLatLong, text="3.", width=1.5, command=lambda:checkRegion()).place(x=20, y=160)
-btnCheckRegion = ttk.Button(tabLatLong, text="Check Region", width=BUTTON_WIDTH, command=lambda:checkRegion()).place(x=50, y=160)
+btnNumKeyLat5 = ttk.Button(tabLatLong, text="3.", width=1.5, command=lambda:checkRegion()).place(x=20, y=117)
+btnCheckRegion = ttk.Button(tabLatLong, text="Check Region", width=BUTTON_WIDTH, command=lambda:checkRegion()).place(x=50, y=117)
 
-labelRegion = ttk.Label(tabLatLong, text="Region:").place(x=22, y=200)
+labelRegion = ttk.Label(tabLatLong, text="Region").place(x=22, y=158)
 dropdownRegion = ttk.Combobox(tabLatLong, width=26, values = ["Central US", "Eastern US", "Western US"])
-dropdownRegion.place(x=22, y=200)
+dropdownRegion.place(x=22, y=180)
 dropdownRegion.state(['readonly'])
 dropdownRegion.set("Central US (default)")
 
@@ -817,7 +817,7 @@ latLongConsole.bindtags(('Text', 'post-class-bindings', '.', 'all'))
 latLongConsole.bind_class("post-class-bindings", "<KeyPress>", check_pos)
 latLongConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
 
-labelFooter3 = ttk.Label(tabLatLong, textvariable=text3).place(x=225, y=278)
+labelFooter3 = ttk.Label(tabLatLong, textvariable=text3, foreground='#52565e').place(x=225, y=278)
 latlong_separator_left = ttk.Separator(tabLatLong, orient="vertical").place(x=220, y=275, relheight=11)
 latlong_separator_middle = ttk.Separator(tabLatLong, orient="vertical").place(x=400, y=275, relheight=11)
 latlong_separator_right = ttk.Separator(tabLatLong, orient="vertical").place(x=759, y=275, relheight=11)
@@ -868,7 +868,7 @@ inputMarket.insert(0, "W")
 labelCurrenTab4 = ttk.Label(tabELFcreation, text="Current file: ").place(x=220, y=20)
 labelFileTab4 = ttk.Label(tabELFcreation, textvariable=text, foreground='#3baf29').place(x=287, y=20)
 
-labelFooter4 = ttk.Label(tabELFcreation, textvariable=text4, foreground='black').place(x=225, y=278)
+labelFooter4 = ttk.Label(tabELFcreation, textvariable=text4, foreground='#52565e').place(x=225, y=278)
 
 elf_separator_left = ttk.Separator(tabELFcreation, orient="vertical").place(x=220, y=275, relheight=11)
 elf_separator_middle = ttk.Separator(tabELFcreation, orient="vertical").place(x=400, y=275, relheight=11)
