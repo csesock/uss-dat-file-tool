@@ -47,8 +47,8 @@ consoleFont = Font(family="Consolas", size=DEFAULT_FONT_SIZE)
 labelFont = Font(size=10, weight='bold')
 window.title("United Systems .dat File Tool")
 window.resizable(False, False)
-height = window.winfo_screenheight()/3
-width = window.winfo_screenwidth()/3
+height = window.winfo_screenheight()/4
+width = window.winfo_screenwidth()/4
 window.geometry('825x347+%d+%d' %(width, height))
 
 #build window icons
@@ -761,10 +761,10 @@ text2.set('Ln : 0 Col : 0')
 labelFooter = ttk.Label(tabBasicOperations, textvariable=text2, foreground='#52565e').place(x=225, y=278)
 boc_separator_left = ttk.Separator(tabBasicOperations, orient="vertical").place(x=220, y=275, relheight=11)
 boc_separator_middle = ttk.Separator(tabBasicOperations, orient="vertical").place(x=400, y=275, relheight=11)
-boc_separator_right = ttk.Separator(tabBasicOperations, orient="vertical").place(x=759, y=275, relheight=11)
+boc_separator_right = ttk.Separator(tabBasicOperations, orient="vertical").place(x=801, y=275, relheight=11)
 boc_separator_right2 = ttk.Separator(tabBasicOperations, orient="vertical").place(x=710, y=275, relheight=11)
 
-label_windows = ttk.Label(text="UTF-8", foreground='#52565e').place(x=720, y=305)
+label_windows = ttk.Label(text=str(sys.platform), foreground='#52565e').place(x=720, y=305)
 
 text3 = tk.StringVar()
 text3.set('Ln : 0 Col : 0')
@@ -834,7 +834,7 @@ latLongConsole.bind_class("post-class-bindings", "<Button-1>", check_pos)
 labelFooter3 = ttk.Label(tabLatLong, textvariable=text3, foreground='#52565e').place(x=225, y=278)
 latlong_separator_left = ttk.Separator(tabLatLong, orient="vertical").place(x=220, y=275, relheight=11)
 latlong_separator_middle = ttk.Separator(tabLatLong, orient="vertical").place(x=400, y=275, relheight=11)
-latlong_separator_right = ttk.Separator(tabLatLong, orient="vertical").place(x=759, y=275, relheight=11)
+latlong_separator_right = ttk.Separator(tabLatLong, orient="vertical").place(x=801, y=275, relheight=11)
 latlong_separator_right2 = ttk.Separator(tabLatLong, orient="vertical").place(x=710, y=275, relheight=11)
 
 btnConsoleSave = ttk.Button(tabLatLong, text="Save", width=4.25, command=lambda:save()).place(x=717, y=6)
@@ -887,7 +887,7 @@ labelFooter4 = ttk.Label(tabELFcreation, textvariable=text4, foreground='#52565e
 
 elf_separator_left = ttk.Separator(tabELFcreation, orient="vertical").place(x=220, y=275, relheight=11)
 elf_separator_middle = ttk.Separator(tabELFcreation, orient="vertical").place(x=400, y=275, relheight=11)
-elf_separator_right = ttk.Separator(tabELFcreation, orient="vertical").place(x=759, y=275, relheight=11)
+elf_separator_right = ttk.Separator(tabELFcreation, orient="vertical").place(x=801, y=275, relheight=11)
 elf_separator_right2 = ttk.Separator(tabELFcreation, orient="vertical").place(x=710, y=275, relheight=11)
 
 btnELFsave = ttk.Button(tabELFcreation, text="Save", width=4.25, command=lambda:save()).place(x=717, y=6)
