@@ -564,8 +564,12 @@ def save():
     with open("exports\\"+export_filename, 'w') as openfile:
         if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
             text2save = str(bocConsole.get(1.0, "end"))
-        else:
+        elif TAB_CONTROL.index(TAB_CONTROL.select()) == 1:
             text2save = str(latLongConsole.get(1.0, "end"))
+        elif TAB_CONTROL.index(TAB_CONTROL.select()) == 2:
+            text2save = str(ELFConsole.get(1.0, "end"))
+        else:
+            tk.messagebox.showerror(title="Warning", message="Nothing to save in current tab")
         openfile.write(text2save)
     messagebox.showinfo("Export", "Data successfully exported to the 'exports' folder!")
  
@@ -580,8 +584,12 @@ def saveAs():
         return
     if TAB_CONTROL.index(TAB_CONTROL.select()) == 0:
         text2save = str(bocConsole.get(1.0, "end"))
-    else:
+    elif TAB_CONTROL.index(TAB_CONTROL.select()) == 1:
         text2save = str(latLongConsole.get(1.0, "end"))
+    elif TAB_CONTROL.index(TAB_CONTROL.select()) == 2:
+        text2save = str(ELFConsole.get(1.0, "end"))
+    else:
+        tk.messagebox.showerror(title="Warning", message="Nothing to save in current tab")
     if f.name.endswith('.csv'):
         parsed = parseCSV(text2save)
         f.write(parsed)
@@ -923,11 +931,16 @@ tab2defaultsaveentry = ttk.Entry(tabDeveloper, width=10)
 tab2defaultsaveentry.insert(0, '\\exports')
 tab2defaultsaveentry.place(x=155, y=78)
 
+labelDefaultTheme = ttk.Label(tabDeveloper, text="• Default Theme:").place(x=20, y=103)
+defaultThemeEntry = ttk.Entry(tabDeveloper, width=10)
+defaultThemeEntry.insert(0, 'clam')
+defaultThemeEntry.place(x=155, y=103)
+
 tab2enforcebutton = ttk.Checkbutton(tabDeveloper, text="Enforce filetype imports")
-tab2enforcebutton.place(x=20, y=100)
+tab2enforcebutton.place(x=20, y=150)
 
 checkAutoExportExcel = ttk.Checkbutton(tabDeveloper, text="Automatically export customer report")
-checkAutoExportExcel.place(x=20, y=122)
+checkAutoExportExcel.place(x=20, y=172)
 
 # image
 label=ttk.Label(tabDeveloper, image=photo2)
