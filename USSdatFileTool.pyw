@@ -945,7 +945,15 @@ checkAutoExportExcel.place(x=20, y=172)
 # image
 label=ttk.Label(tabDeveloper, image=photo2)
 label.image = photo2
-label.place(x=310, y=60)
+label.place(x=420, y=-53)
+
+settings_separator_left = ttk.Separator(tabDeveloper, orient="vertical").place(x=220, y=275, relheight=11)
+settings_separator_middle = ttk.Separator(tabDeveloper, orient="vertical").place(x=400, y=275, relheight=11)
+settings_separator_right = ttk.Separator(tabDeveloper, orient="vertical").place(x=801, y=275, relheight=11)
+settings_separator_right2 = ttk.Separator(tabDeveloper, orient="vertical").place(x=710, y=275, relheight=11)
+settings_separator_horizontal = ttk.Separator(tabDeveloper, orient="horizontal").place(x=220, y=275, width=582)
+
+
 
 # log settings
 loglabel = ttk.Label(tabDeveloper, text="Log Settings", font=labelFont).place(x=300, y=30)
